@@ -1,0 +1,18 @@
+.footer-links { display: flex; gap: 18px; margin: 0; color: #d8d0c4; }
+.footer-links a:hover, .footer-links [aria-current="page"] { color: var(--gold-light); }
+.legal-main { padding-block: 88px 120px; }
+.legal-hero { max-width: 900px; padding-bottom: 60px; }
+.legal-hero h1 { font-size: clamp(3.8rem, 8vw, 7rem); }
+.legal-note { max-width: 760px; margin: 30px 0 0; padding: 16px 18px; color: #d8d0c4; background: var(--bg-soft); border-left: 2px solid var(--gold); }
+.legal-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.legal-card { padding: clamp(26px, 4vw, 42px); background: var(--panel); border: 1px solid var(--line); }
+.legal-card h2 { margin-bottom: 24px; font-size: clamp(2rem, 4vw, 3.5rem); }
+.legal-card p:not(.offer-kicker) { color: var(--muted); }
+.legal-card-wide { grid-column: 1 / -1; }
+.legal-list { margin: 24px 0 0; padding-left: 1.2rem; color: #d8d0c4; }
+.legal-list li + li { margin-top: 10px; }
+@media (max-width: 860px) {
+  .footer-links { flex-wrap: wrap; }
+  .legal-grid { grid-template-columns: 1fr; }
+  .legal-card-wide { grid-column: auto; }
+}

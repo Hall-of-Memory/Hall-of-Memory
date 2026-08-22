@@ -1,0 +1,73 @@
+---
+import { eventTypes, inquiryLimits } from '../lib/inquiry';
+
+interface OfferOption {
+  id: string;
+  title: string;
+}
+
+interface PackageOption {
+  id: string;
+  name: string;
+}
+
+interface Props {
+  offers: readonly OfferOption[];
+  packages?: readonly PackageOption[];
+  showStepLegends?: boolean;
+  emptyPackageLabel?: string;
+}
+
+const {
+  offers,
+  packages = [],
+  showStepLegends = false,
+  emptyPackageLabel = 'Pakete folgen',
+} = Astro.props;
+---
+<fieldset class:list={['inquiry-field-group', { 'inquiry-step': showStepLegends }]}>
+  <legend class:list={{ 'visually-hidden': !showStepLegends }}>
+    {showStepLegends && <span aria-hidden="true">01</span>}
+    Angebot wählen
+  </legend>
+  <div class="form-grid-two">
+    <label>
+      Event-Angebot
+      <select name="offerId" required>
+        <option value="">Bitte auswählen</option>
+        {offers.map((offer) => <option value={offer.id}>{offer.title}</option>)}
+      </select>
+    </label>
+    <label>
+      Paket <span class="optional">optional</span>
+      <select name="packageId" disabled={packages.length === 0}>
+        <option value="">{packages.length === 0 ? emptyPackageLabel : 'Kein bestimmtes Paket'}</option>
+        {packages.map((item) => <option value={item.id}>{item.name}</option>)}
+      </select>
+    </label>
+  </div>
+</fieldset>
+
+<fieldset class:list={['inquiry-field-group', { 'inquiry-step': showStepLegends }]}>
+  <legend class:list={{ 'visually-hidden': !showStepLegends }}>
+    {showStepLegends && <span aria-hidden="true">02</span>}
+    Eventdetails
+  </legend>
+  <div class="form-grid-two">
+    <label>
+      Wunschdatum
+      <input type="date" name="date" required />
+    </label>
+    <label>
+      Veranstaltungsart
+      <select name="eventType" required>
+        <option value="">Bitte auswählen</option>
+        {eventTypes.map((type) => <option value={type}>{type}</option>)}
+      </select>
+    </label>
+  </div>
+  <label>
+    Veranstaltungsort
+    <input type="text" name="location" minlength="2" maxlength={inquiryLimits.location} autocomplete="address-level2" required placeholder="Ort oder Veranstaltungsstätte" />
+  </label>
+</fieldset>

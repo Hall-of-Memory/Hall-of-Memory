@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/legal.css';
+
+const basePath = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+---
+<BaseLayout
+  title="Impressum — Hall of Memory"
+  description="Entwurfsseite für die später freizugebenden Anbieterangaben von Hall of Memory."
+  noIndex={true}
+  formActionSource="'none'"
+>
+  <header class="site-header shell">
+    <a href={basePath} class="wordmark" aria-label="Hall of Memory Startseite">
+      <span>HALL</span><span>OF MEMORY</span>
+    </a>
+    <nav aria-label="Seitennavigation">
+      <a href={basePath} class="nav-cta">Zur Startseite</a>
+    </nav>
+  </header>
+
+  <main id="main-content" class="legal-main shell" tabindex="-1">
+    <div class="legal-hero">
+      <p class="eyebrow">Rechtliches</p>
+      <h1>Impressum</h1>
+      <p class="legal-note"><strong>Entwurfsstand:</strong> Diese Seite ist technisch vorbereitet, enthält aber noch keine freigegebenen Anbieterangaben und ist noch kein finales Impressum.</p>
+    </div>
+
+    <div class="legal-grid">
+      <section class="legal-card" aria-labelledby="impressum-fehlt">
+        <p class="offer-kicker">Vor Veröffentlichung</p>
+        <h2 id="impressum-fehlt">Kundendaten einsetzen.</h2>
+        <p>Die endgültigen Angaben werden ausschließlich aus den vom Kunden bereitgestellten und freigegebenen Daten übernommen. Es werden keine Firma, Anschrift, Vertretungs- oder Registrierungsangaben erfunden.</p>
+        <ul class="legal-list">
+          <li>Name bzw. Unternehmensbezeichnung und ladungsfähige Anschrift</li>
+          <li>vertretungsberechtigte Person, soweit einschlägig</li>
+          <li>freigegebene Kontaktangaben</li>
+          <li>Register-, Steuer- oder sonstige Pflichtangaben nur, soweit tatsächlich einschlägig und belegt</li>
+        </ul>
+      </section>
+
+      <section class="legal-card" aria-labelledby="impressum-status">
+        <p class="offer-kicker">Projektstatus</p>
+        <h2 id="impressum-status">Keine Platzhalter als Wahrheit.</h2>
+        <p>Der aktuelle Website-Stand bleibt bis zur Freigabe im Entwurfsmodus. Die technische Route und Verlinkung können deshalb bereits getestet werden, ohne unbestätigte Rechts- oder Kundendaten zu veröffentlichen.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer shell">
+    <a href={basePath} class="wordmark"><span>HALL</span><span>OF MEMORY</span></a>
+    <p class="footer-links"><a href={`${basePath}impressum/`} aria-current="page">Impressum</a><a href={`${basePath}datenschutz/`}>Datenschutz</a></p>
+    <p class="muted">Entwurfsstand · Kundendaten folgen</p>
+  </footer>
+</BaseLayout>

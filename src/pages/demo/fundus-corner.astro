@@ -1,0 +1,284 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const assetBase = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const assetUrl = `${assetBase}fundus/botanical-concave-frame-corner-v1/package/assets/botanical-concave-frame-corner-v1-mask.svg`;
+const assetId = 'botanical.concave-frame.corner.v1';
+const buildDigest = '608fca2f2ba23fd0e64eb7d9fbc55346be23d7ff11c3a32ba737e392896a77d1';
+const packageDigest = 'd49ba5fdee0a474da48e6aac061aacda27f75028fc686b0e4607dd83a03b4b7a';
+const outputDigest = 'd05245fa35e5c52e784fd565c88547d2d9dfc0708b88ad871797e680c9a571a1';
+const rejectionDigest = '719ddea6d0d496d1630c302dc13525ab315fd09bd4b953d87e5c43a3bca996fa';
+---
+<BaseLayout
+  title="Hall of Memory — Fundus Corner Pilot · v1 verworfen"
+  description="Isolierter ALT-NEU-Vergleich mit einer später im Live-Review verworfenen Schauwerk-Fundus-v1-Revision."
+  noIndex={true}
+  bodyClass="fundus-corner-pilot-page"
+  formActionSource="'none'"
+>
+  <main
+    id="main-content"
+    class="fundus-corner-pilot"
+    tabindex="-1"
+    data-fundus-asset={assetId}
+    data-fundus-build={buildDigest}
+    data-fundus-package={packageDigest}
+    data-fundus-output={outputDigest}
+    data-fundus-review-state="rejected"
+    data-fundus-rejection={rejectionDigest}
+    data-fundus-rotate-safe="false"
+    data-fundus-mirror-safe="false"
+  >
+    <header class="pilot-header">
+      <p class="pilot-kicker">Schauwerk Fundus · isolierter Realtest</p>
+      <h1>Geometrie <em>oder</em> organische Ecke?</h1>
+      <p>Gleicher Bildraum, gleiche Goldwelt. Die organische v1-Revision wurde nach diesem Live-Vergleich verworfen und bleibt nur als historische Review-Evidenz sichtbar.</p>
+    </header>
+
+    <section class="comparison" aria-label="Direkter Vergleich der Rahmenecken">
+      <article class="comparison-card">
+        <div class="comparison-label">
+          <span>Alt</span>
+          <strong>Geometrische Linien</strong>
+        </div>
+        <div class="stage legacy-stage" aria-label="Bisherige geometrische Rahmensprache">
+          <div class="legacy-frame legacy-frame-one" aria-hidden="true"></div>
+          <div class="legacy-frame legacy-frame-two" aria-hidden="true"></div>
+          <div class="stage-content">
+            <span>HM</span>
+            <p>Erinnerung im Mittelpunkt</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="comparison-card">
+        <div class="comparison-label">
+          <span>Verworfen · v1</span>
+          <strong>Fundus · organischer Corner</strong>
+        </div>
+        <div class="stage fundus-stage" style={`--fundus-corner: url("${assetUrl}")`} aria-label="Verworfene organische Fundus-Ecke, Revision v1">
+          <div class="fundus-corner" aria-hidden="true"></div>
+          <div class="stage-content">
+            <span>HM</span>
+            <p>Erinnerung im Mittelpunkt</p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <footer class="pilot-meta">
+      <span>v1 nach Live-Review verworfen</span>
+      <span>keine Spiegelung</span>
+      <span>keine Rotation</span>
+      <span>Material per CSS getrennt</span>
+    </footer>
+  </main>
+</BaseLayout>
+
+<style>
+  :global(.fundus-corner-pilot-page) {
+    margin: 0;
+    background: #080706;
+    color: #ead39b;
+    font-family: Arial, sans-serif;
+  }
+
+  .fundus-corner-pilot {
+    box-sizing: border-box;
+    min-height: 100vh;
+    width: min(1240px, 100%);
+    margin: 0 auto;
+    padding: clamp(28px, 5vw, 72px);
+    display: grid;
+    gap: clamp(24px, 4vw, 48px);
+    align-content: center;
+  }
+
+  .pilot-header {
+    max-width: 760px;
+  }
+
+  .pilot-kicker,
+  .pilot-header > p:last-child,
+  .pilot-meta {
+    color: #938775;
+    font-size: .7rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  .pilot-header h1 {
+    margin: 8px 0 12px;
+    font: 500 clamp(2rem, 4vw, 4rem) / .98 Georgia, serif;
+    letter-spacing: -.025em;
+  }
+
+  .pilot-header h1 em {
+    color: #b99550;
+    font-weight: 400;
+  }
+
+  .pilot-header p {
+    margin: 0;
+    line-height: 1.65;
+  }
+
+  .comparison {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(18px, 3vw, 34px);
+  }
+
+  .comparison-card {
+    display: grid;
+    gap: 12px;
+  }
+
+  .comparison-label {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    color: #9b8c76;
+    font-size: .68rem;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+  }
+
+  .comparison-label span {
+    color: #d2b676;
+  }
+
+  .comparison-label strong {
+    font-weight: 500;
+  }
+
+  .stage {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    aspect-ratio: 1 / .82;
+    min-height: 340px;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(circle at 62% 38%, rgba(201, 164, 90, .14), transparent 34%),
+      linear-gradient(145deg, #17130f, #090806 72%);
+    border: 1px solid rgba(228, 201, 135, .16);
+    box-shadow: inset 0 0 52px rgba(0, 0, 0, .36);
+  }
+
+  .stage::after {
+    content: "";
+    position: absolute;
+    inset: 18px;
+    border: 1px solid rgba(228, 201, 135, .1);
+    pointer-events: none;
+  }
+
+  .stage-content {
+    position: relative;
+    z-index: 4;
+    display: grid;
+    justify-items: center;
+    gap: 12px;
+    color: #e4c987;
+    text-align: center;
+  }
+
+  .stage-content span {
+    width: 92px;
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(228, 201, 135, .3);
+    border-radius: 50%;
+    font: 500 1.35rem / 1 Georgia, serif;
+    letter-spacing: .14em;
+    text-indent: .14em;
+  }
+
+  .stage-content p {
+    margin: 0;
+    color: #8f806a;
+    font: .64rem / 1.4 Arial, sans-serif;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+  }
+
+  .legacy-frame {
+    position: absolute;
+    z-index: 2;
+    border: 1px solid rgba(228, 201, 135, .28);
+  }
+
+  .legacy-frame-one {
+    width: 56%;
+    height: 67%;
+    transform: rotate(8deg);
+  }
+
+  .legacy-frame-two {
+    width: 48%;
+    height: 73%;
+    transform: rotate(-9deg);
+  }
+
+  .fundus-corner {
+    position: absolute;
+    z-index: 2;
+    left: clamp(-18px, -1.5vw, -5px);
+    bottom: clamp(-24px, -2vw, -8px);
+    width: min(86%, 560px);
+    aspect-ratio: 1;
+    background: linear-gradient(135deg, #f0dca5 5%, #c7a35a 42%, #8d672d 78%, #e5ca88 100%);
+    -webkit-mask-image: var(--fundus-corner);
+    mask-image: var(--fundus-corner);
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    transform: none;
+    pointer-events: none;
+    opacity: .82;
+  }
+
+  .pilot-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 22px;
+    padding-top: 4px;
+  }
+
+  @media (max-width: 760px) {
+    .fundus-corner-pilot {
+      padding: 24px 18px 38px;
+    }
+
+    .comparison {
+      grid-template-columns: 1fr;
+    }
+
+    .stage {
+      min-height: 300px;
+      aspect-ratio: 1;
+    }
+
+    .fundus-corner {
+      width: min(80%, 430px);
+      left: -12px;
+      bottom: -16px;
+      opacity: .78;
+    }
+
+    .comparison-label {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 4px;
+    }
+  }
+</style>

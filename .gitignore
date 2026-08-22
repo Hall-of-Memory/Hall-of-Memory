@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.astro/
+.wrangler/
+.dev.vars
+.env
+.env.*
+!.env.example
+.DS_Store
+*.log
+coverage/
+.form-test-dist/
+.demo-test-dist/
+.preview-base-test-dist/
+# Private customer/source archives are never part of the public repository.
+/customer-assets/private/
+# Local verification outputs.
+/.fundus-corner-test-dist/
+/.pages-test-dist/

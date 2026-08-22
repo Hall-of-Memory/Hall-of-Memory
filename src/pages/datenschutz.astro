@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/legal.css';
+
+const basePath = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+---
+<BaseLayout
+  title="Datenschutz — Hall of Memory"
+  description="Entwurfsseite für die später freizugebenden Datenschutzinformationen von Hall of Memory."
+  noIndex={true}
+  formActionSource="'none'"
+>
+  <header class="site-header shell">
+    <a href={basePath} class="wordmark" aria-label="Hall of Memory Startseite">
+      <span>HALL</span><span>OF MEMORY</span>
+    </a>
+    <nav aria-label="Seitennavigation">
+      <a href={basePath} class="nav-cta">Zur Startseite</a>
+    </nav>
+  </header>
+
+  <main id="main-content" class="legal-main shell" tabindex="-1">
+    <div class="legal-hero">
+      <p class="eyebrow">Rechtliches</p>
+      <h1>Datenschutz</h1>
+      <p class="legal-note"><strong>Entwurfsstand:</strong> Die technische Datenschutzstruktur ist vorbereitet. Der fachlich und rechtlich freizugebende Datenschutzhinweis wird vor dem Livegang mit den tatsächlichen Betreiber- und Dienstedaten ergänzt.</p>
+    </div>
+
+    <div class="legal-grid">
+      <section class="legal-card" aria-labelledby="privacy-tech">
+        <p class="offer-kicker">Technischer Stand</p>
+        <h2 id="privacy-tech">So wenig Daten wie nötig.</h2>
+        <p>Der Anfragepfad ist auf Datenminimierung ausgelegt: Formulardaten werden erst nach serverseitiger Prüfung gespeichert, eine Anfrage ist keine Buchung und der Sicherheits-Token der Missbrauchsprüfung wird nicht als Anfragedatum gespeichert.</p>
+        <p>Der aktuelle öffentliche Build enthält keine Analyse-, Marketing- oder Social-Embed-Integration. Cloudflare Turnstile ist ausschließlich für das Anfrageformular vorgesehen und wird erst bei Bedarf geladen, wenn der Anfragepfad produktiv konfiguriert ist.</p>
+      </section>
+
+      <section class="legal-card" aria-labelledby="privacy-open">
+        <p class="offer-kicker">Vor Veröffentlichung</p>
+        <h2 id="privacy-open">Nur belegte Angaben veröffentlichen.</h2>
+        <p>Vor dem Livegang werden die tatsächlichen Betreiber-, Empfänger-, Dienstleister-, Aufbewahrungs- und Löschangaben ergänzt und fachlich bzw. rechtlich freigegeben.</p>
+        <ul class="legal-list">
+          <li>verantwortliche Stelle und freigegebene Kontaktangaben</li>
+          <li>tatsächliche Datenflüsse und eingesetzte Dienstleister</li>
+          <li>Aufbewahrungs- und Löschfristen</li>
+          <li>Informationen zum späteren geschützten Event-Fotobereich</li>
+          <li>Cookie-/Consent-Entscheidung anhand der tatsächlich eingesetzten Dienste</li>
+        </ul>
+      </section>
+
+      <section class="legal-card legal-card-wide" aria-labelledby="privacy-consent">
+        <p class="offer-kicker">Cookie-/Consent-Baseline</p>
+        <h2 id="privacy-consent">Keine vorsorgliche Tracking-Schicht.</h2>
+        <p>Das Projekt fügt nicht prophylaktisch Analyse- oder Marketingtechnik und auch nicht prophylaktisch ein Consent-Banner hinzu. Erst wenn die endgültigen Drittanbieter und Funktionen feststehen, wird geprüft und freigegeben, welche technische Einwilligungssteuerung tatsächlich benötigt wird.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer shell">
+    <a href={basePath} class="wordmark"><span>HALL</span><span>OF MEMORY</span></a>
+    <p class="footer-links"><a href={`${basePath}impressum/`}>Impressum</a><a href={`${basePath}datenschutz/`} aria-current="page">Datenschutz</a></p>
+    <p class="muted">Entwurfsstand · Freigabe ausstehend</p>
+  </footer>
+</BaseLayout>

@@ -1,0 +1,66 @@
+---
+import '../styles/base.css';
+import { serializeStructuredData } from '../lib/seo';
+
+interface Props {
+  title?: string;
+  description?: string;
+  noIndex?: boolean;
+  apiConnectSource?: string;
+  canonicalUrl?: string;
+  structuredData?: Record<string, unknown>;
+  bodyClass?: string;
+  formActionSource?: "'self'" | "'none'";
+}
+
+const {
+  title = 'Hall of Memory — Event-Erlebnisse',
+  description = 'Fotobox, Fotospiegel, Magazinbox und weitere hochwertige Event-Erlebnisse.',
+  noIndex = true,
+  apiConnectSource = "'self'",
+  canonicalUrl,
+  structuredData,
+  bodyClass,
+  formActionSource = "'self'",
+} = Astro.props;
+
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "object-src 'none'",
+  `form-action ${formActionSource}`,
+  "script-src 'self' https://challenges.cloudflare.com",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data:",
+  "font-src 'self'",
+  `connect-src 'self' https://challenges.cloudflare.com ${apiConnectSource}`,
+  "frame-src https://challenges.cloudflare.com",
+].join('; ');
+---
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Security-Policy" content={contentSecurityPolicy} />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#090806" />
+    <link rel="icon" href="data:," />
+    {noIndex && <meta name="robots" content="noindex,nofollow" />}
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+    <title>{title}</title>
+    {structuredData && (
+      <script type="application/ld+json" is:inline set:html={serializeStructuredData(structuredData)}></script>
+    )}
+  </head>
+  <body class={bodyClass}>
+    <a class="skip-link" href="#main-content">Zum Inhalt springen</a>
+    <slot />
+  </body>
+</html>

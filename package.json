@@ -1,0 +1,38 @@
+{
+  "name": "hall-of-memory",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "deploy": "wrangler deploy",
+    "verify": "npm run spike:inquiry && npm run test:domain && npm run test:gallery-access && npm run test:form && npm run test:quality && npm run test:demo && npm run test:fundus-corner && npm run test:preview-base && npm run check && npm run build && npm run dry-run:worker && npm run dry-run:site",
+    "test:domain": "node --experimental-strip-types scripts/test-availability.mjs",
+    "test:gallery-access": "node --experimental-strip-types scripts/test-gallery-access.mjs",
+    "test:form": "PUBLIC_INQUIRY_API_URL=https://inquiry.example.invalid/api/inquiries PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA astro build --outDir .form-test-dist && node --experimental-strip-types scripts/test-inquiry-form.mjs",
+    "test:quality": "PUBLIC_SITE_URL=https://site.example.invalid PUBLIC_INQUIRY_API_URL=https://inquiry.example.invalid/api/inquiries PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA astro build --outDir .quality-test-dist && node --experimental-strip-types scripts/test-quality.mjs",
+    "test:demo": "PUBLIC_SITE_URL=https://site.example.invalid astro build --outDir .demo-test-dist && node --experimental-strip-types scripts/test-sales-demo.mjs",
+    "test:fundus-corner": "PUBLIC_SITE_URL=https://site.example.invalid astro build --outDir .fundus-corner-test-dist && node scripts/test-fundus-corner.mjs",
+    "dry-run:worker": "WRANGLER_LOG_PATH=/tmp/hall-of-memory-worker-wrangler.log wrangler deploy --dry-run --config spikes/inquiry-worker/wrangler.jsonc --outdir /tmp/hall-of-memory-inquiry-worker-dry",
+    "dry-run:site": "WRANGLER_LOG_PATH=/tmp/hall-of-memory-site-wrangler.log wrangler deploy --dry-run --config wrangler.jsonc --outdir /tmp/hall-of-memory-static-site-dry",
+    "spike:inquiry": "WRANGLER_LOG_PATH=/tmp/hall-of-memory-spike-wrangler.log node --experimental-strip-types scripts/smoke-inquiry-spike.mjs",
+    "spike:admin": "WRANGLER_LOG_PATH=/tmp/hall-of-memory-spike-wrangler.log node --experimental-strip-types scripts/smoke-inquiry-spike.mjs",
+    "test:preview-base": "astro --base /hall-of-memory-preview build --outDir .preview-base-test-dist && node scripts/test-preview-base.mjs"
+  },
+  "dependencies": {
+    "astro": "7.2.0",
+    "jose": "^6.2.8"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "parse5": "7.3.0",
+    "typescript": "6.0.3",
+    "wrangler": "4.120.1"
+  },
+  "engines": {
+    "node": ">=22.0.0 <23.0.0"
+  }
+}

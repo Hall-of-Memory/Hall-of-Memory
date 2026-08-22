@@ -1,0 +1,18 @@
+---
+interface Props {
+  title: string;
+  kicker: string;
+  text: string;
+  index: number;
+  slug: string;
+}
+
+const { title, kicker, text, index, slug } = Astro.props;
+---
+<article class="offer-card" id={`angebot-${slug}`}>
+  <div class="offer-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</div>
+  <p class="offer-kicker">{kicker}</p>
+  <h3>{title}</h3>
+  <p>{text}</p>
+  <a href="#anfrage" class="text-link">Mehr erfahren <span aria-hidden="true">→</span></a>
+</article>

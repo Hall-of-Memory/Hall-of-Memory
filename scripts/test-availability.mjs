@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import { evaluateAvailability, intervalsOverlap } from '../src/domain/availability.ts';
+const request = { offerId: 'fotobox', startsAt: '2026-09-18T16:00:00Z', endsAt: '2026-09-19T01:00:00Z' };
+assert.deepEqual(evaluateAvailability(request, { mode:'capacity-aware', inventoryKnown:false, resources:[], blocks:[] }), { status:'requires-review', reason:'inventory-unknown' });
+assert.deepEqual(evaluateAvailability(request, { mode:'inquiry-only', inventoryKnown:true, resources:[{id:'box-1',offerId:'fotobox',enabled:true}], blocks:[] }), { status:'requires-review', reason:'inquiry-only-policy' });
+assert.deepEqual(evaluateAvailability(request, { mode:'capacity-aware', inventoryKnown:true, resources:[{id:'box-1',offerId:'fotobox',enabled:true}], blocks:[] }), { status:'appears-available', resourceId:'box-1' });
+const busy={ id:'busy-1',resourceId:'box-1',startsAt:'2026-09-18T15:00:00Z',endsAt:'2026-09-19T02:00:00Z',source:'confirmed-allocation' };
+assert.deepEqual(evaluateAvailability(request, { mode:'capacity-aware', inventoryKnown:true, resources:[{id:'box-1',offerId:'fotobox',enabled:true}], blocks:[busy] }), { status:'unavailable', reason:'all-capacity-blocked' });
+assert.deepEqual(evaluateAvailability(request, { mode:'capacity-aware', inventoryKnown:true, resources:[{id:'box-1',offerId:'fotobox',enabled:true},{id:'box-2',offerId:'fotobox',enabled:true}], blocks:[busy] }), { status:'appears-available', resourceId:'box-2' });
+assert.deepEqual(evaluateAvailability(request, { mode:'capacity-aware', inventoryKnown:true, resources:[{id:'box-1',offerId:'fotospiegel',enabled:true},{id:'box-2',offerId:'fotobox',enabled:false}], blocks:[] }), { status:'unavailable', reason:'no-enabled-capacity' });
+assert.equal(intervalsOverlap('2026-09-18T10:00:00Z','2026-09-18T12:00:00Z','2026-09-18T12:00:00Z','2026-09-18T14:00:00Z'), false);
+assert.equal(intervalsOverlap('2026-09-18T10:00:00Z','2026-09-18T12:00:00Z','2026-09-18T11:59:59Z','2026-09-18T14:00:00Z'), true);
+assert.throws(() => evaluateAvailability({ ...request, endsAt: request.startsAt }, { mode:'inquiry-only', inventoryKnown:false, resources:[], blocks:[] }), /positive duration/);
+console.log('availability-domain-ok');

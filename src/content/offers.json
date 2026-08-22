@@ -1,0 +1,29 @@
+[
+  {
+    "id": "fotobox",
+    "slug": "fotobox",
+    "title": "Fotobox",
+    "kicker": "Klassiker, neu gedacht",
+    "description": "Vorläufiger Entwurf für die spätere Angebotsbeschreibung. Finaler Leistungsumfang und Kundentext stehen noch aus.",
+    "sortOrder": 10,
+    "source": "internal-draft"
+  },
+  {
+    "id": "fotospiegel",
+    "slug": "fotospiegel",
+    "title": "Fotospiegel",
+    "kicker": "Eleganter Blickfang",
+    "description": "Vorläufiger Entwurf für die spätere Angebotsbeschreibung. Finaler Leistungsumfang und Kundentext stehen noch aus.",
+    "sortOrder": 20,
+    "source": "internal-draft"
+  },
+  {
+    "id": "magazinbox",
+    "slug": "magazinbox",
+    "title": "Magazinbox",
+    "kicker": "Editorial Moment",
+    "description": "Vorläufiger Entwurf für die spätere Angebotsbeschreibung. Finaler Leistungsumfang und Kundentext stehen noch aus.",
+    "sortOrder": 30,
+    "source": "internal-draft"
+  }
+]

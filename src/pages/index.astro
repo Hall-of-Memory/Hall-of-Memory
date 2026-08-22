@@ -1,0 +1,203 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/site.css';
+import OfferCard from '../components/OfferCard.astro';
+import InquiryEventFields from '../components/InquiryEventFields.astro';
+import { loadSiteContent } from '../lib/content';
+import { resolveInquiryPublicConfig } from '../lib/inquiry-config';
+import { inquiryLimits } from '../lib/inquiry';
+import { buildStructuredData, resolveSeoState } from '../lib/seo';
+
+const { site, offers, packages, faqs, gallery } = await loadSiteContent();
+const isDraft = site.launchStatus === 'draft';
+const pageTitle = `${site.name} — Event-Erlebnisse`;
+const seo = resolveSeoState(Astro.site?.href, site.launchStatus, Astro.url.pathname);
+const basePath = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const structuredData = buildStructuredData({
+  canonicalUrl: seo.canonicalUrl,
+  name: pageTitle,
+  description: site.description,
+  offers,
+});
+const inquiryConfig = resolveInquiryPublicConfig({
+  apiUrl: import.meta.env.PUBLIC_INQUIRY_API_URL,
+  siteKey: import.meta.env.PUBLIC_TURNSTILE_SITE_KEY,
+  development: import.meta.env.DEV,
+});
+---
+<BaseLayout
+  title={pageTitle}
+  description={site.description}
+  noIndex={!seo.indexable}
+  apiConnectSource={inquiryConfig.apiConnectSource}
+  canonicalUrl={seo.canonicalUrl}
+  structuredData={structuredData}
+>
+  <header class="site-header shell">
+    <a href={basePath} class="wordmark" aria-label={`${site.name} Startseite`}>
+      <span>HALL</span><span>OF MEMORY</span>
+    </a>
+    <nav aria-label="Hauptnavigation">
+      <a href="#erlebnisse">Erlebnisse</a>
+      {packages.length > 0 && <a href="#pakete">Pakete</a>}
+      {gallery.length > 0 && <a href="#galerie">Galerie</a>}
+      {faqs.length > 0 && <a href="#faq">FAQ</a>}
+      <a href="#anfrage" class="nav-cta">Termin anfragen</a>
+    </nav>
+  </header>
+
+  <main id="main-content" tabindex="-1">
+    <section class="hero shell">
+      <div class="hero-copy">
+        <p class="eyebrow">{site.eyebrow}</p>
+        <h1>Dein Event.<br /><em>Unvergesslich</em> inszeniert.</h1>
+        <p class="hero-text">{site.description}</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#anfrage">Wunschtermin anfragen</a>
+          <a class="button button-ghost" href="#erlebnisse">Erlebnisse entdecken</a>
+        </div>
+        {isDraft && <p class="draft-note">Entwurfsstand: Texte, Preise, Logo und Originalbilder werden nach Kundenzulieferung finalisiert.</p>}
+      </div>
+      <div class="hero-visual" role="img" aria-label="Platzhalter für späteres Hall-of-Memory Bildmaterial">
+        <div class="frame frame-one"></div>
+        <div class="frame frame-two"></div>
+        <div class="monogram">HM</div>
+        <p>Originalbild folgt</p>
+      </div>
+    </section>
+
+    <section class="trust-strip" aria-label="Projektprinzipien">
+      <div class="shell trust-grid">
+        <span>Hochwertiger Auftritt</span>
+        <span>Flexible Angebote</span>
+        <span>Persönliche Anfrage</span>
+        <span>Für weitere Events erweiterbar</span>
+      </div>
+    </section>
+
+    <section class="section shell" id="erlebnisse">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Erlebnisse</p>
+          <h2>Ein System für heutige<br />und künftige Angebote.</h2>
+        </div>
+        <p>Die Angebotsstruktur wird aus validierten Inhaltsdaten erzeugt. Weitere Event-Produkte können ergänzt werden, ohne die Seitenstruktur neu zu programmieren.</p>
+      </div>
+      <div class="offers-grid">
+        {offers.map((offer, index) => <OfferCard {...offer} text={offer.description} index={index} />)}
+      </div>
+    </section>
+
+    {packages.length > 0 && (
+      <section class="section section-muted" id="pakete">
+        <div class="shell">
+          <div class="section-heading">
+            <div><p class="eyebrow">Pakete</p><h2>Transparent kombinierbar.</h2></div>
+            <p>Pakete und Preise werden hier aus strukturierten Inhaltsdaten dargestellt.</p>
+          </div>
+          <div class="offers-grid">
+            {packages.map((item) => (
+              <article class="offer-card">
+                <p class="offer-kicker">Paket</p>
+                <h3>{item.name}</h3>
+                <p>{item.summary}</p>
+                {item.priceLabel && <strong class="package-price">{item.priceLabel}</strong>}
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    {gallery.length > 0 && (
+      <section class="section shell" id="galerie">
+        <div class="section-heading">
+          <div><p class="eyebrow">Galerie</p><h2>Momente aus echten Events.</h2></div>
+          <p>Nur freigegebenes Kundenmaterial wird hier veröffentlicht.</p>
+        </div>
+        <div class="gallery-grid">
+          {gallery.map((image) => (
+            <figure><img src={image.src} alt={image.alt} loading="lazy" decoding="async" />{image.caption && <figcaption>{image.caption}</figcaption>}</figure>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {faqs.length > 0 && (
+      <section class="section section-muted" id="faq">
+        <div class="shell faq-wrap">
+          <div><p class="eyebrow">FAQ</p><h2>Fragen vor der Anfrage.</h2></div>
+          <div class="faq-list">
+            {faqs.map((faq) => <details><summary>{faq.question}</summary><p>{faq.answer}</p></details>)}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <section class="section shell inquiry-preview" id="anfrage">
+      <div>
+        <p class="eyebrow">Dein Termin</p>
+        <h2>Welcher Moment soll<br />in Erinnerung bleiben?</h2>
+        <p class="section-copy">Sende uns deinen Wunschtermin und die wichtigsten Eckdaten. Wir prüfen deine Anfrage persönlich und melden uns anschließend bei dir.</p>
+      </div>
+      <form
+        class="inquiry-card"
+        aria-label="Anfrageformular"
+        aria-busy="false"
+        data-inquiry-form
+        data-api-url={inquiryConfig.apiUrl}
+        data-turnstile-site-key={inquiryConfig.siteKey}
+      >
+        <InquiryEventFields {offers} {packages} />
+        <div class="form-grid-two">
+          <label>
+            Name
+            <input type="text" name="name" minlength="2" maxlength={inquiryLimits.name} autocomplete="name" required />
+          </label>
+          <label>
+            E-Mail
+            <input type="email" name="email" maxlength={inquiryLimits.email} autocomplete="email" required />
+          </label>
+        </div>
+        <label>
+          Telefon <span class="optional">optional</span>
+          <input type="tel" name="phone" maxlength={inquiryLimits.phone} autocomplete="tel" />
+        </label>
+        <label>
+          Nachricht <span class="optional">optional</span>
+          <textarea name="message" maxlength={inquiryLimits.message} rows="5" placeholder="Was sollten wir über deine Veranstaltung wissen?"></textarea>
+        </label>
+        <label class="consent-row">
+          <input type="checkbox" name="privacyConsent" value="true" required aria-describedby="privacy-note" />
+          <span>Datenschutz-Einwilligung erforderlich.</span>
+        </label>
+        <p class="form-note" id="privacy-note">Der verbindliche Datenschutz- und Einwilligungstext wird vor der Produktionsaktivierung ergänzt.</p>
+        <fieldset class="turnstile-field">
+          <legend>Sicherheitsprüfung</legend>
+          <div class="turnstile-wrap" data-turnstile-container tabindex="-1" aria-describedby="turnstile-help turnstile-status"></div>
+          <p class="form-note" id="turnstile-help">Die Prüfung schützt das Formular vor automatisiertem Missbrauch.</p>
+          <p class="turnstile-status" id="turnstile-status" data-turnstile-status aria-live="polite"></p>
+        </fieldset>
+        <div class="form-feedback">
+          <p class="form-error" data-form-error role="alert" tabindex="-1" hidden></p>
+          <p class="form-success" data-form-success role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden></p>
+        </div>
+        <button type="submit" class="button button-primary" disabled={!inquiryConfig.configured}>
+          <span data-submit-idle>Anfrage senden</span>
+          <span data-submit-busy hidden>Anfrage wird gesendet …</span>
+        </button>
+        {!inquiryConfig.configured && (
+          <p class="form-note config-note" role="status">Das Anfrageformular ist in diesem Build noch nicht für den Produktionsbetrieb konfiguriert.</p>
+        )}
+        <p class="form-note">Das Absenden übermittelt noch keine verbindliche Buchung und bestätigt keine Verfügbarkeit.</p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer shell">
+    <a href={basePath} class="wordmark"><span>HALL</span><span>OF MEMORY</span></a>
+    <p>Event-Erlebnisse, die bleiben. · <a href={`${basePath}impressum/`}>Impressum</a> · <a href={`${basePath}datenschutz/`}>Datenschutz</a></p>
+    <p class="muted">Entwurfsstand · Kundendaten folgen</p>
+  </footer>
+  {inquiryConfig.configured && <script src="../scripts/inquiry-form.ts"></script>}
+</BaseLayout>

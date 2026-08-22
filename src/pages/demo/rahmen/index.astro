@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+const variants = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
+const assetBase = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const frames = {
+  1: `${assetBase}fundus/hall-of-memory-frame-01.png`,
+  2: `${assetBase}fundus/hall-of-memory-frame-02.png`,
+  3: `${assetBase}fundus/hall-of-memory-frame-03.png`,
+  4: `${assetBase}fundus/hall-of-memory-frame-04.png`,
+  5: `${assetBase}fundus/hall-of-memory-frame-05.png`,
+  6: `${assetBase}fundus/hall-of-memory-botanical-frame-06.png`,
+  7: `${assetBase}fundus/hall-of-memory-star-frame-07.png`,
+  8: `${assetBase}fundus/hall-of-memory-star-frame-08.png`,
+  9: `${assetBase}fundus/hall-of-memory-star-frame-09.png`,
+  10: `${assetBase}fundus/hall-of-memory-stellar-frame-primary/package/assets/hall-of-memory-stellar-frame-primary-raster.png`,
+} as const;
+---
+<BaseLayout title="Hall of Memory — Rahmenvergleich" description="Private Vergleichsansicht der zehn Rahmenvarianten." noIndex={true} bodyClass="frame-comparison-page" formActionSource="'none'">
+  <main id="main-content" class="frame-comparison" tabindex="-1">
+    <header class="frame-comparison-header">
+      <div>
+        <span>Hall of Memory</span>
+        <h1>Rahmenvergleich</h1>
+        <p>Wähle einen Rahmen aus, um ihn auf der Website platziert zu sehen.</p>
+      </div>
+    </header>
+    {variants.map((variant) => (
+      <a class="frame-comparison-card" href={`${assetBase}demo/rahmen/${variant}/`} aria-label={`Variante ${variant} öffnen`}>
+        <span class="frame-comparison-preview" data-frame-kind={variant === 6 ? 'floral-source' : variant === 10 ? 'asset-source-portrait' : 'asset-source'} data-frame-variant={variant} style={`--comparison-frame: url("${frames[variant]}")`} aria-hidden="true"></span>
+        <strong>Variante {variant}</strong>
+      </a>
+    ))}
+  </main>
+</BaseLayout>
+
+<style>
+  :global(.frame-comparison-page) {
+    margin: 0;
+    background: #090806;
+    color: #ead39b;
+    font-family: Arial, sans-serif;
+  }
+  .frame-comparison {
+    box-sizing: border-box;
+    min-height: 100vh;
+    width: min(1180px,100%);
+    margin: auto;
+    padding: clamp(24px,5vw,72px);
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+    gap: 18px;
+    align-content: center;
+  }
+  .frame-comparison-header { grid-column: 1 / -1; margin-bottom: 12px; }
+  .frame-comparison-header span,
+  .frame-comparison-header p { color: #8e8375; font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; }
+  .frame-comparison-header h1 { margin: 5px 0 6px; color: #ead39b; font: 500 clamp(1.65rem,3vw,2.7rem)/1 Georgia,serif; }
+  .frame-comparison-header p { margin: 0; }
+  .frame-comparison-card { display: grid; gap: 12px; color: inherit; text-decoration: none; }
+  .frame-comparison-preview {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    background: #050505;
+    overflow: hidden;
+  }
+  .frame-comparison-preview::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--comparison-frame) center / 100% 100% no-repeat;
+  }
+  .frame-comparison-preview[data-frame-kind="asset-source-portrait"]::before {
+    background-size: contain;
+  }
+  .frame-comparison-card strong { text-align: center; font: 500 .78rem/1.2 Arial,sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+  .frame-comparison-card:focus-visible { outline: 2px solid #ead39b; outline-offset: 5px; }
+  @media (max-width: 520px) {
+    .frame-comparison { grid-template-columns: repeat(2,minmax(0,1fr)); padding: 20px; gap: 14px; }
+    .frame-comparison-header { grid-column: 1 / -1; }
+  }
+</style>

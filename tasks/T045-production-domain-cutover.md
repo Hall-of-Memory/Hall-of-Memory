@@ -33,6 +33,7 @@ Der Kunde möchte die Website jetzt direkt auf der vorhandenen Domain veröffent
 - Cloudflare Workers Custom Domains erfordern eine Domain/Zone, deren Nameserver von Cloudflare verwaltet werden. STRATO kann Registrar bleiben; für den Cloudflare-Cutover werden die autoritativen Nameserver nach dem Anlegen der kundeneigenen Zone kontrolliert auf die von Cloudflare ausgegebenen Werte umgestellt.
 
 ## Bereits umgesetzte Vorbereitung
+- README-Terminologie auf die Projekt-/Betreiberperspektive bereinigt: Meta-Bezeichnungen wie `kundeneigen` oder `Kundenauftrag` entfallen dort. Die operative Zuständigkeitsgrenze bleibt erhalten, indem STRATO als Registrar und Hall of Memory als Inhaber des Registrarzugriffs benannt wird; die Datenschutzgrenze ist präzise als `personenbezogene Eventdaten` formuliert statt pauschal als `Daten`.
 
 - README, AGENTS, CONTRIBUTING, T009 und Deployment-Runbook auf `hallofmemory.de` als Primärziel aktualisiert.
 - `PUBLIC_SITE_URL=https://hallofmemory.de npm run build` erfolgreich ausgeführt.

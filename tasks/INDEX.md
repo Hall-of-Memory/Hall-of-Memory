@@ -44,7 +44,7 @@
 | T039 | done | Primärlogo im Demo-Header als stärkeren, responsiven Markenanker kalibriert |
 | T040 | done | Kundenpreview von interner Entwicklungsansicht zu kundennaher Conversion-/UX-Preview poliert |
 | T041 | done | Preview-Pfade für Root- und GitHub-Pages-Unterpfad portabel gemacht und regressionsgesichert |
-| T042 | planned | Demo-CSS-Reserve vor weiteren Styling-Erweiterungen wieder auf mindestens 2 KiB anheben |
+| T042 | done | Demo-CSS-Reserve vor weiteren Styling-Erweiterungen wieder auf mindestens 2 KiB anheben |
 | T043 | active | Kundenkontrolliertes GitHub-Repo, Codex-/CI-Readiness und Publication Gate |
 | T044 | planned | Preview-Legacy-Sternenrahmen V7–V9 in Fundus überführen oder bewusst ausmustern |
 | T045 | active | `hallofmemory.de` als Produktions-/Primärdomain aktivieren und Source-Privatsphäre getrennt entscheiden |

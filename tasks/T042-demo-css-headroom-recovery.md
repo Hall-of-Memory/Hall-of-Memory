@@ -1,6 +1,6 @@
 ---
 id: T042
-status: planned
+status: done
 priority: P2
 dependencies: [T040]
 ---
@@ -28,3 +28,9 @@ Vor der nächsten nennenswerten CSS-Erweiterung mindestens 2 KiB belastbare Roh-
 - `npm run test:demo`, `npm run test:preview-base`, `npm run check` und `npm run build` PASS
 - 390×844, Tablet und Desktop ohne horizontalen Overflow und ohne versteckte Hauptnavigation
 - keine sichtbare Designregression in Hero, Angeboten, Paketen, Galerie, Kundenbereich, Anfrage und Kontakt
+
+## Abschluss-Evidenz — 2026-08-22
+
+- `npm run test:demo` liefert 26.601 Byte Demo-CSS und damit 2.071 Byte Reserve gegenüber 28 KiB; `test:preview-base`, `check` und der vollständige `npm run verify` sind grün.
+- Browser-Readback bei 390×844, 768×1024 und 1440×1000 zeigt keinen horizontalen Overflow, alle Hauptnavigationslinks bleiben sichtbar und die Viewport-Screenshots sind pixelidentisch zum Stand vor der semantisch äquivalenten Konsolidierung.
+- Reduced Motion bleibt über die globale Transition-Unterdrückung erhalten; die Demo enthält keine CSS-Animationen.

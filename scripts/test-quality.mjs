@@ -262,13 +262,18 @@ try {
   const d1ExportPosition = stageTwo.indexOf('wrangler d1 export DB --remote --config spikes/inquiry-worker/wrangler.production.jsonc');
   const d1ListPosition = stageTwo.indexOf('wrangler d1 migrations list DB --remote --config spikes/inquiry-worker/wrangler.production.jsonc');
   const d1ApplyPosition = stageTwo.indexOf('wrangler d1 migrations apply DB --remote --config spikes/inquiry-worker/wrangler.production.jsonc');
+  const turnstileSecretPosition = stageTwo.indexOf('wrangler secret put TURNSTILE_SECRET_KEY --config spikes/inquiry-worker/wrangler.production.jsonc');
+  const workerDeployPosition = stageTwo.indexOf('wrangler deploy --strict --config spikes/inquiry-worker/wrangler.production.jsonc');
   const routeActivationPosition = stageTwo.indexOf('Vor jedem Stage-2-Site-Build');
   const siteBuildPosition = stageTwo.indexOf('Site mit API-URL und Turnstile-Site-Key bauen');
   assert.ok(productionConfigPosition >= 0, 'Stage 2 must create the production Worker config explicitly');
   assert.ok(d1ExportPosition > productionConfigPosition, 'production config must exist before any remote D1 export');
   assert.ok(d1ListPosition > productionConfigPosition, 'production config must exist before reading remote D1 migrations');
   assert.ok(d1ApplyPosition > d1ListPosition, 'remote D1 migrations must be read before they are applied');
-  assert.ok(routeActivationPosition > d1ApplyPosition, 'Stage 2 must define an explicit post-backend route activation gate');
+  assert.ok(turnstileSecretPosition > d1ApplyPosition, 'Turnstile secret must be set only after the production config and D1 target are bound');
+  assert.ok(workerDeployPosition > turnstileSecretPosition, 'Inquiry Worker deploy must occur only after the config-bound Turnstile secret step');
+  assert.doesNotMatch(stageTwo, /wrangler secret put TURNSTILE_SECRET_KEY(?! --config spikes\/inquiry-worker\/wrangler\.production\.jsonc)/);
+  assert.ok(routeActivationPosition > workerDeployPosition, 'Stage 2 must define an explicit post-backend route activation gate');
   assert.ok(siteBuildPosition > routeActivationPosition, 'Stage 2 must switch away from the disabled Stage-1 route before the active site build');
   assert.match(stageTwo, /Ein bloßes Setzen von API-URL und Turnstile-Key reicht ausdrücklich nicht/);
 

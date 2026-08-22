@@ -276,13 +276,20 @@ try {
   assert.equal(turnstileView.calls.outcomes.at(-1)?.code, 'human-verification-failed');
 
   const rateStatuses = [];
+  let rateLimitedResponse = null;
   for (let index = 0; index < 12; index += 1) {
-    rateStatuses.push((await fetch(`${baseUrl}/__spike/rate`)).status);
+    const response = await fetch(`${baseUrl}/__spike/rate`);
+    rateStatuses.push(response.status);
+    if (response.status === 429 && rateLimitedResponse === null) {
+      rateLimitedResponse = response.clone();
+    }
   }
-  assert.ok(rateStatuses.includes(429), `expected 429, got ${rateStatuses.join(',')}`);
+  assert.ok(rateLimitedResponse, `expected 429, got ${rateStatuses.join(',')}`);
   const rateView = recordedView();
-  const rateController = createInquiryController(`${baseUrl}/api/inquiries`, rateView.view, async () =>
-    fetch(`${baseUrl}/__spike/rate`),
+  const rateController = createInquiryController(
+    `${baseUrl}/api/inquiries`,
+    rateView.view,
+    async () => rateLimitedResponse.clone(),
   );
   const rateOutcome = await rateController.submit({
     ...valid,

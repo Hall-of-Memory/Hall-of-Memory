@@ -102,10 +102,10 @@ Der `rg`-Schritt muss **ohne Treffer** enden. `npm run dry-run:worker:production
 Reihenfolge Stufe 2:
 
 1. D1-/Worker-/Access-/Turnstile-/Email-Ressourcen im Kundenkonto inventarisieren und Kosten/Limits bestätigen.
-2. D1 vor Migration exportieren, Migrationen lesen und kontrolliert anwenden.
-3. `spikes/inquiry-worker/wrangler.production.jsonc` aus der Beispielvorlage erzeugen bzw. die vorhandene lokale Datei gegen den Kunden-Readback abgleichen; alle Platzhalter müssen ersetzt sein.
-4. Secrets ausschließlich im Plattform-Secretstore setzen.
-5. Exakt `npm run dry-run:worker:production` ausführen und den Output auf die erwarteten produktiven Bindings prüfen.
+2. `spikes/inquiry-worker/wrangler.production.jsonc` aus der Beispielvorlage erzeugen bzw. die vorhandene lokale Datei gegen den Kunden-Readback abgleichen; alle Platzhalter müssen ersetzt sein. Noch **vor jedem D1-Write** den gebundenen `DB`-Eintrag gegen die tatsächlich gewünschte Remote-D1 im Kundenkonto lesen.
+3. Exakt `npm run dry-run:worker:production` ausführen und den Output auf die erwarteten produktiven Bindings prüfen. Der Dry-Run muss denselben `DB`-Binding-Namen und dieselbe produktive Konfiguration zeigen, die in den folgenden D1-Befehlen verwendet werden.
+4. Erst jetzt D1 sichern und migrieren. Bei einer bereits bestehenden D1 zunächst `wrangler d1 export DB --remote --config spikes/inquiry-worker/wrangler.production.jsonc --output <approved-backup-path>` ausführen. Danach `wrangler d1 migrations list DB --remote --config spikes/inquiry-worker/wrangler.production.jsonc` lesen und offene Migrationen kontrolliert mit `wrangler d1 migrations apply DB --remote --config spikes/inquiry-worker/wrangler.production.jsonc` anwenden. Bei einer frisch angelegten leeren D1 entfällt nur der Export, nicht der configgebundene Migrations-Readback.
+5. Secrets ausschließlich im Plattform-Secretstore setzen.
 6. Erst danach exakt dieselbe Konfiguration revisionsgebunden deployen: `wrangler deploy --strict --config spikes/inquiry-worker/wrangler.production.jsonc`.
 7. Health, CORS, Access, D1 und Outbox read-backen.
 8. Site mit API-URL und Turnstile-Site-Key bauen; Formular muss jetzt aktiv sein.

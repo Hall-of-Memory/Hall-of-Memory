@@ -256,6 +256,16 @@ try {
     /^\/spikes\/inquiry-worker\/wrangler\.production\.jsonc$/m,
     'customer-bound production Worker config must remain outside Git',
   );
+  const deploymentRunbook = readFileSync(join(repo, 'docs', 'deployment-handover.md'), 'utf8');
+  const stageTwo = deploymentRunbook.slice(deploymentRunbook.indexOf('Reihenfolge Stufe 2:'));
+  const productionConfigPosition = stageTwo.indexOf('2. `spikes/inquiry-worker/wrangler.production.jsonc`');
+  const d1ExportPosition = stageTwo.indexOf('wrangler d1 export DB --remote --config spikes/inquiry-worker/wrangler.production.jsonc');
+  const d1ListPosition = stageTwo.indexOf('wrangler d1 migrations list DB --remote --config spikes/inquiry-worker/wrangler.production.jsonc');
+  const d1ApplyPosition = stageTwo.indexOf('wrangler d1 migrations apply DB --remote --config spikes/inquiry-worker/wrangler.production.jsonc');
+  assert.ok(productionConfigPosition >= 0, 'Stage 2 must create the production Worker config explicitly');
+  assert.ok(d1ExportPosition > productionConfigPosition, 'production config must exist before any remote D1 export');
+  assert.ok(d1ListPosition > productionConfigPosition, 'production config must exist before reading remote D1 migrations');
+  assert.ok(d1ApplyPosition > d1ListPosition, 'remote D1 migrations must be read before they are applied');
 
   assert.equal(
     readdirSync(outDir).includes('_redirects'),

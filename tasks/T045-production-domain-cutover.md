@@ -47,6 +47,7 @@ Der Kunde möchte die Website jetzt direkt auf der vorhandenen Domain veröffent
 - Vollständiges `npm run verify` nach dieser Routingänderung erfolgreich.
 - Der Redirect ist absichtlich `302`: solange die Website gemeinsam weiterentwickelt wird, wird noch keine permanente URL-/SEO-Entscheidung behauptet.
 - Aktueller Codex-Review auf dem Domain-Cutover-Head verlangte zu Recht zwei zusätzliche Gates: Impressum/Datenschutz müssen vom neuen primären `/demo/`-Einstieg erreichbar bleiben, und der spätere Anfrage-Worker braucht einen Dry-Run gegen die tatsächlich befüllte Produktionskonfiguration statt gegen die lokale Dummy-Konfiguration. Beide Punkte werden in demselben PR umgesetzt und regressionsgesichert.
+- Der anschließende Codex-Review auf dem Fix-Head präzisierte den Worker-Pfad: Die produktive Konfiguration muss **vor** Export/Migration der Remote-D1 existieren und deren `DB`-Target binden. Das Runbook ordnet deshalb Config-Erstellung + Dry-Run vor alle D1-Operationen und verwendet bei Export, Migration-Readback und Migration-Apply explizit dieselbe `wrangler.production.jsonc`.
 
 ## Zielarchitektur
 

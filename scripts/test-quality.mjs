@@ -231,6 +231,8 @@ try {
   assert.match(headers, /\/_astro\/\*[\s\S]*max-age=31536000, immutable/);
   assert.match(headers, /X-Content-Type-Options: nosniff/);
   assert.match(headers, /X-Frame-Options: DENY/);
+  assert.match(headers, /Content-Security-Policy: frame-ancestors 'none'/);
+  assert.doesNotMatch(headers, /Strict-Transport-Security/i);
 
   const publicEnvironment = readFileSync(join(repo, '.env.example'), 'utf8');
   assert.deepEqual(

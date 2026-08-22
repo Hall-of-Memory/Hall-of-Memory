@@ -1,7 +1,9 @@
-import { z } from 'astro/zod';
-import offers from '../../../src/content/offers.json';
-import packages from '../../../src/content/packages.json';
-import { inquirySchema } from '../../../src/lib/inquiry.ts';
+import {
+  isKnownProductionOffer,
+  isKnownProductionPackage,
+  inquiryStatusUpdateSchema,
+  parseInquirySubmission,
+} from '../../../shared/inquiry-contract.ts';
 import { verifyAccessRequest, type AccessEnv, type AdminIdentity } from './access.ts';
 import { actorRateLimitKey, ownerNotificationText } from './privacy.ts';
 
@@ -43,10 +45,6 @@ interface NotificationRow {
   message_id: string | null; last_error: string | null; updated_at: number;
 }
 
-const submissionSchema = inquirySchema.extend({ turnstileToken: z.string().min(1).max(4096) });
-const statusSchema = z.object({ status: z.enum(['new', 'contacted', 'quoted', 'closed', 'rejected']) });
-const offerIds = new Set((offers as Array<{ id: string }>).map((offer) => offer.id));
-const packageRows = packages as Array<{ id: string; offerId: string }>;
 const OWNER_NOTIFICATION_KIND = 'owner-new-inquiry';
 const STALE_SENDING_MS = 15 * 60 * 1000;
 
@@ -69,13 +67,6 @@ function publicCorsHeaders(request: Request, env: Env): Record<string, string> |
 function withHeaders(response: Response, headers: Record<string, string>): Response {
   for (const [name, value] of Object.entries(headers)) response.headers.set(name, value);
   return response;
-}
-function normalizeOptionalFields(raw: unknown): void {
-  if (typeof raw !== 'object' || raw === null) return;
-  const record = raw as Record<string, unknown>;
-  for (const field of ['packageId', 'phone', 'message']) {
-    if (typeof record[field] === 'string' && record[field].trim() === '') delete record[field];
-  }
 }
 function html(body: string, status = 200): Response {
   return new Response(body, { status, headers: {
@@ -135,13 +126,11 @@ async function handleInquiry(request: Request, env: Env, ctx: ExecutionContextLi
   try { rawText = await request.text(); if (rawText.length > 32768) return json({ error: 'request-too-large' }, 413); }
   catch { return json({ error: 'invalid-body' }, 400); }
   let raw: unknown; try { raw = JSON.parse(rawText); } catch { return json({ error: 'invalid-json' }, 400); }
-  normalizeOptionalFields(raw);
-  const parsed = submissionSchema.safeParse(raw); if (!parsed.success) return json({ error: 'validation-failed' }, 422);
+  const parsed = parseInquirySubmission(raw); if (!parsed.success) return json({ error: 'validation-failed' }, 422);
   const input = parsed.data;
-  if (!offerIds.has(input.offerId)) return json({ error: 'unknown-offer' }, 422);
+  if (!isKnownProductionOffer(input.offerId)) return json({ error: 'unknown-offer' }, 422);
   if (input.packageId) {
-    const pkg = packageRows.find((row) => row.id === input.packageId);
-    if (!pkg || pkg.offerId !== input.offerId) return json({ error: 'invalid-package-for-offer' }, 422);
+    if (!isKnownProductionPackage(input.offerId, input.packageId)) return json({ error: 'invalid-package-for-offer' }, 422);
   }
   const actorGate = await env.PUBLIC_ACTOR_LIMITER.limit({ key: await actorRateLimitKey(input.offerId, input.email) });
   if (!actorGate.success) return rateLimited('actor');
@@ -150,12 +139,17 @@ async function handleInquiry(request: Request, env: Env, ctx: ExecutionContextLi
   if (human === null) return json({ error: 'human-verification-unavailable' }, 503);
 
   const id = crypto.randomUUID(); const notificationId = crypto.randomUUID(); const now = Date.now();
-  const results = await env.DB.batch([
-    env.DB.prepare(`INSERT INTO inquiries (id,created_at,offer_id,package_id,event_date,event_type,location,name,email,phone,message,privacy_consent,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,1,'new')`)
-      .bind(id, now, input.offerId, input.packageId ?? null, input.date, input.eventType, input.location, input.name, input.email, input.phone ?? null, input.message ?? null),
-    env.DB.prepare(`INSERT INTO inquiry_notifications (id,inquiry_id,kind,status,attempts,created_at,updated_at) VALUES (?,?,?,'pending',0,?,?)`)
-      .bind(notificationId, id, OWNER_NOTIFICATION_KIND, now, now),
-  ]);
+  let results: D1Result[];
+  try {
+    results = await env.DB.batch([
+      env.DB.prepare(`INSERT INTO inquiries (id,created_at,offer_id,package_id,event_date,event_type,location,name,email,phone,message,privacy_consent,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,1,'new')`)
+        .bind(id, now, input.offerId, input.packageId ?? null, input.date, input.eventType, input.location, input.name, input.email, input.phone ?? null, input.message ?? null),
+      env.DB.prepare(`INSERT INTO inquiry_notifications (id,inquiry_id,kind,status,attempts,created_at,updated_at) VALUES (?,?,?,'pending',0,?,?)`)
+        .bind(notificationId, id, OWNER_NOTIFICATION_KIND, now, now),
+    ]);
+  } catch {
+    return json({ error: 'storage-failed' }, 500);
+  }
   if (results.some((result) => !result.success)) return json({ error: 'storage-failed' }, 500);
   ctx.waitUntil(deliverOwnerNotification(id, env));
   return json({ inquiryId: id, status: 'received', bookingCreated: false, ownerNotification: 'queued' }, 201);
@@ -177,11 +171,13 @@ async function listNotifications(env: Env): Promise<Response> {
 }
 async function updateInquiryStatus(request: Request, env: Env, id: string): Promise<Response> {
   let raw: unknown; try { raw = await request.json(); } catch { return json({ error: 'invalid-json' }, 400); }
-  const parsed = statusSchema.safeParse(raw); if (!parsed.success) return json({ error: 'invalid-status' }, 422);
-  const result = await env.DB.prepare('UPDATE inquiries SET status=? WHERE id=?').bind(parsed.data.status, id).run();
+  const parsed = inquiryStatusUpdateSchema.safeParse(raw);
+  if (!parsed.success) return json({ error: 'invalid-status' }, 422);
+  const { status } = parsed.data;
+  const result = await env.DB.prepare('UPDATE inquiries SET status=? WHERE id=?').bind(status, id).run();
   if (!result.success) return json({ error: 'storage-failed' }, 500);
   if ((result.meta?.changes ?? 0) === 0) return json({ error: 'inquiry-not-found' }, 404);
-  return json({ inquiryId: id, status: parsed.data.status });
+  return json({ inquiryId: id, status });
 }
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContextLike): Promise<Response> {

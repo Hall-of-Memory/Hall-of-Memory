@@ -38,7 +38,10 @@ assert.deepEqual(badRootRefs, [], `root refs escaped preview base: ${JSON.string
 const demo = await readFile(path.join(root, 'demo/index.html'), 'utf8');
 assert.match(demo, /noindex,nofollow/);
 assert.equal((demo.match(/demo-offer-details/g) ?? []).length, 3);
-assert.equal((demo.match(/data-demo-offer-choice=/g) ?? []).length, 3);
+assert.equal((demo.match(/data-demo-offer-choice=/g) ?? []).length, 0);
+assert.match(demo, /data-demo-inquiry-disabled/);
+assert.match(demo, /Anfrageformular noch nicht aktiv/);
+assert.doesNotMatch(demo, /demo-inquiry\.js/);
 assert.match(demo, /Paket gemeinsam auswählen/);
 assert.match(demo, /Beispielzugang ansehen/);
 assert.doesNotMatch(demo, /Customer Journey|Datenstruktur|Private Formular-Preview|Business-Nummer noch offen/i);

@@ -1,6 +1,6 @@
 # Mitwirken an Hall of Memory
 
-Hall of Memory wird als kundenkontrolliertes, öffentliches Quellrepository vorbereitet. Der Arbeitsprozess soll für kleine menschliche und Codex-gestützte Änderungen einfach bleiben.
+Hall of Memory liegt in einem kundenkontrollierten GitHub-Repository. Die öffentliche Website und die Sichtbarkeit des Source-Repositories werden bewusst getrennt behandelt; T045 dokumentiert die aktuelle Privatsphäre-/Tarifentscheidung.
 
 ## Kanonischer Ablauf
 
@@ -11,6 +11,7 @@ Hall of Memory wird als kundenkontrolliertes, öffentliches Quellrepository vorb
 5. Pull Request erstellen und die Wirkung knapp beschreiben.
 6. Diff, Preview und Checks prüfen.
 7. Erst danach nach `main` mergen.
+8. Bei einer für Produktion vorgesehenen Änderung zusätzlich den revisionsgebundenen Deploy-/Domain-Readback aus T045 durchführen.
 
 `tasks/` bleibt die einzige Aufgabenquelle. GitHub Issues ersetzen die Task-Dateien nicht.
 
@@ -22,26 +23,25 @@ Für normale Inhaltsänderungen muss Git nicht im Detail bedient werden. Ein gut
 
 Für Preise, Angebote und Pakete nur bestätigte Werte verwenden. Codex darf fehlende Geschäftsdaten nicht erfinden.
 
-## Öffentlichkeitsgrenze
-
-Vor jedem Commit gilt: Der Inhalt muss für eine dauerhaft öffentliche Git-Historie geeignet sein.
+## Datenschutz- und Veröffentlichungsgrenze
 
 Nicht committen:
 
 - Secrets, Tokens, Zugangsdaten oder echte `.env`-Dateien,
 - private Eventfotos oder personenbezogene Eventkundendaten,
 - interne Verträge, Rechnungen oder private Korrespondenz,
-- Assets mit ungeklärtem Recht zur öffentlichen Weiterverbreitung.
+- nicht zur Veröffentlichung bestimmte Designer-/Stock-/Font-Source-Master.
 
-Die Sichtbarkeit eines Repositorys ist keine Freigabe für private Betriebsdaten. Produktive Secrets und private Medien bleiben außerhalb von Git.
+Auch ein privates Repository ist keine Freigabe für private Betriebsdaten. Produktive Secrets und private Eventmedien bleiben außerhalb von Git. Öffentliche Web-Exports dürfen nach den projektseitig geklärten Nutzungsrechten über `hallofmemory.de` ausgeliefert werden.
 
 ## Branches und Pull Requests
 
 - `main` soll jederzeit stabil bleiben.
 - Branches kurzlebig und auf einen Task begrenzen.
 - Keine ungeprüften Sammel-Pushes alter lokaler Branches.
-- Force-Push auf `main` vermeiden.
+- Kein Force-Push auf `main`.
 - Architektur-, Security-, Dependency- und Deployment-Änderungen brauchen besonders sorgfältige Review.
+- Repository-Sichtbarkeit nur ändern, wenn der Schutz von `main` danach weiterhin nachweislich funktioniert.
 
 ## Verifikation
 
@@ -55,8 +55,10 @@ Die GitHub-CI führt denselben Befehl aus. Lokale und Remote-Prüfung sollen nic
 
 ## Deployment
 
-Ein Merge ist keine Produktionsfreigabe. Die vorgesehene Produktionsarchitektur bleibt Cloudflare gemäß T009 und `docs/deployment-handover.md`. GitHub Pages dient nur der öffentlichen Preview, solange die kanonischen Tasks nichts anderes festlegen.
+Produktiver Primär-Origin ist `https://hallofmemory.de`; Zielplattform ist Cloudflare gemäß T009/T045 und `docs/deployment-handover.md`. GitHub Pages ist nur noch Übergangs-Fallback bis zum erfolgreichen Domain-Cutover.
+
+Die Kundenentscheidung vom 22.08.2026 autorisiert den statischen Domain-Livegang. Neue kostenpflichtige Dienste oder produktive Backend-Ressourcen werden dadurch nicht pauschal freigegeben.
 
 ## Lizenz
 
-Solange keine `LICENSE`-Datei eine ausdrückliche Lizenz erteilt, wird durch die öffentliche Sichtbarkeit des Quellcodes keine zusätzliche Open-Source-Lizenz zugesagt. Marken- und Drittanbieterassets können davon unabhängige Rechtebedingungen haben.
+Es gibt derzeit keine allgemeine Open-Source-Lizenz. Repository-Sichtbarkeit und Lizenzierung sind getrennte Entscheidungen; Marken- und Drittanbieterassets können eigene Rechtebedingungen haben.

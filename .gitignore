@@ -17,3 +17,5 @@ coverage/
 # Local verification outputs.
 /.fundus-corner-test-dist/
 /.pages-test-dist/
+# Customer-bound production Worker config is local-only; the example template is tracked.
+/spikes/inquiry-worker/wrangler.production.jsonc

@@ -1,131 +1,192 @@
 # Deployment- und Handover-Runbook
 
-Stand: 2026-08-11
+Stand: 2026-08-22
 
-Dieses Runbook bereitet den Livegang reproduzierbar vor. Es autorisiert kein Deployment und keine Provisionierung. Alle Ressourcen, Domains, Empfänger und Zugänge müssen vor Ausführung im kundeneigenen Konto liegen. Platzhalter dürfen nie deployt werden.
+Dieses Runbook trennt zwei Stufen:
 
-## 1. Externe Freigabegates
+1. **Domain-Arbeitsstand:** die gepflegte Hall-of-Memory-Website wird unter `https://hallofmemory.de` erreichbar und dort weiterentwickelt; sie bleibt bis zur inhaltlichen/rechtlichen Freigabe `noindex` und das produktive Anfrageformular bleibt fail-closed.
+2. **Vollständige V1-Produktion:** Anfrage-Worker, Turnstile, Access, D1, Email-Binding und finale Recht-/Inhaltsfreigaben werden erst nach den Gates aus T008/T010/T011 aktiviert.
 
-Vor einem Produktionslauf müssen T008, T010 und T011 entblockt sein. Konkret erforderlich sind:
+Die Kundenentscheidung vom 22.08.2026 autorisiert Stufe 1. Sie ist keine pauschale Freigabe neuer kostenpflichtiger Dienste oder der Backend-Stufe 2.
 
-- echte öffentliche Domain und API-Origin sowie geklärter Registrar-/DNS-Status
-- freigegebene Inhalte und `src/content/site.json` mit bewusst gesetztem `launchStatus: production`
-- freigegebener Datenschutz-/Einwilligungstext und konkrete Aufbewahrungs-/Löschregel
-- kundeneigener Cloudflare-Account/Zone mit benannten Eigentümern und mindestens einem Wiederherstellungszugang
-- kundeneigene D1-, Worker-, Turnstile-, Access-, Rate-Limit- und Email-Binding-Ressourcen
-- verifizierte Betreiber-Ziel- und Absenderadresse; keine automatische Kundenmail ist Bestandteil von V1
-- entschiedener Selbstpflege-Workflow aus T011; das Deployment baut keinen vorläufigen CMS-Editor
-- akzeptierte laufende Kosten und Limits aus dem Ressourceninventar unten
+## 1. Aktuelle Kundeninfrastruktur
 
-## 2. Konfigurationsvertrag
+- Produktions-/Primärdomain: `https://hallofmemory.de`
+- Registrar/DNS: kundeneigen bei STRATO
+- autoritative Nameserver zum Stand 22.08.2026: `docks09.rzone.de`, `shades16.rzone.de`
+- Apex-A-Record: `217.160.0.152`
+- `www.hallofmemory.de`: CNAME auf `hallofmemory.de`
+- kanonisches Source-Repo: `Hall-of-Memory/Hall-of-Memory`
+- `main`: PR-geschützt, Required Check `verify`, Admin-Enforcement, Conversation Resolution, kein Force-Push/Branch-Löschen
+- GitHub Pages: nur Übergangs-Fallback, nicht Produktionsplattform
+- Cloudflare: vorgesehene produktive Auslieferung; auf dem Heim-PC ist Wrangler derzeit **nicht** an ein Kundenkonto authentifiziert
 
-Öffentlicher Astro-Build, ausschließlich nicht geheim:
+T045 ist die operative Wahrheit für den Domain-Cutover.
 
-| Name | Exakter Inhalt |
+## 2. Öffentlicher Buildvertrag
+
+Öffentliche, nicht geheime Buildwerte:
+
+| Name | Vertrag |
 |---|---|
-| `PUBLIC_SITE_URL` | HTTPS-Origin der öffentlichen Site, ohne Pfad, Query oder Fragment |
-| `PUBLIC_INQUIRY_API_URL` | relative Same-Origin-Route oder vollständiger HTTPS-Anfrage-Endpunkt |
-| `PUBLIC_TURNSTILE_SITE_KEY` | öffentlicher Site-Key des produktiven Turnstile-Widgets |
+| `PUBLIC_SITE_URL` | für den Domain-Build exakt `https://hallofmemory.de`, ohne Pfad/Query/Fragment |
+| `PUBLIC_INQUIRY_API_URL` | leer, solange Stufe 2 nicht aktiviert ist; später relative Same-Origin-Route oder vollständiger HTTPS-Endpunkt |
+| `PUBLIC_TURNSTILE_SITE_KEY` | leer, solange Stufe 2 nicht aktiviert ist; später öffentlicher produktiver Site-Key |
+| `PUBLIC_WHATSAPP_NUMBER` | nur bestätigte Business-Nummer; sonst leer |
 
-Fehlt `PUBLIC_SITE_URL`, wird kein Canonical behauptet, `robots.txt` sperrt Crawling und die Sitemap bleibt leer. Entwurfsinhalte bleiben auch mit URL `noindex`. Fehlen API-URL oder Site-Key, bleibt das Formular fail-closed deaktiviert. `.env.example` dokumentiert nur die Namen und enthält keine Werte.
+Solange Inhalte/Legal noch Entwurfsstand sind, bleibt `noindex` bewusst erhalten. Das ist für die Arbeitsdomain kein Fehler.
 
-Serverseitiger Worker-Vertrag:
+`public/_redirects` enthält für Cloudflare Workers Static Assets genau die vorläufige Root-Regel:
+
+```text
+/ /demo/ 302
+```
+
+Damit zeigt `https://hallofmemory.de/` auf die gepflegte Kundenwebsite unter `/demo/`, ohne den sicherheitsgehärteten internen Root-Scaffold oder seine Formularprüfungen zu ersetzen. Bis zur finalen Launch-Entscheidung bleibt es ein temporärer `302` statt eines permanenten `301`.
+
+Der Anfragebereich auf `/demo/` ist in Stage 1 nur eine sichtbare Ablaufvorschau: Feldgruppen und Submit sind disabled, es gibt keinen Mock-Submit und keinen clientseitigen Pfad, der eingegebene Kontaktdaten scheinbar entgegennimmt und verwirft. Ein echter Anfragepfad darf erst mit Stage 2 aktiviert werden.
+
+## 3. Stufe 1 — Domain-Arbeitsstand
+
+Vor Mutation:
+
+- exakten Git-Commit und sauberen Worktree lesen;
+- `npm ci` und `npm run verify` grün;
+- Domain-Build mit `PUBLIC_SITE_URL=https://hallofmemory.de` erzeugen;
+- `dist/_redirects` exakt auf die eine freigegebene Regel prüfen;
+- keine Secrets oder produktiven Backend-Platzhalter im Artefakt;
+- **vollständigen autoritativen STRATO-DNS-Zonenstand** vor jeder Nameservermutation inventarisieren/exportieren: alle Ownernamen/Subdomains, Recordtypen, Werte, Prioritäten und TTLs; mindestens `A`, `AAAA`, `CNAME`, `MX`, `TXT` (einschließlich SPF/DKIM/DMARC/Verifikationen), `SRV` und `CAA`; aktuelle `NS`/`SOA` separat dokumentieren;
+- DNSSEC/DS-Status beim Registrar separat read-backen. Bei aktivem DNSSEC darf der Nameserverwechsel nicht erfolgen, solange ein alter/inkompatibler DS die neue Delegation validierungsfehlerhaft machen würde; die zum Umschaltzeitpunkt gültige STRATO-/Cloudflare-Migrationsprozedur wird live gelesen und revisionsgebunden protokolliert;
+- im kundeneigenen Cloudflare-Kontext Account/Zone, Tarif und tatsächlich verlangte Nameserver/Custom-Domain-Konfiguration lesen;
+- **vor dem Nameserverwechsel** sämtliche weiterhin benötigten nicht-provider-spezifischen RRsets aus dem STRATO-Snapshot in Cloudflare anlegen/importieren. Mail-/Verifikationsrecords (`MX`, zugehörige `A`/`AAAA`, `TXT`, `SRV`) bleiben DNS-only; nur bewusst gewählte Webrecords dürfen proxied werden;
+- den normalisierten STRATO-Snapshot und die Cloudflare-Zone recordweise vergleichen. Abgesehen von bewusst dokumentierten providerbedingten `NS`/`SOA`-/Proxy-Unterschieden darf kein benötigter Record fehlen oder unerklärt abweichen. `CAA` muss mit der vorgesehenen TLS-Zertifikatsausstellung vereinbar sein; bei Unklarheit bleibt der Cutover blockiert;
+- vollständigen Zonen-Snapshot, DNSSEC-Ausgangszustand und vorherige Nameserver als Rollbackevidenz außerhalb von Secrets protokollieren. Die bekannten Apex-`A`- und `www`-Records allein sind ausdrücklich **kein** vollständiger DNS-Sicherungsnachweis.
+
+Dann:
+
+1. statische Site revisionsgebunden nach Cloudflare deployen;
+2. Deployment auf dem Cloudflare-Standardhost read-backen;
+3. `hallofmemory.de` als Custom Domain an das geprüfte Deployment binden;
+4. Cloudflare-Zonenbestand nochmals gegen den vollständigen STRATO-Snapshot vergleichen und den Vergleich als `PASS` binden; DNSSEC/DS-Preflight muss ebenfalls `PASS` sein;
+5. die von Cloudflare tatsächlich ausgegebenen Nameserver revisionsgebunden lesen;
+6. **erst bei bestandenem Vollzonen- und DNSSEC-Gate** die STRATO-Nameserver kontrolliert auf diese Cloudflare-Werte umstellen;
+7. DNS-Propagation, vollständige öffentliche Record-Stichprobe (insbesondere Web + Mail/Verifikation) und TLS abwarten/read-backen;
+8. `https://hallofmemory.de/` muss mit `302` nach `/demo/` führen;
+9. `/demo/` und `/demo/rahmen/` müssen HTTP 200 liefern und die erwarteten Assets laden;
+10. `www` erhält eine explizite Redirect-/Canonical-Strategie;
+11. Desktop/Mobil-Browserreadback durchführen.
+
+Bei irgendeinem unklaren externen Write-Ausgang: keine Wiederholung ohne Provider-Readback.
+
+## 4. Stufe 2 — Anfrage/Admin-Produktion
+
+Erst nach Entblockung von T008/T010/T011:
 
 | Art | Name | Zweck |
 |---|---|---|
 | D1-Binding | `DB` | autoritative Anfragen und Benachrichtigungs-Outbox |
 | Rate-Limit-Binding | `PUBLIC_ROUTE_LIMITER` | grobes Limit des öffentlichen Endpunkts |
 | Rate-Limit-Binding | `PUBLIC_ACTOR_LIMITER` | Angebot + gehashte normalisierte E-Mail |
-| Email-Binding | `NOTIFY_OWNER` | Betreiberbenachrichtigung an verifiziertes Ziel |
-| Secret | `TURNSTILE_SECRET_KEY` | serverseitiger produktiver Turnstile-Secret-Key |
-| Variable | `SPIKE_MODE` | exakt `production`; deaktiviert lokale `__spike`-Routen |
-| Variable | `ACCESS_TEAM_DOMAIN` | HTTPS-Origin der kundeneigenen Access-Team-Domain |
+| Email-Binding | `NOTIFY_OWNER` | Betreiberbenachrichtigung |
+| Secret | `TURNSTILE_SECRET_KEY` | serverseitiger Turnstile-Secret-Key |
+| Variable | `SPIKE_MODE` | exakt `production` |
+| Variable | `ACCESS_TEAM_DOMAIN` | kundeneigene Access-Team-Domain |
 | Variable | `ACCESS_AUD` | Audience der Access-Anwendung |
 | Variable | `NOTIFY_TO` | verifizierte Betreiber-Zieladresse |
 | Variable | `NOTIFY_FROM` | verifizierte Absenderadresse |
-| Variable | `PUBLIC_SITE_ORIGIN` | exakter öffentlicher Site-Origin für CORS |
+| Variable | `PUBLIC_SITE_ORIGIN` | exakt `https://hallofmemory.de` |
 
-`ACCESS_JWKS_JSON` und `SMOKE_LIMITER` sind ausschließlich lokale Testkonfiguration und dürfen nicht in die Produktionskonfiguration. Produktiv werden die rotierenden öffentlichen Schlüssel von `ACCESS_TEAM_DOMAIN` gelesen und alle `__spike`-Routen bleiben deaktiviert. `spikes/inquiry-worker/wrangler.production.example.jsonc` ist eine absichtlich nicht deploybare Platzhaltervorlage. Sie wird als nicht versionierte `wrangler.production.jsonc` kopiert, vollständig ersetzt und vor Nutzung mit `rg -n 'REPLACE_WITH|example\.invalid|local-only'` fail-closed geprüft.
+`ACCESS_JWKS_JSON` und `SMOKE_LIMITER` bleiben ausschließlich lokale Testkonfiguration. Die Vorlage `spikes/inquiry-worker/wrangler.production.example.jsonc` darf mit Platzhaltern nie produktiv deployt werden. Die tatsächliche kundengebundene Laufzeitkonfiguration heißt exakt `spikes/inquiry-worker/wrangler.production.jsonc`, ist in `.gitignore` ausgeschlossen und darf weder Secrets noch `REPLACE_WITH_*`-/`example.invalid`-/`local-only`-Werte enthalten.
 
-## 3. Reproduzierbarer Preflight ohne Remote-Mutation
-
-Vom sauberen, freigegebenen Commit aus und mit Node 22:
+Die Produktionskonfiguration wird einmalig aus der Beispielvorlage erzeugt und vollständig mit den im Kundenkonto read-backbaren Ressourcenwerten befüllt. Vor jedem produktiven Worker-Dry-Run gilt fail-closed:
 
 ```sh
-git status --short
-git rev-parse HEAD
-npm ci
-npm run spike:inquiry
-npm run test:domain
-npm run test:form
-npm run test:quality
-npm run check
-npm run build
-npm run dry-run:worker
-npm run dry-run:site
-git show --check HEAD
+rg -n 'REPLACE_WITH|example\.invalid|local-only' spikes/inquiry-worker/wrangler.production.jsonc
+npm run dry-run:worker:production
 ```
 
-Für den produktionsähnlichen Site-Build werden die drei öffentlichen Werte explizit in der Buildumgebung gesetzt. Danach sind `dist/index.html`, `dist/robots.txt`, `dist/sitemap.xml` und `dist/_headers` zu prüfen: genau erwartetes Canonical, `index,follow` durch Abwesenheit von `noindex`, korrekter Sitemap-Origin, korrekter CSP-Connect-Origin und aktiviertes Formular. Geheimnisse dürfen weder in `dist/` noch im Buildlog vorkommen.
+Der `rg`-Schritt muss **ohne Treffer** enden. `npm run dry-run:worker:production` bindet ausdrücklich `--config spikes/inquiry-worker/wrangler.production.jsonc`; der normale lokale `npm run dry-run:worker` gegen `spikes/inquiry-worker/wrangler.jsonc` ist **kein** Produktionsnachweis. Secrets werden weiterhin ausschließlich über den Plattform-Secretstore gesetzt und deshalb nicht durch den JSONC-Dry-Run transportiert.
 
-## 4. Erstmalige Aktivierungsreihenfolge
+Reihenfolge Stufe 2:
 
-Die Reihenfolge vermeidet eine sichtbare Site mit noch nicht funktionsfähigem Backend.
+1. D1-/Worker-/Access-/Turnstile-/Email-Ressourcen im Kundenkonto inventarisieren und Kosten/Limits bestätigen.
+2. `spikes/inquiry-worker/wrangler.production.jsonc` aus der Beispielvorlage erzeugen bzw. die vorhandene lokale Datei gegen den Kunden-Readback abgleichen; alle Platzhalter müssen ersetzt sein. Noch **vor jedem D1-Write** den gebundenen `DB`-Eintrag gegen die tatsächlich gewünschte Remote-D1 im Kundenkonto lesen.
+3. Exakt `npm run dry-run:worker:production` ausführen und den Output auf die erwarteten produktiven Bindings prüfen. Der Dry-Run muss denselben `DB`-Binding-Namen und dieselbe produktive Konfiguration zeigen, die in den folgenden D1-Befehlen verwendet werden.
+4. Erst jetzt D1 sichern und migrieren. Bei einer bereits bestehenden D1 zunächst `wrangler d1 export DB --remote --config spikes/inquiry-worker/wrangler.production.jsonc --output <approved-backup-path>` ausführen. Danach `wrangler d1 migrations list DB --remote --config spikes/inquiry-worker/wrangler.production.jsonc` lesen und offene Migrationen kontrolliert mit `wrangler d1 migrations apply DB --remote --config spikes/inquiry-worker/wrangler.production.jsonc` anwenden. Bei einer frisch angelegten leeren D1 entfällt nur der Export, nicht der configgebundene Migrations-Readback.
+5. Secrets ausschließlich im Plattform-Secretstore und **configgebunden an den Inquiry-Worker** setzen. Für Turnstile exakt `wrangler secret put TURNSTILE_SECRET_KEY --config spikes/inquiry-worker/wrangler.production.jsonc` verwenden; ein configloser Secret-Befehl aus dem Repository-Root ist verboten, weil er sonst den statischen Site-Worker aus `wrangler.jsonc` treffen kann. Danach den Secret-Binding-Status des Inquiry-Workers read-backen, ohne den Secretwert offenzulegen.
+6. Erst danach exakt dieselbe Konfiguration revisionsgebunden deployen: `wrangler deploy --strict --config spikes/inquiry-worker/wrangler.production.jsonc`.
+7. Health, CORS, Access, D1 und Outbox read-backen.
+8. **Vor jedem Stage-2-Site-Build** einen eigenen revisionsgebundenen Routing-/UI-Commit integrieren: Die Stage-1-Regel `/ /demo/ 302` muss entfernt oder so ersetzt werden, dass `/` auf eine tatsächlich aktive Anfrage-Route zeigt. Solange `/` noch auf die bewusst deaktivierte Stage-1-`/demo/`-Form führt, ist Stage 2 fail-closed **nicht aktivierbar**. Ein bloßes Setzen von API-URL und Turnstile-Key reicht ausdrücklich nicht.
+9. Erst nach diesem Routing-Readback die Site mit API-URL und Turnstile-Site-Key bauen. Der ausgelieferte Primärpfad muss jetzt ein aktives `data-inquiry-form`, Turnstile und die verbindliche Datenschutz-Einwilligung enthalten; die Stage-1-Markierung `data-demo-inquiry-disabled` darf auf dem Primärpfad nicht mehr die Anfrage ersetzen.
+10. Site deployen und vollständigen Browser-Smoke ausführen.
 
-1. Commit-ID, verantwortliche Person, Wartungsfenster und bisherige Worker-Versionen protokollieren: `wrangler deployments status --config <production-worker-config>` und für die Site `wrangler deployments status --config wrangler.jsonc`.
-2. Bei einer bestehenden D1 vor Migration einen verschlüsselt und zugriffsbeschränkt abzulegenden Export erstellen: `wrangler d1 export DB --remote --config <production-worker-config> --output <approved-backup-path>`.
-3. Offene Migrationen lesen: `wrangler d1 migrations list DB --remote --config <production-worker-config>`. In numerischer Reihenfolge zunächst `0001_inquiries.sql`, dann `0002_notifications.sql` anwenden: `wrangler d1 migrations apply DB --remote --config <production-worker-config>`.
-4. Tabellen und Migrationen read-only prüfen; keine manuell abweichenden Produktionsschemata akzeptieren.
-5. Turnstile-Secret interaktiv und ohne Shell-History setzen: `wrangler secret put TURNSTILE_SECRET_KEY --config <production-worker-config>`. Alle übrigen Bindings/Variablen gegen die Tabelle oben lesen.
-6. Worker nochmals dry-run bauen, anschließend nur nach ausdrücklicher Freigabe mit Konfliktschutz deployen: `wrangler deploy --strict --config <production-worker-config>`.
-7. Worker-Readback und Smokes aus Abschnitt 5 vollständig durchführen. Erst wenn Speicherung, Outbox, Access und CORS funktionieren, fortfahren.
-8. Site mit den drei öffentlichen Buildvariablen frisch bauen und den Output wie in Abschnitt 3 prüfen.
-9. Site erst danach und nur nach ausdrücklicher Freigabe deployen: `wrangler deploy --strict --config wrangler.jsonc`.
-10. DNS/Custom Domain aktivieren beziehungsweise umschalten, dann Browser-Smoke gegen die echte öffentliche Domain durchführen.
+## 5. Verifikation
 
-Das Runbook legt absichtlich keine Accounts, Remote-D1, Access-App, Turnstile-Ressource, Email-Ressource, Domain oder Git-Remote an.
+Kanonischer lokaler Volltest:
 
-## 5. Produktions-Smoke und Readback
+```sh
+npm ci
+npm run verify
+```
 
-- `GET /health` des Anfrage-Workers liefert `ok: true` und `mode: production`; `GET /__spike/count` liefert in Produktion `404`.
-- Preflight/POST mit einem fremden `Origin` wird `403 origin-not-allowed`; der exakte Site-Origin erhält nur seine eigene CORS-Freigabe.
-- `/admin` und `/api/admin/inquiries` ohne Access-JWT sowie mit unberechtigter Identität werden abgewiesen.
-- Ein kontrollierter Browser-Smoke mit gültigem Turnstile erzeugt genau eine D1-Anfrage, `bookingCreated: false`, einen Outbox-Eintrag und eine Betreiberbenachrichtigung. Er erzeugt keine Reservierung und keine Kundenmail.
-- Die Testanfrage wird im geschützten Admin angezeigt, lässt sich auf einen erlaubten Status ändern und wird anschließend gemäß der freigegebenen Löschregel behandelt.
-- Site-Readback prüft Statuscode, Security-Header, Canonical, Robots/Sitemap, CSP, Formularziel sowie Desktop-/Mobilansicht mit Tastatur und Screenreader-Baseline.
-- `wrangler deployments status` für beide Worker und `git rev-parse HEAD` werden im Handoverprotokoll zusammengeführt.
+Für den Stage-1-Domain-Build zusätzlich:
 
-## 6. Rollback
+```sh
+PUBLIC_SITE_URL=https://hallofmemory.de npm run build
+```
 
-Vor jedem Deployment die bisher aktive Version mit `wrangler deployments list --config <config>` notieren.
+Stage 1:
 
-- Sitefehler: vorherige Site-Version mit `wrangler rollback <site-version-id> --config wrangler.jsonc --message <reason>` aktivieren und Status/Headers erneut lesen.
-- API-/Adminfehler: vorherige Worker-Version mit `wrangler rollback <worker-version-id> --config <production-worker-config> --message <reason>` aktivieren; anschließend Health, Access und eine read-only D1-Abfrage prüfen.
-- D1-Migrationen haben bewusst kein automatisches Down-Migration-Skript. Die vorhandenen Migrationen sind additiv; ein älterer Worker ignoriert die zusätzliche Outbox-Tabelle. Bei destruktiven künftigen Migrationen ist vorab ein eigener vorwärtsgerichteter Reparatur-/Restoreplan Pflicht. Ein D1-Export darf nicht ungeprüft über neue Anfragen zurückgespielt werden.
-- Bei Domain-/DNS-Fehlern zur zuvor protokollierten Zielkonfiguration zurückkehren; TTL und Zertifikatsstatus read-only prüfen.
+- Build erfolgreich;
+- `_redirects` enthält nur `/ /demo/ 302`;
+- `/demo/` bleibt `noindex`, solange die Freigabe nicht erfolgt ist;
+- statischer Arbeitsstand behauptet kein funktionsfähiges produktives Anfrageformular;
+- keine Secrets in `dist/` oder Buildlogs.
 
-## 7. Eigentum, Zugänge und Übergabe
+Stage 2 hat absichtlich einen **anderen Routingvertrag**: Vor dem produktiven Site-Build muss die Stage-1-Root-Weiterleitung in einem eigenen geprüften Commit entfernt/ersetzt sein. Der Build ist zu verwerfen, wenn `dist/_redirects` weiterhin `/ /demo/ 302` enthält und `/demo/` weiterhin `data-demo-inquiry-disabled` als einzigen primären Anfrageweg ausliefert.
 
-- Registrar, Domain, Cloudflare-Account/Zone, Billing und sämtliche Ressourcen gehören dem Kunden oder sind nachweislich vollständig übertragbar.
-- Primärer Eigentümer, zweiter Wiederherstellungsinhaber und Rollen nach geringstem Recht sind benannt; persönliche Entwicklerkonten sind kein dauerhafter Single Point of Failure.
-- Quellrepository und produktiver Git-Remote liegen unter Kundenhoheit; der aktuelle lokale Stand besitzt noch keinen Remote.
-- D1-Datenbank, beide Worker, Turnstile-Widget/Hostname-Regeln, Access-Anwendung/Policies, Email Routing/Binds und Rate-Limit-Namespaces sind inventarisiert.
-- Secrets werden über den Plattform-Secretstore gesetzt, nicht in Git, `.env`, Tickets, Buildartefakte oder Handoverdokumente kopiert; Rotations- und Recovery-Verantwortung ist benannt.
-- Deployment-Commit, Plattform-Versionen, DNS-Ziele, Backuport, Smokeprotokoll, Rollbackversionen und freigegebene Datenschutz-/Löschregeln sind übergeben.
+## 6. Produktions-Readback
 
-## 8. Kosten- und Ressourceninventar
+Stufe 1:
 
-| Ressource | V1-Zweck | Aktivierung/Kostenprüfung |
-|---|---|---|
-| Domain/Registrar/DNS | öffentliche Kundenadresse | kundeneigener Vertrag; Preis und Verlängerung vor Kauf bestätigen |
-| Static Assets Worker | Astro-Site | aktuelles Cloudflare-Limit/Tarif vor Aktivierung prüfen |
-| Anfrage-Worker | API und Admin | Requests/CPU-Limits und Tarif vor Aktivierung prüfen |
-| D1 | Anfrage + Outbox | Speicher, Reads/Writes, Export/Backupbedarf prüfen |
-| Turnstile | Bot-Schutz | Hostname-Regeln und aktuelle Konditionen prüfen |
-| Workers Rate Limiting | Route-/Akteurslimit | Verfügbarkeit und Planlimit im Kundenkonto prüfen |
-| Cloudflare Access | Adminschutz | Nutzerzahl, IdP und aktuellen Tarif prüfen |
-| Email Service/Binding | Betreiberhinweis | verifiziertes Ziel ist laut belegter Projektentscheidung für V1 der kostenarme Pfad; aktuelle Konditionen erneut prüfen |
-| Automatische Kundenmail | nicht Bestandteil von V1 | nicht provisionieren; beliebige Empfänger können einen Paid-Pfad verlangen |
-| R2/Queues/Durable Objects/Payment | nicht Bestandteil von V1 | erst bei belegtem Bedarf und eigener Kostenentscheidung aktivieren |
+- DNS/Nameserver entsprechen dem dokumentierten Ziel;
+- HTTPS-Zertifikat gültig;
+- `/` → `302 /demo/`;
+- `/demo/` und `/demo/rahmen/` → HTTP 200;
+- Logo, Eventbild, Styles, Frame-Assets und Navigation laden;
+- Mobile/Desktop-Basis funktioniert;
+- `noindex` bleibt bis zur Launchfreigabe erhalten.
 
-Free-Tiers und Preise können sich ändern. Deshalb enthält das Repository keine dauerhafte Null-Euro-Zusage: Vor Freigabe werden Dashboard-/Vertragswerte im Kundenkonto gelesen, mit erwarteter Last dokumentiert und vom Kunden akzeptiert.
+Stufe 2 zusätzlich:
+
+- `/` führt **nicht mehr** über die Stage-1-Regel auf eine deaktivierte `/demo/`-Anfrage;
+- der primäre öffentliche Anfragepfad enthält ein aktives Formular mit API-Ziel, Turnstile und Datenschutz-Einwilligung und kann eine kontrollierte Testanfrage übermitteln;
+- `GET /health` des Anfrage-Workers liefert `ok: true` und `mode: production`;
+- `__spike`-Routen sind nicht erreichbar;
+- fremder Origin wird abgewiesen;
+- Admin ohne gültigen Access-JWT wird abgewiesen;
+- kontrollierte Testanfrage erzeugt genau die erwartete D1-/Outbox-Wirkung, keine Reservierung und keine automatische Kundenmail;
+- Datenschutz-/Löschregel wird eingehalten.
+
+## 7. Rollback
+
+Vor DNS- und Deployment-Mutationen immer den vorherigen Zustand protokollieren.
+
+- Sitefehler: auf vorherige Cloudflare-Version zurückrollen und Readback wiederholen.
+- Domainfehler: STRATO-DNS/Nameserver auf den protokollierten vorherigen Zustand zurücksetzen; TTL und Zertifikat erneut lesen.
+- Workerfehler in Stufe 2: vorherige Worker-Version aktivieren; Health, Access und D1 read-only prüfen.
+- D1-Migrationen haben kein automatisches Down-Skript; künftige destruktive Migrationen brauchen vorab einen eigenen Restore-/Forward-Fix-Plan.
+
+## 8. Eigentum, Repo-Sichtbarkeit und Übergabe
+
+- Registrar, Domain, Cloudflare-Account/Zone, Billing und produktive Ressourcen bleiben kundenkontrolliert.
+- Persönliche Entwicklerkonten dürfen kein dauerhafter Single Point of Failure sein.
+- Das GitHub-Repo liegt bereits unter Kundenhoheit.
+- Das Source-Repo soll langfristig so privat wie sinnvoll sein; eine Sichtbarkeitsänderung darf aber nicht unbemerkt den `main`-Schutz entfernen.
+- Keine kostenpflichtige GitHub-Aufwertung ohne ausdrückliche Freigabe.
+- Private Eventfotos, Kundendaten, Secrets und nicht öffentliche Source-Master bleiben unabhängig von der Repo-Sichtbarkeit außerhalb von Git.
+- GitHub Pages wird nach erfolgreichem Domain-Cutover aus der Primärrolle entfernt.
+
+## 9. Kosten
+
+Free-Tiers und Preise sind keine dauerhafte Zusage. Vor Aktivierung neuer Plattformressourcen werden die aktuellen Dashboard-/Vertragswerte im Kundenkonto gelesen. Kostenpflichtige Zusatznutzung wird nur nach ausdrücklicher Freigabe aktiviert.

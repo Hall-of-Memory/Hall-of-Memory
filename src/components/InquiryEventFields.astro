@@ -16,6 +16,7 @@ interface Props {
   packages?: readonly PackageOption[];
   showStepLegends?: boolean;
   emptyPackageLabel?: string;
+  disabled?: boolean;
 }
 
 const {
@@ -23,9 +24,10 @@ const {
   packages = [],
   showStepLegends = false,
   emptyPackageLabel = 'Pakete folgen',
+  disabled = false,
 } = Astro.props;
 ---
-<fieldset class:list={['inquiry-field-group', { 'inquiry-step': showStepLegends }]}>
+<fieldset class:list={['inquiry-field-group', { 'inquiry-step': showStepLegends }]} disabled={disabled}>
   <legend class:list={{ 'visually-hidden': !showStepLegends }}>
     {showStepLegends && <span aria-hidden="true">01</span>}
     Angebot wählen
@@ -40,7 +42,7 @@ const {
     </label>
     <label>
       Paket <span class="optional">optional</span>
-      <select name="packageId" disabled={packages.length === 0}>
+      <select name="packageId" disabled={disabled || packages.length === 0}>
         <option value="">{packages.length === 0 ? emptyPackageLabel : 'Kein bestimmtes Paket'}</option>
         {packages.map((item) => <option value={item.id}>{item.name}</option>)}
       </select>
@@ -48,7 +50,7 @@ const {
   </div>
 </fieldset>
 
-<fieldset class:list={['inquiry-field-group', { 'inquiry-step': showStepLegends }]}>
+<fieldset class:list={['inquiry-field-group', { 'inquiry-step': showStepLegends }]} disabled={disabled}>
   <legend class:list={{ 'visually-hidden': !showStepLegends }}>
     {showStepLegends && <span aria-hidden="true">02</span>}
     Eventdetails

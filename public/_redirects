@@ -1,0 +1,3 @@
+# hallofmemory.de Entwicklungsrouting
+# Auf der Cloudflare-Produktion zeigt die Domainwurzel vorerst auf die gepflegte Kundenwebsite.
+/ /demo/ 302

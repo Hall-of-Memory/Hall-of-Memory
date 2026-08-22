@@ -70,6 +70,18 @@ Damit wird die Website-/Preview-Nutzung nicht unnötig mit einer öffentlichen W
 9. erst danach den bisherigen Mirror `alexdermohr/hall-of-memory-preview` archivieren;
 10. lokalen kanonischen `main` auf die neue öffentliche Historie ausrichten, während die alte Vollhistorie ausschließlich lokal als Recovery-Referenz erhalten bleibt.
 
+## Live-Evidenz — 2026-08-22
+
+- Bereinigter öffentlicher Root-Commit: `32ba86e724a7d932f044a736848774d63c7ec6d5`; parentlos, nur `main` öffentlich.
+- Der erste `Verify`-Lauf auf GitHub zeigte einen timingabhängigen Testfehler im Inquiry-Rate-Limit-Smoke: Der reale Limiter hatte bereits `429` geliefert, danach erzeugte der Test für die UI-Abbildung unnötig einen weiteren Request, der auf dem GitHub-Runner als `backend-failed` enden konnte.
+- Abhilfe in PR #1: die erste reale `429`-Antwort des bestehenden 12-Request-Smokes wird per `Response.clone()` gebunden und für das UI-Mapping wiederverwendet; es gibt keinen zusätzlichen Request nach ausgeschöpftem Limit. Damit bleiben realer Rate-Limiter und UI-Abbildung getrennt bewiesen.
+- Lokale Verifikation des Fixes: `npm ci`, dreimal `npm run spike:inquiry`, danach vollständiges `npm run verify` und `git diff --check`; alle grün.
+- GitHub-Runner `verify` auf dem revisionsgebundenen PR-Head war anschließend grün; der PR wird erst nach erneut grünem Check auf dem aktualisierten Head gemergt.
+- GitHub Pages wurde für `build_type=workflow` aktiviert. Der erneute Pages-Build und das Deployment waren erfolgreich.
+- Externer Readback: `https://hall-of-memory.github.io/Hall-of-Memory/demo/` und `https://hall-of-memory.github.io/Hall-of-Memory/demo/rahmen/` liefern jeweils HTTP `200` und den erwarteten Hall-of-Memory-Inhalt.
+- `main` ist live geschützt: Pull Request erforderlich, Required Check `verify` mit `strict=true`, Schutz gilt auch für Admins, offene Review-Gespräche müssen aufgelöst sein, Force-Push und Branch-Löschung sind deaktiviert, verpflichtende Approval-Anzahl `0`.
+- Codex-Review auf PR #1 meldete berechtigt, dass die CI-Stabilisierung zunächst nicht im kanonischen Taskjournal dokumentiert war. Dieser Befund wird mit derselben PR revisionsgebunden eingearbeitet; der Review-Thread wird erst nach GitHub-Readback des aktualisierten Heads aufgelöst.
+
 ## Restgrenze
 
 Die GitHub-/Pages-/CI-/Protection-Arbeit kann technisch autonom abgeschlossen werden. Nicht autonom möglich ist die Anmeldung im persönlichen ChatGPT/Codex-Konto des Kunden. Der abschließende **Kunden-Codex-Golden-Path** bleibt deshalb bis zu seiner GitHub-Verbindung als externer Akzeptanzpunkt offen.

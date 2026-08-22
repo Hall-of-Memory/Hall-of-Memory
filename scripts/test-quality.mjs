@@ -244,11 +244,67 @@ try {
   assert.match(workerExample, /REPLACE_WITH_REMOTE_D1_DATABASE_ID/);
   assert.match(workerExample, /"SPIKE_MODE": "production"/);
   assert.doesNotMatch(workerExample, /TURNSTILE_SECRET_KEY|ACCESS_JWKS_JSON|local-only/);
+  const packageJson = JSON.parse(readFileSync(join(repo, 'package.json'), 'utf8'));
+  assert.match(
+    packageJson.scripts['dry-run:worker:production'],
+    /wrangler deploy --dry-run --config spikes\/inquiry-worker\/wrangler\.production\.jsonc/,
+    'production Worker dry-run must bind the exact customer production config',
+  );
+  const gitignore = readFileSync(join(repo, '.gitignore'), 'utf8');
+  assert.match(
+    gitignore,
+    /^\/spikes\/inquiry-worker\/wrangler\.production\.jsonc$/m,
+    'customer-bound production Worker config must remain outside Git',
+  );
+  const deploymentRunbook = readFileSync(join(repo, 'docs', 'deployment-handover.md'), 'utf8');
+  const stageOneStart = deploymentRunbook.indexOf('## 3. Stufe 1 — Domain-Arbeitsstand');
+  const stageTwoStart = deploymentRunbook.indexOf('## 4. Stufe 2 — Anfrage/Admin-Produktion');
+  const stageOne = deploymentRunbook.slice(stageOneStart, stageTwoStart);
+  const fullZoneSnapshotPosition = stageOne.indexOf('vollständigen autoritativen STRATO-DNS-Zonenstand');
+  const cloudflareZoneComparePosition = stageOne.indexOf('Cloudflare-Zonenbestand nochmals gegen den vollständigen STRATO-Snapshot vergleichen');
+  const nameserverSwitchPosition = stageOne.indexOf('erst bei bestandenem Vollzonen- und DNSSEC-Gate');
+  assert.ok(stageOneStart >= 0 && stageTwoStart > stageOneStart, 'Stage 1 DNS cutover section must be explicit');
+  assert.ok(fullZoneSnapshotPosition >= 0, 'Stage 1 must require a complete authoritative DNS-zone snapshot');
+  assert.match(stageOne, /`A`, `AAAA`, `CNAME`, `MX`, `TXT`[\s\S]*`SRV` und `CAA`/);
+  assert.match(stageOne, /SPF\/DKIM\/DMARC/);
+  assert.match(stageOne, /DNSSEC\/DS-Status/);
+  assert.match(stageOne, /Mail-\/Verifikationsrecords[\s\S]*DNS-only/);
+  assert.ok(cloudflareZoneComparePosition > fullZoneSnapshotPosition, 'Cloudflare full-zone comparison must follow the source-zone snapshot');
+  assert.ok(nameserverSwitchPosition > cloudflareZoneComparePosition, 'Nameservers must not switch before full-zone and DNSSEC gates pass');
+  assert.match(stageOne, /bekannten Apex-`A`- und `www`-Records allein sind ausdrücklich \*\*kein\*\* vollständiger DNS-Sicherungsnachweis/);
+  const stageTwo = deploymentRunbook.slice(deploymentRunbook.indexOf('Reihenfolge Stufe 2:'));
+  const productionConfigPosition = stageTwo.indexOf('2. `spikes/inquiry-worker/wrangler.production.jsonc`');
+  const d1ExportPosition = stageTwo.indexOf('wrangler d1 export DB --remote --config spikes/inquiry-worker/wrangler.production.jsonc');
+  const d1ListPosition = stageTwo.indexOf('wrangler d1 migrations list DB --remote --config spikes/inquiry-worker/wrangler.production.jsonc');
+  const d1ApplyPosition = stageTwo.indexOf('wrangler d1 migrations apply DB --remote --config spikes/inquiry-worker/wrangler.production.jsonc');
+  const turnstileSecretPosition = stageTwo.indexOf('wrangler secret put TURNSTILE_SECRET_KEY --config spikes/inquiry-worker/wrangler.production.jsonc');
+  const workerDeployPosition = stageTwo.indexOf('wrangler deploy --strict --config spikes/inquiry-worker/wrangler.production.jsonc');
+  const routeActivationPosition = stageTwo.indexOf('Vor jedem Stage-2-Site-Build');
+  const siteBuildPosition = stageTwo.indexOf('Site mit API-URL und Turnstile-Site-Key bauen');
+  assert.ok(productionConfigPosition >= 0, 'Stage 2 must create the production Worker config explicitly');
+  assert.ok(d1ExportPosition > productionConfigPosition, 'production config must exist before any remote D1 export');
+  assert.ok(d1ListPosition > productionConfigPosition, 'production config must exist before reading remote D1 migrations');
+  assert.ok(d1ApplyPosition > d1ListPosition, 'remote D1 migrations must be read before they are applied');
+  assert.ok(turnstileSecretPosition > d1ApplyPosition, 'Turnstile secret must be set only after the production config and D1 target are bound');
+  assert.ok(workerDeployPosition > turnstileSecretPosition, 'Inquiry Worker deploy must occur only after the config-bound Turnstile secret step');
+  assert.doesNotMatch(stageTwo, /wrangler secret put TURNSTILE_SECRET_KEY(?! --config spikes\/inquiry-worker\/wrangler\.production\.jsonc)/);
+  assert.ok(routeActivationPosition > workerDeployPosition, 'Stage 2 must define an explicit post-backend route activation gate');
+  assert.ok(siteBuildPosition > routeActivationPosition, 'Stage 2 must switch away from the disabled Stage-1 route before the active site build');
+  assert.match(stageTwo, /Ein bloßes Setzen von API-URL und Turnstile-Key reicht ausdrücklich nicht/);
 
   assert.equal(
     readdirSync(outDir).includes('_redirects'),
-    false,
-    'quality build must not introduce implicit redirects',
+    true,
+    'quality build must include the explicit domain-root routing contract',
+  );
+  const redirectRules = readFileSync(join(outDir, '_redirects'), 'utf8')
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line && !line.startsWith('#'));
+  assert.deepEqual(
+    redirectRules,
+    ['/ /demo/ 302'],
+    'quality build must contain only the reviewed domain-root redirect',
   );
   console.log(`quality-baseline-ok html=${Buffer.byteLength(html)} css=${cssBytes} js=${jsBytes} gzip=${transferBytes}`);
 } finally {

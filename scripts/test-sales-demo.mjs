@@ -135,6 +135,10 @@ try {
   assert.equal(attr(elements(demo, 'main')[0], 'id'), 'main-content');
   assert.equal(attr(elements(demo, 'main')[0], 'tabindex'), '-1');
   assert.equal(elements(demo, 'footer').length, 1);
+  const demoFooter = elements(demo, 'footer')[0];
+  const demoFooterHrefs = elements(demoFooter, 'a').map((node) => attr(node, 'href'));
+  assert.ok(demoFooterHrefs.includes('/impressum/'), 'demo footer must link the legal notice');
+  assert.ok(demoFooterHrefs.includes('/datenschutz/'), 'demo footer must link the privacy page');
 
   const meta = elements(demoHead, 'meta');
   const metaByName = (name) => meta.find((node) => attr(node, 'name') === name);
@@ -163,7 +167,7 @@ try {
   assert.match(demoText, /Deine Erinnerungen/);
   assert.match(demoText, /persönlich(?:er|en) Link oder Code/);
   assert.match(demoText, /WhatsApp/);
-  assert.match(demoText, /Jetzt anfragen/);
+  assert.match(demoText, /Anfragebereich/);
   assert.match(demoText, /Angebot wählen/);
   assert.match(demoText, /Eventdetails/);
   assert.match(demoText, /Kontaktdetails/);
@@ -177,7 +181,7 @@ try {
   assert.equal(offerDetails.length, 3, 'each offer needs a real expandable Mehr-erfahren disclosure');
   for (const detail of offerDetails) assert.match(textContent(detail), /Mehr erfahren/);
   const inquiryChoices = elements(demo, 'a').filter((node) => hasAttr(node, 'data-demo-offer-choice'));
-  assert.equal(inquiryChoices.length, 3, 'only direct inquiry CTAs may preselect products');
+  assert.equal(inquiryChoices.length, 0, 'disabled Stage-1 inquiry must not expose product-preselection behavior');
   assert.doesNotMatch(demoHtml, /mailto:|tel:/i);
   assert.doesNotMatch(demoHtml, /wa\.me\//i, 'WhatsApp must stay unlinked until a real business number is configured');
   assert.doesNotMatch(demoText, /€|EUR|\b[0-9]+(?:[.,][0-9]{2})?\s*Euro\b/i);
@@ -242,17 +246,25 @@ try {
         `dead demo fragment link ${href}`,
       );
     } else {
-      assert.equal(href, '/demo/', `unexpected external or dead demo link ${href}`);
+      assert.ok(
+        ['/demo/', '/impressum/', '/datenschutz/'].includes(href),
+        `unexpected external or dead demo link ${href}`,
+      );
     }
   }
 
-  const form = elements(demo, 'form').find((node) => hasAttr(node, 'data-demo-inquiry-form'));
-  assert.ok(form, 'demo inquiry form is missing');
+  const form = elements(demo, 'form').find((node) => hasAttr(node, 'data-demo-inquiry-disabled'));
+  assert.ok(form, 'disabled Stage-1 inquiry form preview is missing');
+  assert.equal(attr(form, 'aria-disabled'), 'true');
+  assert.equal(hasAttr(form, 'data-demo-inquiry-form'), false);
   assert.equal(hasAttr(form, 'data-inquiry-form'), false);
   assert.equal(hasAttr(form, 'data-api-url'), false);
   assert.equal(hasAttr(form, 'data-turnstile-site-key'), false);
   assert.equal(elements(form, 'fieldset').length, 3);
   assert.equal(elements(form, 'legend').length, 3);
+  for (const fieldset of elements(form, 'fieldset')) {
+    assert.equal(hasAttr(fieldset, 'disabled'), true, 'every Stage-1 inquiry field group must be disabled');
+  }
   for (const control of descendants(form, (node) => ['input', 'select', 'textarea'].includes(node.nodeName))) {
     assert.ok(ancestor(control, 'label'), `${attr(control, 'name')} must have a real label`);
   }
@@ -262,27 +274,21 @@ try {
   assert.equal(hasAttr(descendants(form, (node) => attr(node, 'name') === 'offerId')[0], 'required'), true);
   assert.equal(hasAttr(descendants(form, (node) => attr(node, 'name') === 'date')[0], 'required'), true);
   const packageSelect = descendants(form, (node) => attr(node, 'name') === 'packageId')[0];
-  assert.equal(hasAttr(packageSelect, 'disabled'), false, 'package field must be usable in the new preview');
+  assert.equal(hasAttr(packageSelect, 'disabled'), true, 'package field must remain disabled on the public Stage-1 domain');
   const submit = elements(form, 'button').find((node) => attr(node, 'type') === 'submit');
-  assert.match(textContent(submit), /Anfrage senden/);
-  const status = descendants(form, (node) => hasAttr(node, 'data-demo-inquiry-status'))[0];
-  assert.equal(attr(status, 'role'), 'status');
-  assert.equal(attr(status, 'aria-live'), 'polite');
-  assert.equal(attr(status, 'tabindex'), '-1');
+  assert.equal(hasAttr(submit, 'disabled'), true, 'Stage-1 inquiry submit must be disabled');
+  assert.match(textContent(submit), /noch nicht aktiv/);
+  assert.match(demoText, /Bitte noch keine Kontaktdaten eintragen/);
+  assert.match(demoText, /keine Anfragen übermittelt/);
+  assert.equal(descendants(form, (node) => hasAttr(node, 'data-demo-inquiry-status')).length, 0);
 
   const demoScripts = elements(demo, 'script').filter((node) => attr(node, 'src'));
-  assert.equal(demoScripts.length, 1, 'demo must ship one small local behavior bundle');
-  assert.equal(attr(demoScripts[0], 'src'), '/demo-inquiry.js');
-  assert.ok(hasAttr(demoScripts[0], 'defer'));
-  const demoScriptSource = readFileSync(join(repo, 'public', 'demo-inquiry.js'), 'utf8');
-  assert.doesNotMatch(
-    demoScriptSource,
-    /\bfetch\s*\(|requestInquiry|createInquiryController|data-api-url|turnstile/i,
-    'demo behavior must not call or imitate the production inquiry API',
-  );
+  assert.equal(demoScripts.length, 0, 'base Stage-1 demo must not ship mock inquiry behavior');
+  assert.doesNotMatch(demoHtml, /demo-inquiry\.js/);
 
   assert.ok(descendants(production, (node) => hasAttr(node, 'data-inquiry-form'))[0]);
   assert.equal(productionHtml.includes('data-demo-inquiry-form'), false);
+  assert.equal(demoHtml.includes('data-demo-inquiry-form'), false);
   assert.equal(demoHtml.includes('data-inquiry-form'), false);
 
   const productionStructured = elements(elements(production, 'head')[0], 'script').filter(

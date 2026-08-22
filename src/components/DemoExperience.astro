@@ -187,7 +187,7 @@ const isPortraitAssetFrame = frameVariant === 10;
       <a href="#pakete">Pakete</a>
       <a href="#galerie">Galerie</a>
       <a href="#ablauf">So funktioniert’s</a>
-      <a href="#anfrage" class="nav-cta">Jetzt anfragen</a>
+      <a href="#anfrage" class="nav-cta">Anfragebereich</a>
     </nav>
   </header>
 
@@ -202,7 +202,7 @@ const isPortraitAssetFrame = frameVariant === 10;
           persönlich, hochwertig und mit Raum für genau den Moment, der zu deinem Anlass passt.
         </p>
         <div class="hero-actions">
-          <a class="button button-primary" href="#anfrage">Jetzt anfragen <span aria-hidden="true">→</span></a>
+          <a class="button button-primary" href="#anfrage">Anfragebereich ansehen <span aria-hidden="true">→</span></a>
           <a class="button button-ghost" href="#angebote">Angebote entdecken</a>
         </div>
         <div class="demo-hero-points" aria-label="Hall of Memory auf einen Blick">
@@ -292,7 +292,7 @@ const isPortraitAssetFrame = frameVariant === 10;
                 <p>{offer.moreInfo}</p>
               </details>
               <div class="demo-card-actions">
-                <a class="demo-card-cta" href="#anfrage" data-demo-offer-choice={offer.id}>Jetzt anfragen</a>
+                <a class="demo-card-cta" href="#anfrage">Anfragebereich ansehen</a>
                 {productWhatsAppHref(offer.title) && (
                   <a
                     class="demo-card-whatsapp"
@@ -438,7 +438,7 @@ const isPortraitAssetFrame = frameVariant === 10;
 
     <section class="demo-section demo-inquiry shell" id="anfrage" aria-labelledby="inquiry-title">
       <div class="demo-inquiry-intro">
-        <p class="eyebrow">Jetzt anfragen</p>
+        <p class="eyebrow">Anfrage</p>
         <h2 id="inquiry-title">Erzähl uns,<br /><em>was du vorhast.</em></h2>
         <p>
           Mit wenigen Angaben können wir deinen Anlass, das gewünschte Erlebnis und den passenden
@@ -449,14 +449,16 @@ const isPortraitAssetFrame = frameVariant === 10;
         </div>
       </div>
 
-      <form class="inquiry-card demo-inquiry-card" data-demo-inquiry-form autocomplete="off" aria-label="Anfrageformular">
+      <form class="inquiry-card demo-inquiry-card" data-demo-inquiry-disabled autocomplete="off" aria-label="Anfrageformular – noch nicht aktiv" aria-disabled="true">
+        <p class="demo-form-legal" role="status"><strong>Entwicklungsstand:</strong> Das Anfrageformular ist noch nicht aktiv. Bitte noch keine Kontaktdaten eintragen; es werden derzeit keine Anfragen übermittelt.</p>
         <InquiryEventFields
           offers={demoOffers}
           packages={demoPackages}
           showStepLegends={true}
           emptyPackageLabel="Beratung gewünscht"
+          disabled={true}
         />
-        <fieldset class="inquiry-field-group inquiry-step">
+        <fieldset class="inquiry-field-group inquiry-step" disabled>
           <legend><span aria-hidden="true">03</span> Kontaktdetails</legend>
           <div class="form-grid-two">
             <label>
@@ -477,9 +479,8 @@ const isPortraitAssetFrame = frameVariant === 10;
             <textarea name="message" maxlength={inquiryLimits.message} rows="4" placeholder="Was sollen wir über dein Event noch wissen?"></textarea>
           </label>
         </fieldset>
-        <button type="submit" class="button button-primary demo-submit">Anfrage senden <span aria-hidden="true">→</span></button>
+        <button type="submit" class="button button-primary demo-submit" disabled>Anfrageformular noch nicht aktiv</button>
         <p class="demo-form-legal">Eine Anfrage ist keine Buchung und keine Verfügbarkeitsbestätigung.</p>
-        <p class="demo-inquiry-status" data-demo-inquiry-status role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden></p>
       </form>
     </section>
 
@@ -501,8 +502,8 @@ const isPortraitAssetFrame = frameVariant === 10;
           <img class="demo-contact-logo" src={`${assetBase}brand/hall-of-memory-logo-dark.jpg`} alt="Hall of Memory – Schwarz-Gold-Variante auf heller Fläche" width="4167" height="4167" loading="lazy" decoding="async" />
           <p class="eyebrow">Direkter Kontakt</p>
           <h3>Dein Event beginnt mit einer Nachricht.</h3>
-          <p>Nutze das Anfrageformular für die wichtigsten Eckdaten. WhatsApp ergänzt den direkten Kontakt.</p>
-          <a class="button button-primary" href="#anfrage">Jetzt anfragen</a>
+          <p>Der direkte Anfrageweg wird vor dem Launch aktiviert. Bis dahin zeigt dieser Bereich den vorgesehenen Ablauf.</p>
+          <a class="button button-primary" href="#anfrage">Anfragebereich ansehen</a>
           {whatsappHref ? (
             <a class="button button-ghost" href={whatsappHref} target="_blank" rel="noopener noreferrer">Per WhatsApp schreiben</a>
           ) : (
@@ -536,10 +537,9 @@ const isPortraitAssetFrame = frameVariant === 10;
       <img src={`${assetBase}brand/hall-of-memory-logo-primary.svg`} alt="Hall of Memory" width="406" height="475" />
       <span class="demo-brand-copy"><small>Every Star Has a Memory</small></span>
     </a>
-    <p>Event-Erlebnisse mit Raum für Erinnerungen.</p>
-    <a href="#anfrage">Jetzt anfragen <span aria-hidden="true">↑</span></a>
+    <p>Event-Erlebnisse mit Raum für Erinnerungen. · <a href={`${assetBase}impressum/`}>Impressum</a> · <a href={`${assetBase}datenschutz/`}>Datenschutz</a></p>
+    <a href="#anfrage">Anfragebereich <span aria-hidden="true">↑</span></a>
   </footer>
 
   {frameVariant && <script is:inline src={`${assetBase}frame-comparison.js`} defer></script>}
-  <script is:inline src={`${assetBase}demo-inquiry.js`} defer></script>
 </BaseLayout>

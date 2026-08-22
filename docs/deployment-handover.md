@@ -44,6 +44,8 @@ Solange Inhalte/Legal noch Entwurfsstand sind, bleibt `noindex` bewusst erhalten
 
 Damit zeigt `https://hallofmemory.de/` auf die gepflegte Kundenwebsite unter `/demo/`, ohne den sicherheitsgehärteten internen Root-Scaffold oder seine Formularprüfungen zu ersetzen. Bis zur finalen Launch-Entscheidung bleibt es ein temporärer `302` statt eines permanenten `301`.
 
+Der Anfragebereich auf `/demo/` ist in Stage 1 nur eine sichtbare Ablaufvorschau: Feldgruppen und Submit sind disabled, es gibt keinen Mock-Submit und keinen clientseitigen Pfad, der eingegebene Kontaktdaten scheinbar entgegennimmt und verwirft. Ein echter Anfragepfad darf erst mit Stage 2 aktiviert werden.
+
 ## 3. Stufe 1 — Domain-Arbeitsstand
 
 Vor Mutation:

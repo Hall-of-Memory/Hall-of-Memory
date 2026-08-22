@@ -63,4 +63,8 @@ Chrome wurde lokal unter `/opt/google/chrome/google-chrome` verwendet. Nach dem 
 - Browserreview des visuellen UI-HEAD `fee42840c2d0de81a1e0b8600af905f5279b97aa`: Desktop `PASS`, iPad `PASS`, iPhone `PASS`.
 - Produktionscontent, Inquiry-Backend und T013 bleiben gegenüber dem Ausgangs-HEAD unverändert.
 
+### Sicherheits-Nachtrag für die öffentliche Arbeitsdomain — 2026-08-22
+
+Mit T045 wird `/demo/` vorübergehend zum sichtbaren Arbeitsstand hinter `hallofmemory.de`. Damit ist der frühere lokale Mock-Submit nicht mehr geeignet: Ein echter Interessent könnte ihn mit einer funktionierenden Anfrage verwechseln, obwohl keine Daten an den Betreiber gehen. Der Anfragebereich bleibt deshalb als Design-/Ablaufvorschau sichtbar, aber alle drei Feldgruppen und der Submit sind technisch deaktiviert, die Seite weist ausdrücklich darauf hin, dass derzeit keine Anfragen übermittelt werden, Produkt-Preselection und `demo-inquiry.js` werden nicht mehr ausgeliefert. Die echte Anfragefunktion wird erst in Stage 2 nach T008/T010/T011 aktiviert. Dieser Nachtrag supersediert für die öffentliche Arbeitsdomain ausschließlich die frühere Akzeptanz „Anfrage beispielhaft senden“; die übrige T014-Demo-/SEO-Isolation bleibt erhalten.
+
 Damit ist T014 `done`. Die Produktionswebsite bleibt getrennt davon weiterhin durch T007 bis T011 auf echte Kundenzulieferungen, Geschäftsregeln beziehungsweise autorisierte Infrastruktur angewiesen; T013 bleibt unverändert `blocked_external`.

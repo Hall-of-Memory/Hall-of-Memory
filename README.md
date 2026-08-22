@@ -6,7 +6,7 @@ Kanonisches Arbeitsrepository für **Hall of Memory**.
 
 **Produktions- und Primärdomain:** `https://hallofmemory.de`
 
-Die Domain liegt beim Kunden bei STRATO. Der aktuelle DNS-Cutover zur Zielplattform ist in T045 dokumentiert. Bis der Domain-Readback vollständig grün ist, bleibt die GitHub-Pages-Preview nur als technischer Übergangs-Fallback bestehen.
+Die Domain liegt auf STRATO. Der aktuelle DNS-Cutover zur Zielplattform ist in T045 dokumentiert. Bis der Domain-Readback vollständig grün ist, bleibt die GitHub-Pages-Preview nur als technischer Übergangs-Fallback bestehen.
 
 ## Ziel
 
@@ -14,7 +14,7 @@ Eine hochwertige, moderne und erweiterbare Event-Website mit Schwerpunkt auf Fot
 
 ## Eigentum und technische Rollen
 
-- **Domain/Registrar:** kundeneigen bei STRATO.
+- **Domain/Registrar:** STRATO.
 - **GitHub:** Quellcode, Pull Requests, CI und nachvollziehbare Änderungshistorie.
 - **Cloudflare:** vorgesehene produktive Auslieferung und später die serverseitigen Produktbausteine gemäß T009.
 - **GitHub Pages:** nur Übergangs-Preview; nicht die Produktionsplattform.
@@ -22,11 +22,11 @@ Eine hochwertige, moderne und erweiterbare Event-Website mit Schwerpunkt auf Fot
 
 Das Source-Repo soll langfristig so privat wie sinnvoll sein. Die Repository-Sichtbarkeit wird aber nicht auf Kosten von Branchschutz und CI-Sicherheit geändert. Solange der eingesetzte GitHub-Organisationstarif Schutzregeln für private Repositories nicht nachweislich unterstützt, bleibt die bereinigte Veröffentlichungshistorie ohne vertrauliche Quellen zulässig öffentlich. T045 hält diese Sichtbarkeitsentscheidung revisionsgebunden fest.
 
-Unabhängig von der GitHub-Sichtbarkeit gilt: produktive Secrets, Zugangsdaten, private Eventfotos, Kundendaten, Verträge und nicht zur Veröffentlichung bestimmte Designer-Originaldateien gehören **nicht** in Git.
+Unabhängig von der GitHub-Sichtbarkeit gilt: produktive Secrets, Zugangsdaten, private Eventfotos, Daten, Verträge und nicht zur Veröffentlichung bestimmte Designer-Originaldateien gehören **nicht** in Git.
 
 ## Verbindliche Arbeitsregel
 
-**Alle Aufgaben, Restpunkte, Entscheidungen und Folgethemen dieses Kundenauftrags werden ausschließlich in diesem Repository verwaltet.**
+**Alle Aufgaben, Restpunkte, Entscheidungen und Folgethemen werden ausschließlich in diesem Repository verwaltet.**
 
 - Kein Bureau als Aufgabenquelle für diesen Auftrag.
 - GitHub Issues sind kein paralleles Taskregister.

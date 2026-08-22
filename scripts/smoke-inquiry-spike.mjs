@@ -327,6 +327,28 @@ try {
   assert.equal(updated.status, 200, await updated.text());
   const count = await fetch(`${baseUrl}/__spike/count`);
   assert.deepEqual(await count.json(), { count: 1 });
+
+  execFileSync(
+    wrangler,
+    [
+      'd1',
+      'execute',
+      'DB',
+      '--local',
+      '--config',
+      'wrangler.jsonc',
+      '--command',
+      'DROP TABLE inquiry_notifications',
+    ],
+    { cwd: spike, stdio: 'pipe' },
+  );
+  const storageFailure = await post({
+    ...valid,
+    email: 'storage-failure@example.invalid',
+  });
+  assert.equal(storageFailure.status, 500);
+  assert.match(storageFailure.headers.get('content-type') ?? '', /^application\/json\b/);
+  assert.deepEqual(await storageFailure.json(), { error: 'storage-failed' });
   console.log('inquiry-admin-frontend-smoke-ok');
 } finally {
   if (rejectionChild) {

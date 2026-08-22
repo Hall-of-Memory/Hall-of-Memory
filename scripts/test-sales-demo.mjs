@@ -382,7 +382,7 @@ try {
     ...scriptRefs.map((reference) => readFileSync(localAssetPath(reference))),
   ].reduce((total, value) => total + gzipSync(value).byteLength, 0);
   assert.ok(Buffer.byteLength(demoHtml) <= 32 * 1024, 'demo HTML budget exceeded (32 KiB raw)');
-  assert.ok(cssBytes <= 28 * 1024, 'demo CSS budget exceeded (28 KiB raw)');
+  assert.ok(cssBytes <= 26 * 1024, 'demo CSS budget exceeded (26 KiB raw)');
   assert.ok(jsBytes <= 4 * 1024, 'demo JavaScript budget exceeded (4 KiB raw)');
   assert.ok(transferBytes <= 24 * 1024, 'demo initial HTML/CSS/JS transfer budget exceeded (24 KiB gzip)');
 

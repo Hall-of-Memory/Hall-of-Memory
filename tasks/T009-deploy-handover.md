@@ -14,35 +14,52 @@ dependencies: [T001, T004, T008, T010, T011]
 
 ## Bestätigter Kundenwunsch — 2026-08-12
 
-Domain und produktive Zugänge sollen auf den Namen des Kunden bzw. unter seine tatsächliche Kontrolle laufen. Das bestätigt die bereits vorhandene Eigentumsinvariante dieses Tasks; Entwicklerkonten dürfen keine dauerhafte Abhängigkeit erzeugen.
+Domain und produktive Zugänge sollen auf den Namen des Kunden bzw. unter seine tatsächliche Kontrolle laufen. Entwicklerkonten dürfen keine dauerhafte Abhängigkeit erzeugen.
 
-## Public-First GitHub-Entscheidung — 2026-08-16
+## Produktionsdomain-Entscheidung — 2026-08-22
 
-- Das bestehende Repository soll nach bestandenem Publication Gate aus T043 direkt als **öffentliches kanonisches Repository** in einer GitHub-Organisation des Kunden veröffentlicht werden.
-- Kein temporäres kanonisches Repository unter Entwicklerhoheit und kein späterer Transfer als Normalpfad. Das Kundenrepo `Hall-of-Memory/Hall-of-Memory` wurde am 22.08.2026 live als öffentliches Ziel unter Kundenhoheit verifiziert; der erste kanonische Remote wird ausschließlich dorthin gesetzt.
-- Der Kunde bleibt Organisations-Owner; Alexander benötigt lediglich die Repository-Adminrechte, die für Pflege, CI und Integrationen tatsächlich nötig sind.
-- Initial wird ausschließlich der geprüfte `main` veröffentlicht. Historische lokale Branches und Worktrees werden nicht pauschal per `--all` oder `--mirror` publiziert.
-- Das öffentliche Repo ermöglicht auf dem kostenlosen GitHub-Pfad einen technisch geschützten PR-/CI-Workflow. Ruleset/Branch-Protection und der reale Required-Check werden erst nach Existenz des Kundenrepos konfiguriert und per Readback verifiziert.
-- GitHub bleibt Quellcode-, Collaboration-, CI- und Preview-Oberfläche. Produktion bleibt die bereits vorbereitete Cloudflare-Architektur; ein Merge ist keine implizite Produktionsfreigabe.
-- Die heutige öffentliche GitHub-Pages-Preview unter Entwicklerhoheit ist nur ein temporärer Publikationsmirror. Ziel ist, sie nach erfolgreichem Kundenrepo-/Pages-Readback aus der kanonischen Quelle abzulösen und anschließend zu archivieren.
+Der Kunde möchte die Website jetzt direkt auf der vorhandenen Domain **`https://hallofmemory.de`** veröffentlichen und anschließend dort weiterentwickeln. T045 ist der operative Domain-Cutover-Task.
 
-## Technische Vorbereitung — 2026-08-11
+Live belegt:
 
-- `docs/deployment-handover.md` beschreibt den reproduzierbaren Preflight, alle drei öffentlichen Buildvariablen, sämtliche serverseitigen Bindings/Variablen/Secrets, D1-Export und Migrationen `0001` → `0002`, Worker-vor-Site-Reihenfolge, Smokes, Readbacks und Rollback ohne automatische Down-Migration.
-- `.env.example` enthält ausschließlich leere öffentliche Buildvariablen. `spikes/inquiry-worker/wrangler.production.example.jsonc` inventarisiert serverseitige Platzhalternamen, ist mit `REPLACE_WITH_*` absichtlich nicht produktiv deploybar und enthält kein Secret.
+- Registrar/DNS liegt beim Kunden bei STRATO.
+- Autoritative Nameserver: `docks09.rzone.de`, `shades16.rzone.de`.
+- Aktueller Apex-A-Record: `217.160.0.152`.
+- `www.hallofmemory.de` ist CNAME auf `hallofmemory.de`.
+
+Die Produktionsplattform bleibt Cloudflare. GitHub Pages ist nur noch Übergangs-Fallback und wird nach erfolgreichem Domain-Readback nicht mehr als Primärpreview benötigt.
+
+## GitHub-/Source-Entscheidung — aktualisiert 2026-08-22
+
+- Das kanonische Kundenrepo ist `Hall-of-Memory/Hall-of-Memory`.
+- Der bisherige Public-First-Schritt war ein Bootstrap, um kundenkontrollierten Remote, CI, Pages und Branch Protection ohne Zusatzkosten sicher zu etablieren.
+- Der Kunde möchte den Source nun möglichst privat halten. Das ist architektonisch sinnvoll, weil die öffentliche Website und die Repository-Sichtbarkeit getrennte Schichten sind.
+- Eine Sichtbarkeitsänderung darf aber **nicht** stillschweigend den gerade eingerichteten `main`-Schutz entfernen. GitHub dokumentiert Branch Protection/Rulesets für private Repositories nicht für GitHub Free for organizations, sondern für passende bezahlte Pläne.
+- Deshalb gilt fail-closed: Repo erst dann auf `private` umstellen, wenn live belegt ist, dass der Kundentarif die benötigten Schutzregeln für private Repositories unterstützt, oder der Kunde bewusst eine andere Schutz-/Kostenentscheidung trifft.
+- Keine kostenpflichtige GitHub-Aufwertung wird ohne ausdrückliche Freigabe aktiviert.
+- Unabhängig von der Sichtbarkeit bleiben private Eventmedien, Secrets, personenbezogene Kundendaten und nicht öffentliche Designer-Source-Master außerhalb von Git.
+
+## Technische Vorbereitung — 2026-08-11 bis 2026-08-22
+
+- `docs/deployment-handover.md` beschreibt den reproduzierbaren Preflight, öffentliche Buildvariablen, serverseitige Bindings/Variablen/Secrets, D1-Export und Migrationen, Worker-vor-Site-Reihenfolge, Smokes, Readbacks und Rollback.
+- `.env.example` enthält ausschließlich leere öffentliche Buildvariablen. `spikes/inquiry-worker/wrangler.production.example.jsonc` ist absichtlich nicht produktiv deploybar und enthält kein Secret.
 - `npm run dry-run:worker` und `npm run dry-run:site` prüfen beide Artefakte lokal ohne Upload. Das vollständige `npm run verify` umfasst Inquiry-Smoke, Domain/Form/Quality, Astro-Check/Build und beide Dry-Runs.
-- Eigentums-/Zugangscheckliste und Ressourcen-/Kosteninventar grenzen Domain, Static/API Worker, D1, Turnstile, Rate Limit, Access und Email Service von nicht aktivierten R2/Queues/Durable Objects/Payments ab. Veränderte Free-Tiers oder Preise müssen vor Aktivierung im Kundenkonto erneut gelesen und akzeptiert werden.
+- Das Kundenrepo ist live; `main` besitzt PR-Pflicht, Required Check `verify`, Conversation Resolution, Admin-Enforcement sowie deaktivierten Force-Push und Branch-Löschung.
+- Der erste öffentliche GitHub-Runner-Fehler im Rate-Limit-Smoke wurde in PR #1 korrigiert und im kanonischen T043-Journal dokumentiert.
+- GitHub Pages aus dem Kundenrepo ist als Übergangs-Preview live und extern read-backbar.
 
 ## Externe Blockade
 
-Es fehlen weiterhin kundeneigene Konten/Ressourcen und Rollen, Domain/API-Origin/DNS, echte Turnstile-/Access-/D1-/Rate-Limit-/Email-Bindings, verifizierte Ziel-/Absenderadresse, finale Inhalte sowie Datenschutz-/Löschfreigabe aus T008 und die verbleibenden Produkt-/CMS-Entscheidungen aus T011.
+Für den **statischen Domain-Livegang** fehlen derzeit noch die nachweislich kundeneigene Cloudflare-Zielautorität und die autorisierte DNS-Mutation bei STRATO. Die Domain selbst ist nicht mehr unbekannt.
 
-Der frühere GitHub-Blocker ist am 22.08.2026 in T043 in Umsetzung gegangen: Kundenorganisation/Zielrepo und Repository-Adminzugriff sind live verifiziert. Designer-Arbeitsquellen werden nicht öffentlich übertragen; nur die bestätigten Webexports gehen in die bereinigte Public-Historie. CI, Pages, Branch-Schutz und der revisionsgebundene Cutover werden in T043 live abgeschlossen. Ein Entwicklerrepo wird nicht als Zwischenlösung erzeugt.
+Für die vollständige V1 mit Anfrage/Admin bleiben zusätzlich die produktiven Ressourcen/Freigaben aus T008/T010/T011 erforderlich: Turnstile, Access, D1, Rate Limit, Email-Binding, verifizierte Ziel-/Absenderadresse, finale Inhalte sowie Datenschutz-/Löschregel.
 
-T009 ist deshalb `blocked_external`. Es wurde kein produktives Deployment freigeschaltet und es wurden keine produktiven Secrets, Domains, Remote-D1-, Access-, Turnstile-, Email- oder kostenpflichtigen Ressourcen angelegt.
+Der statische Marketing-/Demo-Livegang auf `hallofmemory.de` darf von diesen späteren Backend-Bausteinen getrennt vorbereitet werden, solange nicht fälschlich ein funktionsfähiges produktives Anfrageformular behauptet wird. Fehlende produktive Formularwerte bleiben fail-closed.
 
-## Sales-Demo-Preview-Befund — 2026-08-11
+T009 bleibt deshalb `blocked_external`; T045 ist für den unmittelbar gewünschten Domain-Cutover `active`.
 
-- Die für T015 verwendete unauthentifizierte Cloudflare-Temporary-Preview unter `hall-of-memory.lofty-canoe.workers.dev` war beim T016-Closeout nicht mehr erreichbar und ohne dauerhafte Cloudflare-Authentifizierung nicht fortschreibbar.
-- Als rein temporärer, nicht produktiver Ersatz wurde der exakt validierte T016-Build per `wrangler deploy --temporary` unter `https://hall-of-memory.dot-shaker.workers.dev/demo/` bereitgestellt. Der öffentliche Readback lieferte HTTP 200; Demo-HTML und Demo-CSS waren bytegenau identisch mit dem lokalen `dist`, `noindex,nofollow` und die Sales-Demo-Kennzeichnung blieben erhalten.
-- Diese Temporary-Preview ist kein dauerhafter Hosting-/Handover-Nachweis. Eine stabile, wiederverwendbare Preview- oder Produktionsroute bleibt Bestandteil von T009 und setzt eine autorisierte, übergebbare Cloudflare-/Domain-Autorität voraus. Bis dahin darf aus wechselnden temporären `workers.dev`-Hostnamen keine Persistenzzusage abgeleitet werden.
+## Historischer Preview-Befund — 2026-08-11
+
+- Frühere unauthentifizierte Cloudflare-Temporary-Previews unter wechselnden `workers.dev`-Hostnamen waren ausdrücklich nicht dauerhaft.
+- Diese temporären Hosts sind keine Produktions- oder Handover-Wahrheit.
+- Mit der Kundenentscheidung vom 22.08.2026 ist `hallofmemory.de` die einzige vorgesehene produktive Primäradresse.

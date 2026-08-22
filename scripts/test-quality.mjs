@@ -247,8 +247,17 @@ try {
 
   assert.equal(
     readdirSync(outDir).includes('_redirects'),
-    false,
-    'quality build must not introduce implicit redirects',
+    true,
+    'quality build must include the explicit domain-root routing contract',
+  );
+  const redirectRules = readFileSync(join(outDir, '_redirects'), 'utf8')
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line && !line.startsWith('#'));
+  assert.deepEqual(
+    redirectRules,
+    ['/ /demo/ 302'],
+    'quality build must contain only the reviewed domain-root redirect',
   );
   console.log(`quality-baseline-ok html=${Buffer.byteLength(html)} css=${cssBytes} js=${jsBytes} gzip=${transferBytes}`);
 } finally {

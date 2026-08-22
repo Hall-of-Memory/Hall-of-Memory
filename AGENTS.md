@@ -18,15 +18,16 @@ Diese Datei ist der operative Arbeitsvertrag für Coding-Agenten in Hall of Memo
 - Markenassets nicht eigenmächtig nachzeichnen, umfärben oder inhaltlich verändern.
 - T042 beachten: Styling-Erweiterungen dürfen das Demo-CSS-Budget nicht weiter unter Druck setzen, solange die dort geforderte Reserve nicht wiederhergestellt ist.
 
-## 3. Public-Repository-Grenze
+## 3. Datenschutz- und Veröffentlichungsgrenze
 
-Dieses Projekt ist für ein öffentliches, kundenkontrolliertes kanonisches GitHub-Repository vorgesehen. Deshalb gilt fail-closed:
+Die Repository-Sichtbarkeit kann sich gemäß T045 ändern. Deshalb gilt unabhängig von `public` oder `private` fail-closed:
 
 - Keine Secrets, Tokens, Passwörter, `.env`-Dateien oder produktiven Zugangsdaten committen.
 - Keine personenbezogenen Eventkundendaten oder privaten Eventmedien committen.
 - Keine internen Verträge, Rechnungen, privaten Korrespondenzen oder sonstigen nicht zur Veröffentlichung bestimmten Unterlagen committen.
-- Original-, Stock-, Font- oder Designerassets nur dann in die öffentliche Historie aufnehmen, wenn ihre Weiterverbreitung geklärt ist. Bei unklaren Rechten nicht veröffentlichen und den kanonischen Task blockieren.
+- Designer-/Stock-/Font-Source-Master nur dann in eine öffentliche Historie aufnehmen, wenn ihre Weiterverbreitung geklärt ist. Web-Exports für die öffentliche Website sind davon getrennt zu beurteilen.
 - `.env.example` darf nur leere bzw. offensichtlich nicht produktive Beispielwerte enthalten.
+- Ein privates Git-Repo ist kein Ersatz für eine private Eventmedien-/Secret-Schicht.
 
 ## 4. Verifikation
 
@@ -45,15 +46,17 @@ Wenn eine Änderung nur Dokumentation betrifft, darf `npm ci` entfallen, wenn di
 
 - `main` soll stabil und veröffentlichbar bleiben.
 - Normalfall: Task -> kleiner Branch -> Änderung -> `npm run verify` -> Pull Request -> Review -> Merge.
-- Direkte Pushes auf `main`, Force-Pushes und ungeprüfte Merges vermeiden; im späteren öffentlichen Kundenrepo sollen Rulesets/Branch-Protection dies technisch absichern.
+- Direkte Pushes auf `main`, Force-Pushes und ungeprüfte Merges vermeiden; vorhandenen Branchschutz nicht für eine Sichtbarkeitsänderung opfern.
 - Alte lokale Branches/Worktrees nicht mit `--all` oder `--mirror` ungeprüft in das Kundenrepo publizieren.
 - GitHub Issues dürfen für Diskussion oder externe Referenzen genutzt werden, aber nicht als zweite Task-Wahrheit.
 
 ## 6. Deployment-Grenze
 
-- GitHub ist Quellcode-, Review- und Preview-Oberfläche; die vorgesehene Produktion bleibt Cloudflare gemäß `docs/deployment-handover.md` und T009.
-- Keine produktiven Cloudflare-Ressourcen, Domains, D1-Datenbanken, Turnstile-/Access-/Email-Bindings oder kostenpflichtigen Dienste eigenmächtig anlegen oder aktivieren.
-- Kein Merge darf implizit als Freigabe für Produktion interpretiert werden.
+- Produktiver Primär-Origin ist gemäß T045 `https://hallofmemory.de`.
+- Cloudflare bleibt die vorgesehene Produktionsplattform; GitHub Pages ist nur Übergangs-Fallback bis zum erfolgreichen Domain-Cutover.
+- Die Kundenentscheidung vom 22.08.2026 autorisiert den statischen Domain-Livegang und die weitere Entwicklung auf dieser Domain, sobald kundeneigene Cloudflare-/DNS-Autorität technisch verfügbar ist und keine neue kostenpflichtige Zusatznutzung ohne Freigabe entsteht.
+- Produktive Backend-Ressourcen wie D1, Turnstile, Access, Email-Bindings oder neue kostenpflichtige Dienste bleiben an T009/T011 und ihre Freigaben gebunden.
+- Nach Deployment immer revisionsgebundenen HTTP-/Browser-Readback durchführen; ein Merge allein beweist keinen erfolgreichen Livegang.
 
 ## 7. Definition of Done
 
@@ -64,4 +67,4 @@ Eine Änderung ist erst abgeschlossen, wenn:
 3. relevante Tests inklusive `npm run verify` grün sind,
 4. Diff und Auswirkungen selbst geprüft wurden,
 5. Task-Journal/Evidenz aktualisiert ist,
-6. keine neue Public-Repository-, Datenschutz-, Rechte- oder Deployment-Grenze verletzt wurde.
+6. keine Datenschutz-, Rechte-, Repository-Sichtbarkeits- oder Deployment-Grenze verletzt wurde.

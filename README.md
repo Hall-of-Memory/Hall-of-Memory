@@ -1,20 +1,28 @@
 # Hall of Memory
 
-Kanonisches Arbeitsrepository für den Kundenauftrag **Hall of Memory**.
+Kanonisches Arbeitsrepository für **Hall of Memory**.
+
+## Website
+
+**Produktions- und Primärdomain:** `https://hallofmemory.de`
+
+Die Domain liegt beim Kunden bei STRATO. Der aktuelle DNS-Cutover zur Zielplattform ist in T045 dokumentiert. Bis der Domain-Readback vollständig grün ist, bleibt die GitHub-Pages-Preview nur als technischer Übergangs-Fallback bestehen.
 
 ## Ziel
 
-Eine hochwertige, moderne und erweiterbare Event-Website mit Schwerpunkt auf Fotobox, Fotospiegel und Magazinbox. Die erste Version soll geringe laufende Kosten, vollständige Kundenhoheit und spätere Erweiterbarkeit um weitere Mietangebote sowie Verfügbarkeits-/Buchungsfunktionen sicherstellen.
+Eine hochwertige, moderne und erweiterbare Event-Website mit Schwerpunkt auf Fotobox, Fotospiegel und Magazinbox. Die Architektur soll geringe laufende Kosten, vollständige Kundenhoheit und spätere Erweiterbarkeit um weitere Mietangebote sowie Verfügbarkeits-/Buchungsfunktionen ermöglichen.
 
-## Repository- und Eigentumsmodell
+## Eigentum und technische Rollen
 
-Hall of Memory wird für ein **öffentliches, kundenkontrolliertes kanonisches GitHub-Repository** vorbereitet. Der erste kanonische Git-Remote soll direkt in einer GitHub-Organisation des Kunden liegen; ein temporäres Quellrepo unter Entwicklerhoheit ist nicht vorgesehen.
+- **Domain/Registrar:** kundeneigen bei STRATO.
+- **GitHub:** Quellcode, Pull Requests, CI und nachvollziehbare Änderungshistorie.
+- **Cloudflare:** vorgesehene produktive Auslieferung und später die serverseitigen Produktbausteine gemäß T009.
+- **GitHub Pages:** nur Übergangs-Preview; nicht die Produktionsplattform.
+- **`tasks/`:** einzige kanonische Task-Registry dieses Kundenauftrags.
 
-Der öffentliche GitHub-Stand verwendet eine bereinigte Veröffentlichungshistorie: private Designer-Arbeitsdateien und historische lokale Branches werden nicht publiziert; die Website nutzt ausschließlich die bestätigten Web-Exports unter `public/`. T043 dokumentiert den Cutover und die verbleibende Codex-Abnahme.
+Das Source-Repo soll langfristig so privat wie sinnvoll sein. Die Repository-Sichtbarkeit wird aber nicht auf Kosten von Branchschutz und CI-Sicherheit geändert. Solange der eingesetzte GitHub-Organisationstarif Schutzregeln für private Repositories nicht nachweislich unterstützt, bleibt die bereinigte Veröffentlichungshistorie ohne vertrauliche Quellen zulässig öffentlich. T045 hält diese Sichtbarkeitsentscheidung revisionsgebunden fest.
 
-GitHub dient Quellcode, Collaboration, CI und Preview. Die vorgesehene Produktionsarchitektur bleibt Cloudflare gemäß T009 und [`docs/deployment-handover.md`](docs/deployment-handover.md).
-
-Private Designer-/Kundenquellen, Eventmedien und produktive Secrets gehören ausdrücklich **nicht** in dieses öffentliche Repository.
+Unabhängig von der GitHub-Sichtbarkeit gilt: produktive Secrets, Zugangsdaten, private Eventfotos, Kundendaten, Verträge und nicht zur Veröffentlichung bestimmte Designer-Originaldateien gehören **nicht** in Git.
 
 ## Verbindliche Arbeitsregel
 
@@ -25,8 +33,9 @@ Private Designer-/Kundenquellen, Eventmedien und produktive Secrets gehören aus
 - `tasks/` ist die kanonische Task-Registry.
 - Architekturentscheidungen stehen in `decisions/`.
 - Kundenanforderungen und Primärevidenz stehen in `docs/` bzw. `assets/reference/`.
-- Keine Secrets, Zugangsdaten, personenbezogenen Kundendaten oder privaten Eventmedien committen.
-- Keine Assets mit ungeklärtem Recht zur öffentlichen Weiterverbreitung in die öffentliche Historie aufnehmen.
+- Geschäftsangaben, Preise, Kontaktdaten und Produktregeln niemals erfinden.
+- Keine Secrets, personenbezogenen Kundendaten oder privaten Eventmedien committen.
+- Web-Assets dürfen öffentlich ausgeliefert werden; private Source-Master bleiben außerhalb des öffentlichen Webpfads.
 
 ## Entwicklung
 
@@ -43,19 +52,25 @@ Kanonischer Volltest:
 npm run verify
 ```
 
-Der gleiche Volltest wird in GitHub Actions für Pull Requests und `main` ausgeführt.
+Der gleiche Volltest läuft in GitHub Actions für Pull Requests und `main`.
+
+## Deployment
+
+Produktiver Ziel-Origin ist `https://hallofmemory.de`. Ein Produktions-Build setzt `PUBLIC_SITE_URL` auf genau diesen HTTPS-Origin. Deployment, DNS-Cutover, Rollback und Readback sind in [`docs/deployment-handover.md`](docs/deployment-handover.md), T009 und T045 geregelt.
+
+Ein Merge allein ist keine Behauptung eines erfolgreichen Produktivdeployments. Ein Livegang gilt erst nach revisionsgebundenem Deployment und HTTP-/Browser-Readback der echten Domain als erfolgt.
 
 ## Zusammenarbeit mit Menschen und Codex
 
 - [`AGENTS.md`](AGENTS.md) enthält den operativen Vertrag für Coding-Agenten.
-- [`CONTRIBUTING.md`](CONTRIBUTING.md) beschreibt den einfachen Branch-/PR-Workflow.
-- Für normale Inhaltsänderungen sollen die Zod-validierten Dateien unter `src/content/` bevorzugt werden.
-- Ein Merge ist keine automatische Produktionsfreigabe.
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) beschreibt den Branch-/PR-Workflow.
+- Für normale Inhaltsänderungen werden die Zod-validierten Dateien unter `src/content/` bevorzugt.
+- Private Eventmedien bleiben auch bei einem privaten Source-Repo in einer dafür vorgesehenen privaten Speicher-/Zugriffsschicht und nicht in Git.
 
 ## Aktueller Stand
 
-Siehe [`tasks/INDEX.md`](tasks/INDEX.md), [`tasks/T043-public-collaboration-readiness.md`](tasks/T043-public-collaboration-readiness.md) und [`docs/project-brief.md`](docs/project-brief.md).
+Siehe [`tasks/INDEX.md`](tasks/INDEX.md), [`tasks/T009-deploy-handover.md`](tasks/T009-deploy-handover.md), [`tasks/T043-public-collaboration-readiness.md`](tasks/T043-public-collaboration-readiness.md), [`tasks/T045-production-domain-cutover.md`](tasks/T045-production-domain-cutover.md) und [`docs/project-brief.md`](docs/project-brief.md).
 
 ## Lizenzstatus
 
-Solange keine `LICENSE`-Datei eine ausdrückliche Lizenz erteilt, wird durch die öffentliche Sichtbarkeit des Quellcodes keine zusätzliche Open-Source-Lizenz zugesagt. Marken- und Drittanbieterassets können davon unabhängige Rechtebedingungen haben.
+Es gibt derzeit keine allgemeine Open-Source-Lizenz. Repository-Sichtbarkeit und Lizenzierung sind getrennte Entscheidungen; Marken- und Drittanbieterassets können eigene Rechtebedingungen haben.

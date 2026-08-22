@@ -88,17 +88,28 @@ Erst nach Entblockung von T008/T010/T011:
 | Variable | `NOTIFY_FROM` | verifizierte Absenderadresse |
 | Variable | `PUBLIC_SITE_ORIGIN` | exakt `https://hallofmemory.de` |
 
-`ACCESS_JWKS_JSON` und `SMOKE_LIMITER` bleiben ausschließlich lokale Testkonfiguration. Die Vorlage `spikes/inquiry-worker/wrangler.production.example.jsonc` darf mit Platzhaltern nie produktiv deployt werden.
+`ACCESS_JWKS_JSON` und `SMOKE_LIMITER` bleiben ausschließlich lokale Testkonfiguration. Die Vorlage `spikes/inquiry-worker/wrangler.production.example.jsonc` darf mit Platzhaltern nie produktiv deployt werden. Die tatsächliche kundengebundene Laufzeitkonfiguration heißt exakt `spikes/inquiry-worker/wrangler.production.jsonc`, ist in `.gitignore` ausgeschlossen und darf weder Secrets noch `REPLACE_WITH_*`-/`example.invalid`-/`local-only`-Werte enthalten.
+
+Die Produktionskonfiguration wird einmalig aus der Beispielvorlage erzeugt und vollständig mit den im Kundenkonto read-backbaren Ressourcenwerten befüllt. Vor jedem produktiven Worker-Dry-Run gilt fail-closed:
+
+```sh
+rg -n 'REPLACE_WITH|example\.invalid|local-only' spikes/inquiry-worker/wrangler.production.jsonc
+npm run dry-run:worker:production
+```
+
+Der `rg`-Schritt muss **ohne Treffer** enden. `npm run dry-run:worker:production` bindet ausdrücklich `--config spikes/inquiry-worker/wrangler.production.jsonc`; der normale lokale `npm run dry-run:worker` gegen `spikes/inquiry-worker/wrangler.jsonc` ist **kein** Produktionsnachweis. Secrets werden weiterhin ausschließlich über den Plattform-Secretstore gesetzt und deshalb nicht durch den JSONC-Dry-Run transportiert.
 
 Reihenfolge Stufe 2:
 
 1. D1-/Worker-/Access-/Turnstile-/Email-Ressourcen im Kundenkonto inventarisieren und Kosten/Limits bestätigen.
 2. D1 vor Migration exportieren, Migrationen lesen und kontrolliert anwenden.
-3. Secrets ausschließlich im Plattform-Secretstore setzen.
-4. Worker dry-run, dann revisionsgebunden deployen.
-5. Health, CORS, Access, D1 und Outbox read-backen.
-6. Site mit API-URL und Turnstile-Site-Key bauen; Formular muss jetzt aktiv sein.
-7. Site deployen und vollständigen Browser-Smoke ausführen.
+3. `spikes/inquiry-worker/wrangler.production.jsonc` aus der Beispielvorlage erzeugen bzw. die vorhandene lokale Datei gegen den Kunden-Readback abgleichen; alle Platzhalter müssen ersetzt sein.
+4. Secrets ausschließlich im Plattform-Secretstore setzen.
+5. Exakt `npm run dry-run:worker:production` ausführen und den Output auf die erwarteten produktiven Bindings prüfen.
+6. Erst danach exakt dieselbe Konfiguration revisionsgebunden deployen: `wrangler deploy --strict --config spikes/inquiry-worker/wrangler.production.jsonc`.
+7. Health, CORS, Access, D1 und Outbox read-backen.
+8. Site mit API-URL und Turnstile-Site-Key bauen; Formular muss jetzt aktiv sein.
+9. Site deployen und vollständigen Browser-Smoke ausführen.
 
 ## 5. Verifikation
 

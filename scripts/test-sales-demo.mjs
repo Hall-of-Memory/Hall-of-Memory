@@ -135,6 +135,10 @@ try {
   assert.equal(attr(elements(demo, 'main')[0], 'id'), 'main-content');
   assert.equal(attr(elements(demo, 'main')[0], 'tabindex'), '-1');
   assert.equal(elements(demo, 'footer').length, 1);
+  const demoFooter = elements(demo, 'footer')[0];
+  const demoFooterHrefs = elements(demoFooter, 'a').map((node) => attr(node, 'href'));
+  assert.ok(demoFooterHrefs.includes('/impressum/'), 'demo footer must link the legal notice');
+  assert.ok(demoFooterHrefs.includes('/datenschutz/'), 'demo footer must link the privacy page');
 
   const meta = elements(demoHead, 'meta');
   const metaByName = (name) => meta.find((node) => attr(node, 'name') === name);
@@ -242,7 +246,10 @@ try {
         `dead demo fragment link ${href}`,
       );
     } else {
-      assert.equal(href, '/demo/', `unexpected external or dead demo link ${href}`);
+      assert.ok(
+        ['/demo/', '/impressum/', '/datenschutz/'].includes(href),
+        `unexpected external or dead demo link ${href}`,
+      );
     }
   }
 

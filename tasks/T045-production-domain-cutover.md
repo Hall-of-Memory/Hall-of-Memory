@@ -46,6 +46,7 @@ Der Kunde möchte die Website jetzt direkt auf der vorhandenen Domain veröffent
 - Quality-Gate von „keine Redirect-Datei erlaubt“ auf „genau diese eine revisionsgebundene Redirect-Regel erlaubt“ gehärtet; zusätzliche/abweichende Regeln bleiben rot.
 - Vollständiges `npm run verify` nach dieser Routingänderung erfolgreich.
 - Der Redirect ist absichtlich `302`: solange die Website gemeinsam weiterentwickelt wird, wird noch keine permanente URL-/SEO-Entscheidung behauptet.
+- Aktueller Codex-Review auf dem Domain-Cutover-Head verlangte zu Recht zwei zusätzliche Gates: Impressum/Datenschutz müssen vom neuen primären `/demo/`-Einstieg erreichbar bleiben, und der spätere Anfrage-Worker braucht einen Dry-Run gegen die tatsächlich befüllte Produktionskonfiguration statt gegen die lokale Dummy-Konfiguration. Beide Punkte werden in demselben PR umgesetzt und regressionsgesichert.
 
 ## Zielarchitektur
 

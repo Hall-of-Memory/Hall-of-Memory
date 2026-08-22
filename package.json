@@ -17,6 +17,7 @@
     "test:demo": "PUBLIC_SITE_URL=https://site.example.invalid astro build --outDir .demo-test-dist && node --experimental-strip-types scripts/test-sales-demo.mjs",
     "test:fundus-corner": "PUBLIC_SITE_URL=https://site.example.invalid astro build --outDir .fundus-corner-test-dist && node scripts/test-fundus-corner.mjs",
     "dry-run:worker": "WRANGLER_LOG_PATH=/tmp/hall-of-memory-worker-wrangler.log wrangler deploy --dry-run --config spikes/inquiry-worker/wrangler.jsonc --outdir /tmp/hall-of-memory-inquiry-worker-dry",
+    "dry-run:worker:production": "WRANGLER_LOG_PATH=/tmp/hall-of-memory-production-worker-wrangler.log wrangler deploy --dry-run --config spikes/inquiry-worker/wrangler.production.jsonc --outdir /tmp/hall-of-memory-inquiry-worker-production-dry",
     "dry-run:site": "WRANGLER_LOG_PATH=/tmp/hall-of-memory-site-wrangler.log wrangler deploy --dry-run --config wrangler.jsonc --outdir /tmp/hall-of-memory-static-site-dry",
     "spike:inquiry": "WRANGLER_LOG_PATH=/tmp/hall-of-memory-spike-wrangler.log node --experimental-strip-types scripts/smoke-inquiry-spike.mjs",
     "spike:admin": "WRANGLER_LOG_PATH=/tmp/hall-of-memory-spike-wrangler.log node --experimental-strip-types scripts/smoke-inquiry-spike.mjs",

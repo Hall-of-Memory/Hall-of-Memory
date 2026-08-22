@@ -244,6 +244,18 @@ try {
   assert.match(workerExample, /REPLACE_WITH_REMOTE_D1_DATABASE_ID/);
   assert.match(workerExample, /"SPIKE_MODE": "production"/);
   assert.doesNotMatch(workerExample, /TURNSTILE_SECRET_KEY|ACCESS_JWKS_JSON|local-only/);
+  const packageJson = JSON.parse(readFileSync(join(repo, 'package.json'), 'utf8'));
+  assert.match(
+    packageJson.scripts['dry-run:worker:production'],
+    /wrangler deploy --dry-run --config spikes\/inquiry-worker\/wrangler\.production\.jsonc/,
+    'production Worker dry-run must bind the exact customer production config',
+  );
+  const gitignore = readFileSync(join(repo, '.gitignore'), 'utf8');
+  assert.match(
+    gitignore,
+    /^\/spikes\/inquiry-worker\/wrangler\.production\.jsonc$/m,
+    'customer-bound production Worker config must remain outside Git',
+  );
 
   assert.equal(
     readdirSync(outDir).includes('_redirects'),

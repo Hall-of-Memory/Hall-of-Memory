@@ -110,8 +110,9 @@ Reihenfolge Stufe 2:
 5. Secrets ausschließlich im Plattform-Secretstore setzen.
 6. Erst danach exakt dieselbe Konfiguration revisionsgebunden deployen: `wrangler deploy --strict --config spikes/inquiry-worker/wrangler.production.jsonc`.
 7. Health, CORS, Access, D1 und Outbox read-backen.
-8. Site mit API-URL und Turnstile-Site-Key bauen; Formular muss jetzt aktiv sein.
-9. Site deployen und vollständigen Browser-Smoke ausführen.
+8. **Vor jedem Stage-2-Site-Build** einen eigenen revisionsgebundenen Routing-/UI-Commit integrieren: Die Stage-1-Regel `/ /demo/ 302` muss entfernt oder so ersetzt werden, dass `/` auf eine tatsächlich aktive Anfrage-Route zeigt. Solange `/` noch auf die bewusst deaktivierte Stage-1-`/demo/`-Form führt, ist Stage 2 fail-closed **nicht aktivierbar**. Ein bloßes Setzen von API-URL und Turnstile-Key reicht ausdrücklich nicht.
+9. Erst nach diesem Routing-Readback die Site mit API-URL und Turnstile-Site-Key bauen. Der ausgelieferte Primärpfad muss jetzt ein aktives `data-inquiry-form`, Turnstile und die verbindliche Datenschutz-Einwilligung enthalten; die Stage-1-Markierung `data-demo-inquiry-disabled` darf auf dem Primärpfad nicht mehr die Anfrage ersetzen.
+10. Site deployen und vollständigen Browser-Smoke ausführen.
 
 ## 5. Verifikation
 
@@ -122,19 +123,21 @@ npm ci
 npm run verify
 ```
 
-Für den Domain-Build zusätzlich:
+Für den Stage-1-Domain-Build zusätzlich:
 
 ```sh
 PUBLIC_SITE_URL=https://hallofmemory.de npm run build
 ```
 
-Zu prüfen:
+Stage 1:
 
 - Build erfolgreich;
 - `_redirects` enthält nur `/ /demo/ 302`;
 - `/demo/` bleibt `noindex`, solange die Freigabe nicht erfolgt ist;
 - statischer Arbeitsstand behauptet kein funktionsfähiges produktives Anfrageformular;
 - keine Secrets in `dist/` oder Buildlogs.
+
+Stage 2 hat absichtlich einen **anderen Routingvertrag**: Vor dem produktiven Site-Build muss die Stage-1-Root-Weiterleitung in einem eigenen geprüften Commit entfernt/ersetzt sein. Der Build ist zu verwerfen, wenn `dist/_redirects` weiterhin `/ /demo/ 302` enthält und `/demo/` weiterhin `data-demo-inquiry-disabled` als einzigen primären Anfrageweg ausliefert.
 
 ## 6. Produktions-Readback
 
@@ -150,6 +153,8 @@ Stufe 1:
 
 Stufe 2 zusätzlich:
 
+- `/` führt **nicht mehr** über die Stage-1-Regel auf eine deaktivierte `/demo/`-Anfrage;
+- der primäre öffentliche Anfragepfad enthält ein aktives Formular mit API-Ziel, Turnstile und Datenschutz-Einwilligung und kann eine kontrollierte Testanfrage übermitteln;
 - `GET /health` des Anfrage-Workers liefert `ok: true` und `mode: production`;
 - `__spike`-Routen sind nicht erreichbar;
 - fremder Origin wird abgewiesen;

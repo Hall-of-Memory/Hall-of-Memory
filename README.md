@@ -6,35 +6,35 @@ Kanonisches Arbeitsrepository für **Hall of Memory**.
 
 **Produktions- und Primärdomain:** `https://hallofmemory.de`
 
-Die Domain liegt auf STRATO. Der aktuelle DNS-Cutover zur Zielplattform ist in T045 dokumentiert. Bis der Domain-Readback vollständig grün ist, bleibt die GitHub-Pages-Preview nur als technischer Übergangs-Fallback bestehen.
+Die Domain ist bei STRATO registriert; der Registrarzugriff liegt bei Hall of Memory. Der aktuelle DNS-Cutover zur Zielplattform ist in T045 dokumentiert. Bis der Domain-Readback vollständig grün ist, bleibt die GitHub-Pages-Preview nur als technischer Übergangs-Fallback bestehen.
 
 ## Ziel
 
-Eine hochwertige, moderne und erweiterbare Event-Website mit Schwerpunkt auf Fotobox, Fotospiegel und Magazinbox. Die Architektur soll geringe laufende Kosten, vollständige Kundenhoheit und spätere Erweiterbarkeit um weitere Mietangebote sowie Verfügbarkeits-/Buchungsfunktionen ermöglichen.
+Eine hochwertige, moderne und erweiterbare Event-Website mit Schwerpunkt auf Fotobox, Fotospiegel und Magazinbox. Die Architektur soll geringe laufende Kosten, vollständige Betreiberhoheit und spätere Erweiterbarkeit um weitere Mietangebote sowie Verfügbarkeits-/Buchungsfunktionen ermöglichen.
 
 ## Eigentum und technische Rollen
 
-- **Domain/Registrar:** STRATO.
+- **Domain/Registrar:** STRATO; Registrarzugriff bei Hall of Memory.
 - **GitHub:** Quellcode, Pull Requests, CI und nachvollziehbare Änderungshistorie.
 - **Cloudflare:** vorgesehene produktive Auslieferung und später die serverseitigen Produktbausteine gemäß T009.
 - **GitHub Pages:** nur Übergangs-Preview; nicht die Produktionsplattform.
-- **`tasks/`:** einzige kanonische Task-Registry dieses Kundenauftrags.
+- **`tasks/`:** einzige kanonische Task-Registry dieses Projekts.
 
 Das Source-Repo soll langfristig so privat wie sinnvoll sein. Die Repository-Sichtbarkeit wird aber nicht auf Kosten von Branchschutz und CI-Sicherheit geändert. Solange der eingesetzte GitHub-Organisationstarif Schutzregeln für private Repositories nicht nachweislich unterstützt, bleibt die bereinigte Veröffentlichungshistorie ohne vertrauliche Quellen zulässig öffentlich. T045 hält diese Sichtbarkeitsentscheidung revisionsgebunden fest.
 
-Unabhängig von der GitHub-Sichtbarkeit gilt: produktive Secrets, Zugangsdaten, private Eventfotos, Daten, Verträge und nicht zur Veröffentlichung bestimmte Designer-Originaldateien gehören **nicht** in Git.
+Unabhängig von der GitHub-Sichtbarkeit gilt: produktive Secrets, Zugangsdaten, private Eventfotos, personenbezogene Eventdaten, Verträge und nicht zur Veröffentlichung bestimmte Designer-Originaldateien gehören **nicht** in Git.
 
 ## Verbindliche Arbeitsregel
 
 **Alle Aufgaben, Restpunkte, Entscheidungen und Folgethemen werden ausschließlich in diesem Repository verwaltet.**
 
-- Kein Bureau als Aufgabenquelle für diesen Auftrag.
+- Kein Bureau als Aufgabenquelle für dieses Projekt.
 - GitHub Issues sind kein paralleles Taskregister.
 - `tasks/` ist die kanonische Task-Registry.
 - Architekturentscheidungen stehen in `decisions/`.
-- Kundenanforderungen und Primärevidenz stehen in `docs/` bzw. `assets/reference/`.
+- Bestätigte Projektanforderungen und Primärevidenz stehen in `docs/` bzw. `assets/reference/`.
 - Geschäftsangaben, Preise, Kontaktdaten und Produktregeln niemals erfinden.
-- Keine Secrets, personenbezogenen Kundendaten oder privaten Eventmedien committen.
+- Keine Secrets, personenbezogenen Eventdaten oder privaten Eventmedien committen.
 - Web-Assets dürfen öffentlich ausgeliefert werden; private Source-Master bleiben außerhalb des öffentlichen Webpfads.
 
 ## Entwicklung

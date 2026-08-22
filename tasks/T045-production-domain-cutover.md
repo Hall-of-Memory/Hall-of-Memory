@@ -51,6 +51,7 @@ Der Kunde möchte die Website jetzt direkt auf der vorhandenen Domain veröffent
 - Der nächste Codex-Review fand einen kritischeren Stage-1-Punkt: Der bisherige Demo-Submit sah auf der echten Domain wie ein nutzbares Anfrageformular aus, verwarf die Daten aber nur lokal. Der öffentliche Arbeitsstand macht den Anfragebereich daher sichtbar **disabled**, entfernt den Mock-Submit-/Preselection-Pfad und weist klar darauf hin, dass bis Stage 2 keine Anfragen übermittelt werden.
 - Der Review auf dem darauf folgenden Fix-Head stellte zu Recht klar, dass diese Stage-1-Deaktivierung nicht dauerhaft hinter dem Root-Redirect bleiben darf: Stage 2 bekommt deshalb einen eigenen verpflichtenden Routing-/UI-Commit. Vor einem aktiven Site-Build muss `/ /demo/ 302` entfernt oder auf einen tatsächlich aktiven Anfragepfad ersetzt sein; API-/Turnstile-Variablen allein können Stage 2 nicht freischalten.
 - Der aktuelle Codex-Review präzisierte zusätzlich die Secret-Bindung: `TURNSTILE_SECRET_KEY` muss mit `--config spikes/inquiry-worker/wrangler.production.jsonc` ausdrücklich am Inquiry-Worker gesetzt werden; ein configloser Root-Befehl könnte sonst den statischen Site-Worker treffen. Der Quality-Gate prüft diese Bindung und die Reihenfolge Secret vor Worker-Deploy.
+- Der darauf folgende Review fand einen DNS-Cutover-P1: Apex-`A` und `www` reichen vor einem Nameserverwechsel nicht als Sicherung. T045 verlangt deshalb vor jeder Delegationsmutation einen vollständigen autoritativen STRATO-Zonen-Snapshot einschließlich Mail-/Verifikationsrecords und DNSSEC/DS-Zustand, vollständige Abbildung in Cloudflare und einen recordweisen Vergleich; erst ein `PASS` dieses Vollzonen-/DNSSEC-Gates erlaubt den Nameserverwechsel.
 
 ## Zielarchitektur
 
@@ -84,13 +85,15 @@ STRATO
 2. Kundeneigenen Cloudflare-Account/Zone und kostenrelevanten Planstatus live lesen; keine kostenpflichtige Zusatznutzung ohne Freigabe aktivieren.
 3. Statische Site revisionsgebunden auf Cloudflare deployen und zunächst auf dem Cloudflare-Standardhost read-backen.
 4. `hallofmemory.de` als Custom Domain an genau dieses Deployment binden.
-5. Die von Cloudflare tatsächlich ausgegebenen Nameserver revisionsgebunden lesen.
-6. Vor STRATO-Mutation die bisherigen Nameserver/A-/CNAME-Werte als Rollbackzustand festhalten.
-7. STRATO-Nameserver kontrolliert auf die Cloudflare-Werte umstellen.
-8. DNS-Propagation, TLS und `https://hallofmemory.de`/`www` extern lesen.
-9. Exakten `302 /demo/`, anschließend HTTP 200, Security-Header, Assets, Navigation sowie Demo-/Rahmenseiten auf der echten Domain prüfen.
-10. Erst nach erfolgreichem Domain-Readback GitHub Pages aus der Primärrolle nehmen und den Legacy-Mirror aus T018/T043 archivieren/deaktivieren.
-11. Repository-Sichtbarkeit separat entscheiden:
+5. Vor jeder Delegationsmutation die **vollständige autoritative STRATO-Zone** inventarisieren/exportieren: alle benötigten RRsets/Subdomains inklusive `A`/`AAAA`/`CNAME`/`MX`/`TXT`/`SRV`/`CAA`, TTL/Priorität sowie `NS`/`SOA` und DNSSEC/DS-Ausgangszustand separat dokumentieren.
+6. Sämtliche weiterhin benötigten Records in der kundeneigenen Cloudflare-Zone anlegen/importieren; Mail-/Verifikationsrecords bleiben DNS-only. Cloudflare-Zone anschließend normalisiert recordweise gegen den STRATO-Snapshot vergleichen und unerklärte Abweichungen blockieren.
+7. CAA/TLS-Kompatibilität und DNSSEC-Migrationszustand prüfen; bei altem inkompatiblem DS keinen Nameserverwechsel durchführen.
+8. Die von Cloudflare tatsächlich ausgegebenen Nameserver revisionsgebunden lesen.
+9. **Nur bei PASS von Vollzonenvergleich und DNSSEC-Gate** die STRATO-Nameserver kontrolliert auf die Cloudflare-Werte umstellen.
+10. DNS-Propagation, Webrecords, Mail-/Verifikationsrecords, TLS und `https://hallofmemory.de`/`www` extern lesen.
+11. Exakten `302 /demo/`, anschließend HTTP 200, Security-Header, Assets, Navigation sowie Demo-/Rahmenseiten auf der echten Domain prüfen.
+12. Erst nach erfolgreichem Domain-Readback GitHub Pages aus der Primärrolle nehmen und den Legacy-Mirror aus T018/T043 archivieren/deaktivieren.
+13. Repository-Sichtbarkeit separat entscheiden:
    - bei nachgewiesenem GitHub-Plan mit Branch Protection für private Repositories: Repo auf privat umstellen und Schutzregeln vollständig read-backen;
    - ohne diesen Nachweis: bereinigtes Repo vorerst öffentlich lassen, statt Schutzregeln zu verlieren oder ungefragt einen kostenpflichtigen Plan zu aktivieren.
 

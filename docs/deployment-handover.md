@@ -55,20 +55,26 @@ Vor Mutation:
 - Domain-Build mit `PUBLIC_SITE_URL=https://hallofmemory.de` erzeugen;
 - `dist/_redirects` exakt auf die eine freigegebene Regel prüfen;
 - keine Secrets oder produktiven Backend-Platzhalter im Artefakt;
-- aktuellen STRATO-DNS-Zustand und ein Rollbackziel dokumentieren;
-- im kundeneigenen Cloudflare-Kontext Account/Zone, Tarif und tatsächlich verlangte Nameserver/Custom-Domain-Konfiguration lesen.
+- **vollständigen autoritativen STRATO-DNS-Zonenstand** vor jeder Nameservermutation inventarisieren/exportieren: alle Ownernamen/Subdomains, Recordtypen, Werte, Prioritäten und TTLs; mindestens `A`, `AAAA`, `CNAME`, `MX`, `TXT` (einschließlich SPF/DKIM/DMARC/Verifikationen), `SRV` und `CAA`; aktuelle `NS`/`SOA` separat dokumentieren;
+- DNSSEC/DS-Status beim Registrar separat read-backen. Bei aktivem DNSSEC darf der Nameserverwechsel nicht erfolgen, solange ein alter/inkompatibler DS die neue Delegation validierungsfehlerhaft machen würde; die zum Umschaltzeitpunkt gültige STRATO-/Cloudflare-Migrationsprozedur wird live gelesen und revisionsgebunden protokolliert;
+- im kundeneigenen Cloudflare-Kontext Account/Zone, Tarif und tatsächlich verlangte Nameserver/Custom-Domain-Konfiguration lesen;
+- **vor dem Nameserverwechsel** sämtliche weiterhin benötigten nicht-provider-spezifischen RRsets aus dem STRATO-Snapshot in Cloudflare anlegen/importieren. Mail-/Verifikationsrecords (`MX`, zugehörige `A`/`AAAA`, `TXT`, `SRV`) bleiben DNS-only; nur bewusst gewählte Webrecords dürfen proxied werden;
+- den normalisierten STRATO-Snapshot und die Cloudflare-Zone recordweise vergleichen. Abgesehen von bewusst dokumentierten providerbedingten `NS`/`SOA`-/Proxy-Unterschieden darf kein benötigter Record fehlen oder unerklärt abweichen. `CAA` muss mit der vorgesehenen TLS-Zertifikatsausstellung vereinbar sein; bei Unklarheit bleibt der Cutover blockiert;
+- vollständigen Zonen-Snapshot, DNSSEC-Ausgangszustand und vorherige Nameserver als Rollbackevidenz außerhalb von Secrets protokollieren. Die bekannten Apex-`A`- und `www`-Records allein sind ausdrücklich **kein** vollständiger DNS-Sicherungsnachweis.
 
 Dann:
 
 1. statische Site revisionsgebunden nach Cloudflare deployen;
 2. Deployment auf dem Cloudflare-Standardhost read-backen;
 3. `hallofmemory.de` als Custom Domain an das geprüfte Deployment binden;
-4. erst danach die von Cloudflare tatsächlich ausgegebenen Nameserver/DNS-Werte bei STRATO setzen;
-5. DNS-Propagation und TLS abwarten/read-backen;
-6. `https://hallofmemory.de/` muss mit `302` nach `/demo/` führen;
-7. `/demo/` und `/demo/rahmen/` müssen HTTP 200 liefern und die erwarteten Assets laden;
-8. `www` erhält eine explizite Redirect-/Canonical-Strategie;
-9. Desktop/Mobil-Browserreadback durchführen.
+4. Cloudflare-Zonenbestand nochmals gegen den vollständigen STRATO-Snapshot vergleichen und den Vergleich als `PASS` binden; DNSSEC/DS-Preflight muss ebenfalls `PASS` sein;
+5. die von Cloudflare tatsächlich ausgegebenen Nameserver revisionsgebunden lesen;
+6. **erst bei bestandenem Vollzonen- und DNSSEC-Gate** die STRATO-Nameserver kontrolliert auf diese Cloudflare-Werte umstellen;
+7. DNS-Propagation, vollständige öffentliche Record-Stichprobe (insbesondere Web + Mail/Verifikation) und TLS abwarten/read-backen;
+8. `https://hallofmemory.de/` muss mit `302` nach `/demo/` führen;
+9. `/demo/` und `/demo/rahmen/` müssen HTTP 200 liefern und die erwarteten Assets laden;
+10. `www` erhält eine explizite Redirect-/Canonical-Strategie;
+11. Desktop/Mobil-Browserreadback durchführen.
 
 Bei irgendeinem unklaren externen Write-Ausgang: keine Wiederholung ohne Provider-Readback.
 

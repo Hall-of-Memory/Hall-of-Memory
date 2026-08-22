@@ -257,6 +257,21 @@ try {
     'customer-bound production Worker config must remain outside Git',
   );
   const deploymentRunbook = readFileSync(join(repo, 'docs', 'deployment-handover.md'), 'utf8');
+  const stageOneStart = deploymentRunbook.indexOf('## 3. Stufe 1 — Domain-Arbeitsstand');
+  const stageTwoStart = deploymentRunbook.indexOf('## 4. Stufe 2 — Anfrage/Admin-Produktion');
+  const stageOne = deploymentRunbook.slice(stageOneStart, stageTwoStart);
+  const fullZoneSnapshotPosition = stageOne.indexOf('vollständigen autoritativen STRATO-DNS-Zonenstand');
+  const cloudflareZoneComparePosition = stageOne.indexOf('Cloudflare-Zonenbestand nochmals gegen den vollständigen STRATO-Snapshot vergleichen');
+  const nameserverSwitchPosition = stageOne.indexOf('erst bei bestandenem Vollzonen- und DNSSEC-Gate');
+  assert.ok(stageOneStart >= 0 && stageTwoStart > stageOneStart, 'Stage 1 DNS cutover section must be explicit');
+  assert.ok(fullZoneSnapshotPosition >= 0, 'Stage 1 must require a complete authoritative DNS-zone snapshot');
+  assert.match(stageOne, /`A`, `AAAA`, `CNAME`, `MX`, `TXT`[\s\S]*`SRV` und `CAA`/);
+  assert.match(stageOne, /SPF\/DKIM\/DMARC/);
+  assert.match(stageOne, /DNSSEC\/DS-Status/);
+  assert.match(stageOne, /Mail-\/Verifikationsrecords[\s\S]*DNS-only/);
+  assert.ok(cloudflareZoneComparePosition > fullZoneSnapshotPosition, 'Cloudflare full-zone comparison must follow the source-zone snapshot');
+  assert.ok(nameserverSwitchPosition > cloudflareZoneComparePosition, 'Nameservers must not switch before full-zone and DNSSEC gates pass');
+  assert.match(stageOne, /bekannten Apex-`A`- und `www`-Records allein sind ausdrücklich \*\*kein\*\* vollständiger DNS-Sicherungsnachweis/);
   const stageTwo = deploymentRunbook.slice(deploymentRunbook.indexOf('Reihenfolge Stufe 2:'));
   const productionConfigPosition = stageTwo.indexOf('2. `spikes/inquiry-worker/wrangler.production.jsonc`');
   const d1ExportPosition = stageTwo.indexOf('wrangler d1 export DB --remote --config spikes/inquiry-worker/wrangler.production.jsonc');

@@ -109,9 +109,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          receipt_url="${PAGE_URL%/}/.well-known/hall-of-memory-deployment.json"
+          receipt_url="${PAGE_URL%/}/hall-of-memory-deployment.json"
           for attempt in $(seq 1 30); do
-            if curl --fail --silent --show-error --location --max-time 5 "$receipt_url" --output /tmp/hall-of-memory-deployment.json; then
+            candidate_url="${receipt_url}?source=${SOURCE_SHA}&verify_run=${VERIFY_RUN_ID}&attempt=${attempt}"
+            if curl --fail --silent --show-error --location --max-time 5 \
+              --header "Cache-Control: no-cache" \
+              "$candidate_url" --output /tmp/hall-of-memory-deployment.json; then
               if node scripts/verify-pages-runtime-receipt.mjs /tmp/hall-of-memory-deployment.json "$SOURCE_SHA" "$VERIFY_RUN_ID"; then
                 exit 0
               fi

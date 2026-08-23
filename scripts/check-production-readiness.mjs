@@ -26,6 +26,21 @@ function validEvidenceApproval(value) {
   return value?.approved === true && typeof value.evidenceRef === 'string' && value.evidenceRef.trim().length > 0;
 }
 
+function validInquiryDataPolicy(value) {
+  return (
+    value?.schemaVersion === 1 &&
+    value?.status === 'approved' &&
+    Number.isInteger(value?.retentionDays) &&
+    value.retentionDays > 0 &&
+    typeof value?.deletionMode === 'string' &&
+    value.deletionMode.trim().length > 0 &&
+    typeof value?.policyEvidenceRef === 'string' &&
+    value.policyEvidenceRef.trim().length > 0 &&
+    typeof value?.enforcementEvidenceRef === 'string' &&
+    value.enforcementEvidenceRef.trim().length > 0
+  );
+}
+
 function validProductionSiteOrigin(value) {
   if (!value?.trim()) return false;
   try {
@@ -98,6 +113,13 @@ export function evaluateProductionReadiness(input) {
     }
   }
 
+  if (!validInquiryDataPolicy(input.inquiryDataPolicy)) {
+    add(
+      'inquiry.data_policy',
+      'Inquiry production needs an approved retention/deletion policy with positive retentionDays plus policy and enforcement evidence.',
+    );
+  }
+
   for (const [path, content] of Object.entries(input.legalSources ?? {})) {
     for (const marker of LEGAL_DRAFT_MARKERS) {
       if (marker.test(content)) {
@@ -134,11 +156,13 @@ export function loadRepositoryReadinessInput({ repoRoot, env = process.env } = {
   const root = repoRoot ?? resolve(fileURLToPath(new URL('..', import.meta.url)));
   const site = JSON.parse(readFileSync(resolve(root, 'src/content/site.json'), 'utf8'))[0];
   const approvals = JSON.parse(readFileSync(resolve(root, 'src/release/production-approvals.json'), 'utf8'));
+  const inquiryDataPolicy = JSON.parse(readFileSync(resolve(root, 'src/release/inquiry-data-policy.json'), 'utf8'));
   const workerPath = resolve(root, 'spikes/inquiry-worker/wrangler.production.jsonc');
 
   return {
     launchStatus: site?.launchStatus,
     approvals,
+    inquiryDataPolicy,
     legalSources: {
       'src/pages/impressum.astro': readFileSync(resolve(root, 'src/pages/impressum.astro'), 'utf8'),
       'src/pages/datenschutz.astro': readFileSync(resolve(root, 'src/pages/datenschutz.astro'), 'utf8'),

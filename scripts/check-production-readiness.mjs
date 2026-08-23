@@ -152,12 +152,22 @@ export function evaluateProductionReadiness(input) {
   return { ready: blockers.length === 0, blockers };
 }
 
+export function enforceProductionReadiness(input, { ifProduction = false } = {}) {
+  if (ifProduction && input?.launchStatus !== 'production') {
+    return { ready: true, skipped: true, blockers: [] };
+  }
+  return { ...evaluateProductionReadiness(input), skipped: false };
+}
+
 export function loadRepositoryReadinessInput({ repoRoot, env = process.env } = {}) {
   const root = repoRoot ?? resolve(fileURLToPath(new URL('..', import.meta.url)));
   const site = JSON.parse(readFileSync(resolve(root, 'src/content/site.json'), 'utf8'))[0];
   const approvals = JSON.parse(readFileSync(resolve(root, 'src/release/production-approvals.json'), 'utf8'));
   const inquiryDataPolicy = JSON.parse(readFileSync(resolve(root, 'src/release/inquiry-data-policy.json'), 'utf8'));
   const workerPath = resolve(root, 'spikes/inquiry-worker/wrangler.production.jsonc');
+  const injectedWorkerConfig = env.PRODUCTION_WORKER_CONFIG_JSON?.trim() ?? '';
+  const fileWorkerConfigExists = existsSync(workerPath);
+  const productionWorkerConfig = injectedWorkerConfig || (fileWorkerConfigExists ? readFileSync(workerPath, 'utf8') : '');
 
   return {
     launchStatus: site?.launchStatus,
@@ -171,13 +181,26 @@ export function loadRepositoryReadinessInput({ repoRoot, env = process.env } = {
     publicSiteUrl: env.PUBLIC_SITE_URL,
     inquiryApiUrl: env.PUBLIC_INQUIRY_API_URL,
     turnstileSiteKey: env.PUBLIC_TURNSTILE_SITE_KEY,
-    productionWorkerConfigExists: existsSync(workerPath),
-    productionWorkerConfig: existsSync(workerPath) ? readFileSync(workerPath, 'utf8') : '',
+    productionWorkerConfigExists: productionWorkerConfig.length > 0,
+    productionWorkerConfig,
   };
 }
 
 function main() {
-  const result = evaluateProductionReadiness(loadRepositoryReadinessInput());
+  const args = process.argv.slice(2);
+  const unknownArgs = args.filter((arg) => arg !== '--if-production');
+  if (unknownArgs.length > 0) {
+    console.error(`production-readiness: unknown argument(s): ${unknownArgs.join(', ')}`);
+    process.exitCode = 2;
+    return;
+  }
+
+  const input = loadRepositoryReadinessInput();
+  const result = enforceProductionReadiness(input, { ifProduction: args.includes('--if-production') });
+  if (result.skipped) {
+    console.log(`production-readiness: SKIPPED launch_status=${input.launchStatus ?? 'missing'}`);
+    return;
+  }
   if (result.ready) {
     console.log('production-readiness: PASS');
     return;

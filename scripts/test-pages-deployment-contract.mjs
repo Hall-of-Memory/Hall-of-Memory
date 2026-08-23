@@ -29,6 +29,7 @@ try {
   assert.match(workflow, /deploy-pages:/);
   assert.match(workflow, /name: pages-runtime/);
   assert.match(workflow, /needs: verify/);
+  assert.match(workflow, /deploy-pages:[\s\S]*timeout-minutes: 20/);
   assert.ok(
     workflow.includes("if: github.event_name == 'push' && github.ref == 'refs/heads/main'"),
     'Pages build/deploy must only run for a verified push to main',
@@ -44,6 +45,8 @@ try {
   assert.match(workflow, /Verify deployed runtime receipt/);
   assert.match(workflow, /\.well-known\/hall-of-memory-deployment\.json/);
   assert.match(workflow, /verify-pages-runtime-receipt\.mjs/);
+  assert.match(workflow, /seq 1 30/);
+  assert.match(workflow, /--max-time 5/);
   assert.match(workflow, /Publish terminal runtime status/);
   assert.match(workflow, /if: always\(\)/);
   assert.match(workflow, /JOB_STATUS: \$\{\{ job\.status \}\}/);
@@ -86,7 +89,7 @@ try {
     /must be numeric/,
   );
 
-  console.log(`pages-deployment-contract-ok action_pins=${actionRefs.length} source_bound=true verify_bound=true runtime_status_observable=true inline_after_verify=true`);
+  console.log(`pages-deployment-contract-ok action_pins=${actionRefs.length} source_bound=true verify_bound=true runtime_status_observable=true inline_after_verify=true timeout_headroom=true`);
 } finally {
   rmSync(tempArtifact, { recursive: true, force: true });
 }

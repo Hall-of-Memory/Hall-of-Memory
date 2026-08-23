@@ -4,16 +4,25 @@ import offers from '../content/offers.json';
 import packages from '../content/packages.json';
 import site from '../content/site.json';
 import steps from '../content/steps.json';
+import type { LaunchStatus } from '../lib/seo';
 
 const bySortOrder = <T extends { sortOrder: number }>(a: T, b: T) => a.sortOrder - b.sortOrder;
 type CanonicalPackage = { id: string; name: string; sortOrder: number };
+type CanonicalSite = {
+  id: string;
+  name: string;
+  eyebrow: string;
+  description: string;
+  source: 'internal-draft' | 'customer-provided';
+  launchStatus: LaunchStatus;
+};
 
 /**
  * Compatibility projection for the landing component while T046 converges the
  * preview and production routes. All actual text/business truth remains in the
  * Zod-validated src/content files; this module only adapts their shape.
  */
-export const demoSite = site[0];
+export const demoSite = site[0] as CanonicalSite | undefined;
 if (!demoSite) throw new Error('Hall of Memory site settings are missing.');
 
 export const demoOffers = [...offers].sort(bySortOrder).map((offer) => ({

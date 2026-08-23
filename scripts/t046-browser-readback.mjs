@@ -107,7 +107,7 @@ async function run() {
     '#ablauf',
     '#kundenbereich',
     '#anfrage',
-    '#faq',
+    '#kontakt',
     '.demo-contact-card',
     'footer',
   ];

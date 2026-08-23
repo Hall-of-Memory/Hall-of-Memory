@@ -1,8 +1,11 @@
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync, rmSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { writePagesDeploymentReceipt } from './write-pages-deployment-receipt.mjs';
+import {
+  PAGES_DEPLOYMENT_RECEIPT,
+  writePagesDeploymentReceipt,
+} from './write-pages-deployment-receipt.mjs';
 import { validatePagesRuntimeReceipt } from './verify-pages-runtime-receipt.mjs';
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -43,7 +46,12 @@ try {
   assert.match(workflow, /Deploy verified artifact to GitHub Pages/);
   assert.match(workflow, /deploy-pages@/);
   assert.match(workflow, /Verify deployed runtime receipt/);
-  assert.match(workflow, /\.well-known\/hall-of-memory-deployment\.json/);
+  assert.match(workflow, /\/hall-of-memory-deployment\.json/);
+  assert.doesNotMatch(
+    workflow,
+    /\.well-known\/hall-of-memory-deployment\.json/,
+    'Pages receipt must not live in a dot-directory excluded by upload-pages-artifact',
+  );
   assert.match(workflow, /verify-pages-runtime-receipt\.mjs/);
   assert.match(workflow, /seq 1 30/);
   assert.match(workflow, /--max-time 5/);
@@ -60,9 +68,14 @@ try {
     assert.match(ref, /^[0-9a-f]{40}$/, `workflow action must be pinned to a full commit SHA: ${ref}`);
   }
 
+  assert.equal(PAGES_DEPLOYMENT_RECEIPT, 'hall-of-memory-deployment.json');
+  assert.equal(PAGES_DEPLOYMENT_RECEIPT.startsWith('.'), false, 'receipt filename must not be hidden');
+
   const sourceRevision = '0123456789abcdef0123456789abcdef01234567';
   const verifyRunId = '32628933774';
   const { receiptPath, receipt } = writePagesDeploymentReceipt('.pages-deployment-contract-test', sourceRevision, verifyRunId);
+  assert.equal(basename(receiptPath), PAGES_DEPLOYMENT_RECEIPT);
+  assert.equal(dirname(receiptPath), tempArtifact, 'receipt must be written at Pages artifact root');
   assert.deepEqual(receipt, {
     schemaVersion: 1,
     sourceRevision,
@@ -89,7 +102,7 @@ try {
     /must be numeric/,
   );
 
-  console.log(`pages-deployment-contract-ok action_pins=${actionRefs.length} source_bound=true verify_bound=true runtime_status_observable=true inline_after_verify=true timeout_headroom=true`);
+  console.log(`pages-deployment-contract-ok action_pins=${actionRefs.length} source_bound=true verify_bound=true runtime_status_observable=true inline_after_verify=true timeout_headroom=true visible_receipt=true`);
 } finally {
   rmSync(tempArtifact, { recursive: true, force: true });
 }

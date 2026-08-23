@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { writePagesDeploymentReceipt } from './write-pages-deployment-receipt.mjs';
@@ -43,7 +43,14 @@ try {
   assert.match(workflow, /Deploy verified artifact to GitHub Pages/);
   assert.match(workflow, /deploy-pages@/);
   assert.match(workflow, /Verify deployed runtime receipt/);
-  assert.match(workflow, /\.well-known\/hall-of-memory-deployment\.json/);
+  assert.match(workflow, /hall-of-memory-deployment\.json/);
+  assert.doesNotMatch(
+    workflow,
+    /\.well-known\/hall-of-memory-deployment\.json/,
+    'upload-pages-artifact excludes root dot entries, so the runtime receipt must use a visible path',
+  );
+  assert.match(workflow, /Cache-Control: no-cache/);
+  assert.match(workflow, /source=\$\{SOURCE_SHA\}&verify_run=\$\{VERIFY_RUN_ID\}&attempt=\$\{attempt\}/);
   assert.match(workflow, /verify-pages-runtime-receipt\.mjs/);
   assert.match(workflow, /seq 1 30/);
   assert.match(workflow, /--max-time 5/);
@@ -60,9 +67,12 @@ try {
     assert.match(ref, /^[0-9a-f]{40}$/, `workflow action must be pinned to a full commit SHA: ${ref}`);
   }
 
+  mkdirSync(tempArtifact, { recursive: true });
   const sourceRevision = '0123456789abcdef0123456789abcdef01234567';
   const verifyRunId = '32628933774';
   const { receiptPath, receipt } = writePagesDeploymentReceipt('.pages-deployment-contract-test', sourceRevision, verifyRunId);
+  assert.equal(receiptPath, join(tempArtifact, 'hall-of-memory-deployment.json'));
+  assert.equal(existsSync(join(tempArtifact, '.well-known')), false, 'receipt path must survive Pages artifact dot-entry filtering');
   assert.deepEqual(receipt, {
     schemaVersion: 1,
     sourceRevision,
@@ -89,7 +99,7 @@ try {
     /must be numeric/,
   );
 
-  console.log(`pages-deployment-contract-ok action_pins=${actionRefs.length} source_bound=true verify_bound=true runtime_status_observable=true inline_after_verify=true timeout_headroom=true`);
+  console.log(`pages-deployment-contract-ok action_pins=${actionRefs.length} source_bound=true verify_bound=true runtime_status_observable=true inline_after_verify=true timeout_headroom=true visible_receipt_path=true`);
 } finally {
   rmSync(tempArtifact, { recursive: true, force: true });
 }

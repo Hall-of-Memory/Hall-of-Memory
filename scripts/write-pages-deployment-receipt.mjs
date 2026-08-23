@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -22,8 +22,9 @@ export function writePagesDeploymentReceipt(artifactValue, sourceRevision, verif
   }
 
   const artifact = resolveArtifactPath(artifactValue);
-  const receiptDir = join(artifact, '.well-known');
-  const receiptPath = join(receiptDir, 'hall-of-memory-deployment.json');
+  // actions/upload-pages-artifact intentionally excludes root entries beginning
+  // with a dot, so this receipt must remain at a visible artifact path.
+  const receiptPath = join(artifact, 'hall-of-memory-deployment.json');
   const receipt = {
     schemaVersion: 1,
     sourceRevision,
@@ -32,7 +33,6 @@ export function writePagesDeploymentReceipt(artifactValue, sourceRevision, verif
     channel: 'github-pages-preview',
   };
 
-  mkdirSync(receiptDir, { recursive: true });
   writeFileSync(receiptPath, `${JSON.stringify(receipt, null, 2)}\n`, 'utf8');
   return { receiptPath, receipt };
 }

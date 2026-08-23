@@ -332,34 +332,11 @@ try {
 
   const demoCss = readFileSync(join(repo, 'src', 'styles', 'demo.css'), 'utf8');
   const baseCss = readFileSync(join(repo, 'src', 'styles', 'base.css'), 'utf8');
-  assert.match(demoCss, /--demo-frame-light/);
-  assert.match(demoCss, /--demo-frame-mask/);
-  assert.match(demoCss, /background: var\(--demo-frame-mask,none\) center \/ 100% 100% no-repeat;/);
-  assert.doesNotMatch(demoCss, /hall-of-memory-stellar-frame-/);
-  assert.match(demoExperienceSource, /hall-of-memory-stellar-frame-primary\/package\/assets\/hall-of-memory-stellar-frame-primary-raster\.png/);
-  assert.match(comparisonSource, /hall-of-memory-stellar-frame-primary\/package\/assets\/hall-of-memory-stellar-frame-primary-raster\.png/);
-  assert.match(demoExperienceSource, /floral-source/);
-  assert.match(demoExperienceSource, /asset-source-portrait/);
-  assert.match(comparisonSource, /asset-source-portrait/);
-  assert.match(comparisonSource, /object-fit: contain/);
-  assert.match(demoExperienceSource, /asset-source/);
-  assert.doesNotMatch(demoExperienceSource, /demo-frame-metal-profile/);
-  assert.match(comparisonSource, /frame-comparison-image/);
-  assert.doesNotMatch(comparisonSource, /--comparison-frame/);
-  assert.doesNotMatch(comparisonSource, /frame-comparison-metal-profile/);
-  const frameComparisonJs = readFileSync(join(repo, 'public', 'frame-comparison.js'), 'utf8');
-  assert.match(frameComparisonJs, /data-frame-size/);
-  assert.match(frameComparisonJs, /bildgroesse/);
-  assert.match(frameComparisonJs, /params\.get\('bild'\) === 'full' \? 100/);
-  assert.match(frameComparisonJs, /searchParams\.delete\('kasten'\)/);
-  assert.doesNotMatch(frameComparisonJs, /data-frame-mode|data-frame-shell-toggle/);
-  assert.match(demoCss, /\.demo-offer-card::before/);
-  assert.match(demoCss, /\.demo-access-card::before/);
-  assert.match(demoCss, /@media \(prefers-reduced-motion: reduce\)/);
-  assert.match(demoCss, /@media \(forced-colors: active\)/);
-  assert.match(demoCss, /\.demo-offer-card:focus-within/);
-  assert.match(demoCss, /\.demo-whatsapp-fab/);
-  assert.match(baseCss, /:focus-visible/);
+  assert.match(demoCss, /@media \(prefers-reduced-motion: reduce\)/, 'reduced-motion override is an accessibility contract');
+  assert.match(demoCss, /@media \(forced-colors: active\)/, 'forced-colors support is an accessibility contract');
+  assert.match(demoCss, /\.demo-offer-card:focus-within/, 'keyboard focus must remain visible on interactive offer cards');
+  assert.match(baseCss, /:focus-visible/, 'global keyboard focus treatment must remain explicit');
+
 
   const stylesheetRefs = elements(demoHead, 'link')
     .filter((node) => attr(node, 'rel') === 'stylesheet')

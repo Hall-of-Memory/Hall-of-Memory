@@ -289,6 +289,18 @@ const captureFullPage = async (cdp, sessionId, file) => {
 
 const normalizeUrl = (origin, pathname) => new URL(pathname, origin);
 
+const waitForProcessExit = async (child, timeoutMs) => {
+  if (child.exitCode !== null) return true;
+  return new Promise((resolveExit) => {
+    const onExit = () => { clearTimeout(timer); resolveExit(true); };
+    const timer = setTimeout(() => {
+      child.off('exit', onExit);
+      resolveExit(child.exitCode !== null);
+    }, timeoutMs);
+    child.once('exit', onExit);
+  });
+};
+
 const main = async () => {
   await stat(join(root, 'demo', 'index.html'));
   await rm(artifacts, { recursive: true, force: true });
@@ -370,13 +382,14 @@ const main = async () => {
   } finally {
     if (cdp?.socket?.readyState === WebSocket.OPEN) cdp.socket.close();
     if (browser.child.exitCode === null) browser.child.kill('SIGTERM');
-    await Promise.race([
-      new Promise((resolveExit) => browser.child.once('exit', resolveExit)),
-      delay(1200),
-    ]);
-    if (browser.child.exitCode === null) browser.child.kill('SIGKILL');
+    if (!(await waitForProcessExit(browser.child, 3000))) {
+      browser.child.kill('SIGKILL');
+      if (!(await waitForProcessExit(browser.child, 3000))) {
+        throw new Error('Chrome did not exit after SIGKILL');
+      }
+    }
     await new Promise((resolveClose) => server.close(resolveClose));
-    await rm(browser.profile, { recursive: true, force: true });
+    await rm(browser.profile, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
   }
 };
 

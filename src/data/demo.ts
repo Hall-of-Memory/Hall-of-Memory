@@ -2,21 +2,23 @@ import benefits from '../content/benefits.json';
 import faqs from '../content/faqs.json';
 import offers from '../content/offers.json';
 import packages from '../content/packages.json';
+import site from '../content/site.json';
 import steps from '../content/steps.json';
 
 const bySortOrder = <T extends { sortOrder: number }>(a: T, b: T) => a.sortOrder - b.sortOrder;
 type CanonicalPackage = { id: string; name: string; sortOrder: number };
 
 /**
- * Compatibility projection for the existing preview components.
- *
- * The canonical business/content truth lives under src/content and is validated
- * by Astro Content Collections. T046 keeps this module temporarily so the
- * frame-comparison surface can stay byte/behavior stable while the landing page
- * is moved onto the shared content model.
+ * Compatibility projection for the landing component while T046 converges the
+ * preview and production routes. All actual text/business truth remains in the
+ * Zod-validated src/content files; this module only adapts their shape.
  */
+export const demoSite = site[0];
+if (!demoSite) throw new Error('Hall of Memory site settings are missing.');
+
 export const demoOffers = [...offers].sort(bySortOrder).map((offer) => ({
   id: offer.id,
+  slug: offer.slug,
   title: offer.title,
   kicker: offer.kicker,
   description: offer.description,

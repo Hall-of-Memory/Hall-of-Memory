@@ -1,6 +1,6 @@
 ---
 id: T047
-status: active
+status: done
 priority: P0
 dependencies: [T046]
 ---
@@ -51,7 +51,21 @@ Begonnen am 23.08.2026 auf Basis von `main` `d159b76a6ff118c628e4218cea9531af642
 
 Der revisionsgebundene Review-Readback von PR #26 zeigte nach dessen Merge noch einen echten P1-Bypass: `npm run build` und `npm run deploy` waren auf `main` nicht mit `check:production-readiness` verbunden. Damit konnten die synthetischen Readiness-Tests grün sein, ohne dass ein später auf `launchStatus=production` gesetzter realer Site-Build denselben Gate zwingend ausführt.
 
-T047 ist deshalb bis zum revisionsgebundenen Fix samt erfolgreichem Post-Merge-`pages-runtime` wieder `active`. Der Fix muss normale Stage-1-Builds weiter erlauben, aber jeden Production-Build vor Astro fail-closed prüfen; der freigegebene Site-Deploy-Pfad muss zusätzlich einen strikten Readiness-Check und einen frischen gegateten Build vor Wrangler erzwingen.
+T047 wurde deshalb bis zum revisionsgebundenen Fix samt erfolgreichem Post-Merge-`pages-runtime` wieder `active`. Der Fix musste normale Stage-1-Builds weiter erlauben, aber jeden Production-Build vor Astro fail-closed prüfen; der freigegebene Site-Deploy-Pfad musste zusätzlich einen strikten Readiness-Check und einen frischen gegateten Build vor Wrangler erzwingen.
+
+## Terminaler Closeout — 23.08.2026
+
+- Die revisionsgebundene T047-PR-Kette ist: PR #24 → Merge `4af05923ff4ce456ccc1e718c4ebbdd94361ada8`; PR #25 → Merge `500e24b9c2f61c71fd26a72a2bb3372de6da15b2`; PR #26 → Merge `d214b179b3502c7190baa88e37b5e6db39198c5c`; PR #27 → Merge `7b702822376cc45ab78b3f766ec2d556bd854fe5`; PR #29 → Merge `d0a645bc7aeeba1bf642b46074b437ac36a12c71`. PR #28 gehört zu T038 und ist ausdrücklich nicht Teil dieses Release-Safety-Closeouts.
+- PR #29 wurde nur auf dem exakten Head `b1f2c1a49dad9ce8c69dc4cd315dc2b7071a10c8` gemergt. Sein Required-Verify-Lauf `32657540559` war erfolgreich; `pages-runtime` war auf dem Pull-Request-Event korrekt übersprungen.
+- Der finale PR-Head bestand lokal den vollständigen `npm run verify`-Pfad einschließlich Production-Readiness, Security-Policy, Pages-Deployment-Vertrag, Astro-Check sowie Worker-/Site-Dry-Run. `npm audit --audit-level=high` meldete `0 vulnerabilities`. Ein unvollständiger synthetischer Production-Zustand blieb fail-closed; der aktuelle Stage-1-/Draft-Zustand bleibt baubar.
+- `.github/grabowski-required-checks.json` bindet die repositoryseitige Review-/Merge-Policy dauerhaft an den Required Check `verify`; die GitHub-Ruleset-Wahrheit verlangt ebenfalls strikt `verify` und aufgelöste Reviewthreads.
+- Der reale Post-Merge-Golden-Run ist der `push`-Run `32658349135` auf exakt `main=d0a645bc7aeeba1bf642b46074b437ac36a12c71`. Der Job `verify` war erfolgreich; darin liefen auch `Enforce production release build`, `Build verified GitHub Pages artifact`, `Bind Pages artifact to this Verify run` und `Upload verified GitHub Pages artifact` erfolgreich.
+- Im selben Run war `pages-runtime` erfolgreich. Die Schritte `Publish pending runtime status`, `Deploy verified artifact to GitHub Pages`, `Verify deployed runtime receipt` und `Publish terminal runtime status` liefen jeweils erfolgreich. Auf exakt `d0a645bc7aeeba1bf642b46074b437ac36a12c71` steht der Commit-Status `pages-runtime=success` mit Ziel `https://hall-of-memory.github.io/Hall-of-Memory/`.
+- Der veröffentlichte Receipt liegt unter `hall-of-memory-deployment.json` beziehungsweise `https://hall-of-memory.github.io/Hall-of-Memory/hall-of-memory-deployment.json` und wurde live mit HTTP-Erfolg gelesen. Inhalt: `schemaVersion=1`, `sourceRevision=d0a645bc7aeeba1bf642b46074b437ac36a12c71`, `verifyWorkflow=Verify`, `verifyRunId=32658349135`, `channel=github-pages-preview`.
+- Der Pages-Vertrag bleibt fail-closed: keine unabhängige Pages-Pipeline, kein PR-Deploy, Source-SHA und Verify-Run-ID sind gebunden, der Receipt liegt nicht unter `.well-known/`, `pages-runtime` besitzt `pending` plus terminal `success|failure`, Actions sind auf volle Commit-SHAs gepinnt, Checkout-Credentials bleiben mit `persist-credentials: false` deaktiviert und der Deployment-/Readback-Pfad behält Timeout-Headroom.
+- HSTS bleibt bewusst **aus**, bis der stabile Domain-/TLS-Cutover aus T045 real belegt ist. Dieser Closeout aktiviert weder Domain/DNS noch Inquiry-Produktion und erfindet keine extern fehlende Datenschutz- oder Kundenwahrheit.
+
+Damit ist T047 technisch terminal belegt. T048 darf nach Integration dieses Closeouts beginnen; T049 bleibt korrekt `blocked_external`, bis T008/T011 reale Retention-/Löschregeln und Enforcement-Evidenz liefern.
 
 ## Nicht-Ziel
 
@@ -69,7 +83,8 @@ T047 ist deshalb bis zum revisionsgebundenen Fix samt erfolgreichem Post-Merge-`
 - [x] Actions-Härtung verändert keine fachliche Websitefunktion.
 - [x] Security-Header/CSP können nicht unbemerkt auseinanderlaufen.
 - [x] `npm ci` und `npm run verify` PASS.
+- [x] realer Post-Merge-`main`-Run liefert auf derselben Revision terminal `pages-runtime=success` und einen live lesbaren, SHA-/Run-ID-gebundenen Receipt.
 
 ## Stage-2-Grenze
 
-T047 bleibt bis zum Post-Merge-Nachweis dieses Reopen-Fixes `active`. Das ist notwendig, aber nicht hinreichend für den Launch. T008/T010/T011/T045 und die dort fehlende externe Wahrheit bleiben maßgeblich.
+T047 ist technisch terminal `done`. Das ist notwendig, aber nicht hinreichend für den Launch. T008/T010/T011/T045 und die dort fehlende externe Wahrheit bleiben maßgeblich; T049 bleibt bis zur realen Retention-/Löschpolicy aus T008/T011 `blocked_external`.

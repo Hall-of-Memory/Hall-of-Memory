@@ -24,6 +24,9 @@ const offers = defineCollection({
     title: z.string().min(1),
     kicker: z.string().min(1),
     description: z.string().min(1),
+    moreInfo: z.string().min(1),
+    motif: z.enum(['flash', 'mirror', 'editorial']),
+    highlights: z.array(z.string().min(1)).min(1),
     sortOrder: z.number().int().nonnegative(),
     source,
   }),
@@ -38,6 +41,29 @@ const packages = defineCollection({
     summary: z.string().min(1),
     priceLabel: z.string().nullable(),
     features: z.array(z.string()),
+    sortOrder: z.number().int().nonnegative(),
+    source,
+  }),
+});
+
+const benefits = defineCollection({
+  loader: file('src/content/benefits.json'),
+  schema: z.object({
+    id: z.string(),
+    title: z.string().min(1),
+    text: z.string().min(1),
+    sortOrder: z.number().int().nonnegative(),
+    source,
+  }),
+});
+
+const steps = defineCollection({
+  loader: file('src/content/steps.json'),
+  schema: z.object({
+    id: z.string(),
+    number: z.string().regex(/^\d{2}$/),
+    title: z.string().min(1),
+    text: z.string().min(1),
     sortOrder: z.number().int().nonnegative(),
     source,
   }),
@@ -66,4 +92,4 @@ const gallery = defineCollection({
   }),
 });
 
-export const collections = { site, offers, packages, faqs, gallery };
+export const collections = { site, offers, packages, benefits, steps, faqs, gallery };

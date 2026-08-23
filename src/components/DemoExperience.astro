@@ -1,7 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import InquiryEventFields from './InquiryEventFields.astro';
-import { loadSiteContent } from '../lib/content';
+import {
+  demoBenefits,
+  demoFaqs,
+  demoOffers,
+  demoPackages,
+  demoSite,
+  demoSteps,
+} from '../data/demo';
 import { resolveInquiryPublicConfig } from '../lib/inquiry-config';
 import { inquiryLimits } from '../lib/inquiry';
 import { buildStructuredData, resolveSeoState } from '../lib/seo';
@@ -16,17 +23,9 @@ interface Props {
 
 const { frameVariant, mode = 'preview' } = Astro.props;
 const isPreview = mode === 'preview';
-const {
-  site,
-  offers: demoOffers,
-  packages: demoPackages,
-  benefits: demoBenefits,
-  steps: demoSteps,
-  faqs: demoFaqs,
-} = await loadSiteContent();
-const pageTitle = `${site.name} — Event-Erlebnisse`;
-const description = site.description;
-const seo = resolveSeoState(Astro.site?.href, site.launchStatus, Astro.url.pathname);
+const pageTitle = `${demoSite.name} — Event-Erlebnisse`;
+const description = demoSite.description;
+const seo = resolveSeoState(Astro.site?.href, demoSite.launchStatus, Astro.url.pathname);
 const structuredData = buildStructuredData({
   canonicalUrl: seo.canonicalUrl,
   name: pageTitle,

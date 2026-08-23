@@ -11,9 +11,10 @@ if (!chromePath) throw new Error('Chrome executable path is required.');
 if (typeof WebSocket !== 'function') throw new Error('Node.js WebSocket support is required.');
 
 const profile = resolve('/tmp', `hom-t046-chrome-${process.pid}`);
-const screenshots = resolve('/tmp', `hom-t046-browser-readback-${process.pid}`);
+const evidenceDir = resolve(process.cwd(), '.t046-browser-evidence');
 const port = 19222;
-mkdirSync(screenshots, { recursive: true });
+rmSync(evidenceDir, { recursive: true, force: true });
+mkdirSync(evidenceDir, { recursive: true });
 
 const chrome = spawn(chromePath, [
   '--headless=new',
@@ -97,6 +98,25 @@ async function run() {
     { name: 'production', path: '/', preview: false },
     { name: 'preview', path: '/demo/', preview: true },
   ];
+  const scrollTargets = [
+    '.demo-hero',
+    '#angebote',
+    '.demo-benefits',
+    '#pakete',
+    '#galerie',
+    '#ablauf',
+    '#kundenbereich',
+    '#anfrage',
+    '#faq',
+    '.demo-contact-card',
+    'footer',
+  ];
+  const manifest = {
+    head: process.env.GITHUB_SHA ?? null,
+    generatedAt: new Date().toISOString(),
+    browser: chromePath,
+    routes: [],
+  };
 
   for (const viewport of viewports) {
     await send('Emulation.setDeviceMetricsOverride', {
@@ -117,7 +137,30 @@ async function run() {
         await delay(50);
         if (attempt === 99) throw new Error(`Timed out loading ${url}`);
       }
-      await delay(100);
+
+      for (const selector of scrollTargets) {
+        const targetY = await evaluate(`(() => {
+          const node = document.querySelector(${JSON.stringify(selector)});
+          if (!node) return null;
+          const rect = node.getBoundingClientRect();
+          return Math.max(0, Math.floor(rect.top + scrollY - 24));
+        })()`);
+        if (targetY !== null) {
+          await evaluate(`window.scrollTo(0, ${targetY})`);
+          await delay(90);
+        }
+      }
+
+      await evaluate(`Promise.all([...document.images].map((image) => {
+        if (image.complete) return true;
+        return new Promise((resolveImage) => {
+          image.addEventListener('load', () => resolveImage(true), { once: true });
+          image.addEventListener('error', () => resolveImage(false), { once: true });
+          setTimeout(() => resolveImage(false), 1500);
+        });
+      }))`);
+      await evaluate('window.scrollTo(0, 0)');
+      await delay(120);
 
       const metrics = await evaluate(`(() => {
         const viewportWidth = innerWidth;
@@ -126,6 +169,20 @@ async function run() {
           const rect = node.getBoundingClientRect();
           return { className: node.className, left: rect.left, right: rect.right, width: rect.width };
         }).filter((rect) => rect.left < -1 || rect.right > viewportWidth + 1);
+        const sections = ${JSON.stringify(scrollTargets)}.map((selector) => {
+          const node = document.querySelector(selector);
+          if (!node) return { selector, present: false };
+          const rect = node.getBoundingClientRect();
+          const style = getComputedStyle(node);
+          return {
+            selector,
+            present: true,
+            width: rect.width,
+            height: rect.height,
+            display: style.display,
+            visibility: style.visibility,
+          };
+        });
         const consent = document.querySelector('.consent-row');
         const turnstile = document.querySelector('.turnstile-field');
         const submit = document.querySelector('.demo-inquiry-card button[type="submit"]');
@@ -133,6 +190,7 @@ async function run() {
           href: location.href,
           viewport: { width: innerWidth, height: innerHeight },
           documentWidth: document.documentElement.scrollWidth,
+          documentHeight: document.documentElement.scrollHeight,
           bodyWidth: document.body.scrollWidth,
           overflowX: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - innerWidth,
           h1Count: document.querySelectorAll('h1').length,
@@ -144,6 +202,9 @@ async function run() {
           submitDisabled: submit?.disabled ?? null,
           configNote: Boolean(document.querySelector('.config-note')),
           outsideCards,
+          sections,
+          imageCount: document.images.length,
+          incompleteImages: [...document.images].filter((image) => !image.complete).length,
           consentGrid: consent ? getComputedStyle(consent).display : null,
           consentColumns: consent ? getComputedStyle(consent).gridTemplateColumns : null,
           turnstileBorderTop: turnstile ? getComputedStyle(turnstile).borderTopWidth : null,
@@ -159,6 +220,13 @@ async function run() {
       assert.equal(metrics.navCount, 1, `${route.name}/${viewport.name}: expected one nav`);
       assert.equal(metrics.hasMain, true, `${route.name}/${viewport.name}: main missing`);
       assert.ok(metrics.heroWidth > 0, `${route.name}/${viewport.name}: hero image area collapsed`);
+      assert.equal(metrics.incompleteImages, 0, `${route.name}/${viewport.name}: images still loading after section sweep`);
+      for (const section of metrics.sections) {
+        assert.equal(section.present, true, `${route.name}/${viewport.name}: section missing: ${section.selector}`);
+        assert.ok(section.width > 0 && section.height > 0, `${route.name}/${viewport.name}: section collapsed: ${section.selector}`);
+        assert.notEqual(section.display, 'none', `${route.name}/${viewport.name}: section hidden: ${section.selector}`);
+        assert.notEqual(section.visibility, 'hidden', `${route.name}/${viewport.name}: section invisible: ${section.selector}`);
+      }
 
       if (route.preview) {
         assert.equal(metrics.previewBar, true, `${viewport.name}: preview marker missing`);
@@ -176,21 +244,49 @@ async function run() {
         assert.equal(metrics.turnstileBorderTop, '0px', `${viewport.name}: production turnstile reset missing`);
       }
 
+      const layout = await send('Page.getLayoutMetrics');
+      const contentSize = layout.cssContentSize ?? layout.contentSize;
+      assert.ok(contentSize?.width > 0 && contentSize?.height > viewport.height, `${route.name}/${viewport.name}: invalid full-page layout metrics`);
       const screenshot = await send('Page.captureScreenshot', {
         format: 'png',
-        captureBeyondViewport: false,
+        captureBeyondViewport: true,
         fromSurface: true,
+        clip: {
+          x: 0,
+          y: 0,
+          width: Math.ceil(contentSize.width),
+          height: Math.ceil(contentSize.height),
+          scale: 1,
+        },
       });
       const bytes = Buffer.from(screenshot.data, 'base64');
-      const screenshotName = `${route.name}-${viewport.name}.png`;
-      writeFileSync(resolve(screenshots, screenshotName), bytes);
+      const screenshotName = `${route.name}-${viewport.name}-full.png`;
+      writeFileSync(resolve(evidenceDir, screenshotName), bytes);
       const digest = createHash('sha256').update(bytes).digest('hex');
-      console.log(`T046_BROWSER_VIEW=${route.name}/${viewport.name} overflowX=${metrics.overflowX} outsideCards=${metrics.outsideCards.length} heroWidth=${metrics.heroWidth.toFixed(2)} screenshot_sha256=${digest}`);
+      const record = {
+        route: route.name,
+        viewport: viewport.name,
+        viewportWidth: viewport.width,
+        viewportHeight: viewport.height,
+        documentHeight: metrics.documentHeight,
+        capturedWidth: Math.ceil(contentSize.width),
+        capturedHeight: Math.ceil(contentSize.height),
+        overflowX: metrics.overflowX,
+        outsideCards: metrics.outsideCards.length,
+        heroWidth: Number(metrics.heroWidth.toFixed(2)),
+        imageCount: metrics.imageCount,
+        incompleteImages: metrics.incompleteImages,
+        screenshot: screenshotName,
+        screenshotSha256: digest,
+      };
+      manifest.routes.push(record);
+      console.log(`T046_BROWSER_VIEW=${route.name}/${viewport.name} overflowX=${record.overflowX} outsideCards=${record.outsideCards} documentHeight=${record.documentHeight} captured=${record.capturedWidth}x${record.capturedHeight} images=${record.imageCount}/${record.incompleteImages} screenshot_sha256=${digest}`);
     }
   }
 
+  writeFileSync(resolve(evidenceDir, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
   socket.close();
-  console.log('T046_BROWSER_READBACK=PASS viewports=3 routes=2');
+  console.log('T046_BROWSER_READBACK=PASS viewports=3 routes=2 full_page=true artifact_ready=true');
 }
 
 try {

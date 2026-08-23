@@ -7,6 +7,18 @@ import steps from '../content/steps.json';
 import type { LaunchStatus } from '../lib/seo';
 
 const bySortOrder = <T extends { sortOrder: number }>(a: T, b: T) => a.sortOrder - b.sortOrder;
+type OfferMotif = 'flash' | 'mirror' | 'editorial';
+type CanonicalOffer = {
+  id: string;
+  slug: string;
+  title: string;
+  kicker: string;
+  description: string;
+  moreInfo: string;
+  motif: OfferMotif;
+  highlights: string[];
+  sortOrder: number;
+};
 type CanonicalPackage = { id: string; name: string; sortOrder: number };
 type CanonicalSite = {
   id: string;
@@ -26,7 +38,7 @@ const siteEntry = site[0] as CanonicalSite | undefined;
 if (!siteEntry) throw new Error('Hall of Memory site settings are missing.');
 export const demoSite: CanonicalSite = siteEntry;
 
-export const demoOffers = [...offers].sort(bySortOrder).map((offer) => ({
+export const demoOffers = [...(offers as CanonicalOffer[])].sort(bySortOrder).map((offer) => ({
   id: offer.id,
   slug: offer.slug,
   title: offer.title,

@@ -1,6 +1,8 @@
 import { verifyAccessRequest, type AdminIdentity } from './access.ts';
 import type { CoreEnv } from './admin-privacy.ts';
 
+type IdentityVerifier = (request: Request, env: CoreEnv) => Promise<AdminIdentity | null>;
+
 const encodeHtml = (value: string): string =>
   value.replace(/[&<>"']/g, (character) => ({
     '&': '&amp;',
@@ -46,11 +48,15 @@ function jsonError(status: number, error: string): Response {
   });
 }
 
-export async function handleAdminPage(request: Request, env: CoreEnv): Promise<Response | null> {
+export async function handleAdminPage(
+  request: Request,
+  env: CoreEnv,
+  verifyIdentity: IdentityVerifier = verifyAccessRequest,
+): Promise<Response | null> {
   const url = new URL(request.url);
   if (request.method !== 'GET' || url.pathname !== '/admin') return null;
 
-  const identity = await verifyAccessRequest(request, env);
+  const identity = await verifyIdentity(request, env);
   if (!identity) return jsonError(403, 'admin-access-required');
 
   const nonce = createAdminNonce();

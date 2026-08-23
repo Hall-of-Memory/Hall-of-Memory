@@ -84,9 +84,17 @@ Damit wird die Website-/Preview-Nutzung nicht unnötig mit einer öffentlichen W
 - `main` ist live geschützt: Pull Request erforderlich, Required Check `verify` mit `strict=true`, Schutz gilt auch für Admins, offene Review-Gespräche müssen aufgelöst sein, Force-Push und Branch-Löschung sind deaktiviert, verpflichtende Approval-Anzahl `0`.
 - Codex-Review auf PR #1 meldete berechtigt, dass die CI-Stabilisierung zunächst nicht im kanonischen Taskjournal dokumentiert war. Dieser Befund wird mit derselben PR revisionsgebunden eingearbeitet; der Review-Thread wird erst nach GitHub-Readback des aktualisierten Heads aufgelöst.
 
+## Live-Evidenz — 2026-08-23
+
+- PR #3 (`Harden Pages preview and inquiry contracts`) wurde über den geschützten Mergepfad revisionsgebunden gemergt; Merge-Commit auf `main` ist `180c97e805890d2e2f827d07c0eb16c983186d54`. Der anschließende `main`-Verify-Lauf `32595447199` und das Pages-Deployment `32595447302` waren erfolgreich.
+- Live-Readback nach diesem Merge: `https://hall-of-memory.github.io/Hall-of-Memory/` liefert HTTP `200` und dieselbe Kundenpreview wie `/demo/`; `/demo/rahmen/` liefert ebenfalls HTTP `200`. Die Pages-Wurzel zeigt keinen produktiven Anfrageformular-Scaffold.
+- Der lokale kanonische Checkout `/home/alex/repos/hall-of-memory` wurde am 23.08.2026 aus dem sauberen Vor-Publication-Stand `73ed117f30536af47ce7e91cb7ddd4dbea467947` auf exakt `origin/main` `180c97e805890d2e2f827d07c0eb16c983186d54` ausgerichtet und folgt wieder `origin/main`. Der alte Stand bleibt zusätzlich unter `refs/grabowski/recovery/hall-of-memory-pre-public-main-20260823T0525Z` erhalten.
+- Der ersetzte Entwickler-Mirror `alexdermohr/hall-of-memory-preview` hatte keine offenen PRs und keine laufenden Actions und wurde nach erfolgreichem Ersatz am 23.08.2026 archiviert. Branches oder Historie wurden nicht gelöscht.
+- Die grünen GitHub-Läufe meldeten als reine CI-Hygiene noch die abgekündigte Node-20-Actions-Runtime für `actions/checkout@v4` und `actions/setup-node@v4`. Die offiziellen aktuellen Releases wurden live als Checkout `v7.0.1` und Setup-Node `v7.0.0` verifiziert; der Closeout-PR hebt deshalb ausschließlich diese beiden Action-Majors auf `@v7`, während der Projektvertrag `node-version: '22'` unverändert bleibt.
+
 ## Restgrenze
 
-Die GitHub-/Pages-/CI-/Protection-Arbeit kann technisch autonom abgeschlossen werden. Nicht autonom möglich ist die Anmeldung im persönlichen ChatGPT/Codex-Konto des Kunden. Der abschließende **Kunden-Codex-Golden-Path** bleibt deshalb bis zu seiner GitHub-Verbindung als externer Akzeptanzpunkt offen.
+Die autonom ausführbare GitHub-/Pages-/CI-/Protection- und Mirror-Cutover-Arbeit ist abgeschlossen. Nicht autonom möglich ist die Anmeldung im persönlichen ChatGPT/Codex-Konto des Kunden. Der abschließende **Kunden-Codex-Golden-Path** bleibt deshalb bis zu seiner GitHub-Verbindung als externer Akzeptanzpunkt offen.
 
 ## Akzeptanz
 

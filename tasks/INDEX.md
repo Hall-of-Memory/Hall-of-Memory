@@ -51,4 +51,4 @@
 | T046 | done | Kanonische Landingpage: Demo- und Produktionsarchitektur auf gemeinsamen Seitenkern und gemeinsames Contentmodell konvergieren |
 | T047 | active | Release-Safety-Gates: Production-Readiness, verify→deploy, Actions-/Header-Härtung |
 | T048 | planned | Testarchitektur in Contract-, Visual- und Performance-Gates entkoppeln |
-| T049 | planned | Inquiry-/Admin-Datenschutz vor Produktivaktivierung härten |
+| T049 | active | Inquiry-/Admin-Datenschutz vor Produktivaktivierung härten |

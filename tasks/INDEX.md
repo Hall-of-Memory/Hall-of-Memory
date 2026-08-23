@@ -49,6 +49,6 @@
 | T044 | planned | Preview-Legacy-Sternenrahmen V7–V9 in Fundus überführen oder bewusst ausmustern |
 | T045 | active | `hallofmemory.de` als Produktions-/Primärdomain aktivieren und Source-Privatsphäre getrennt entscheiden |
 | T046 | done | Kanonische Landingpage: Demo- und Produktionsarchitektur auf gemeinsamen Seitenkern und gemeinsames Contentmodell konvergieren |
-| T047 | active | Release-Safety-Gates: Production-Readiness, verify→deploy, Actions-/Header-Härtung |
+| T047 | done | Release-Safety-Gates: Production-Readiness, verify→deploy, Actions-/Header-Härtung |
 | T048 | planned | Testarchitektur in Contract-, Visual- und Performance-Gates entkoppeln |
-| T049 | active | Inquiry-/Admin-Datenschutz vor Produktivaktivierung härten |
+| T049 | blocked_external | Inquiry-/Admin-Datenschutz technisch gehärtet; konkrete Retention-/Löschpolicy wartet auf T008/T011 |

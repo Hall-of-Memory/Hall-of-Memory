@@ -1,6 +1,6 @@
 ---
 id: T043
-status: active
+status: blocked_external
 priority: P0
 dependencies: [T009, T011, T018]
 ---
@@ -95,6 +95,10 @@ Damit wird die Website-/Preview-Nutzung nicht unnötig mit einer öffentlichen W
 ## Restgrenze
 
 Die autonom ausführbare GitHub-/Pages-/CI-/Protection- und Mirror-Cutover-Arbeit ist abgeschlossen. Nicht autonom möglich ist die Anmeldung im persönlichen ChatGPT/Codex-Konto des Kunden. Der abschließende **Kunden-Codex-Golden-Path** bleibt deshalb bis zu seiner GitHub-Verbindung als externer Akzeptanzpunkt offen.
+
+## Statusableitung — 2026-08-23
+
+Der Task wird deshalb nicht länger als frei ausführbares `active` geführt, sondern als `blocked_external`: Sämtliche autonom ausführbaren Repository-, CI-, Pages-, Branchschutz- und Mirror-Schritte sind erledigt. Der einzige verbleibende Akzeptanzpunkt benötigt eine Handlung im persönlichen Kundenkonto und ist damit keine aktuell claimbare Coding-Lane.
 
 ## Akzeptanz
 

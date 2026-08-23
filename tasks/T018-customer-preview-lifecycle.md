@@ -1,6 +1,6 @@
 ---
 id: T018
-status: active
+status: done
 priority: P0
 dependencies: [T017]
 ---
@@ -57,4 +57,11 @@ Die folgenden Punkte dokumentieren den früheren T018-Pfad. Sie sind für Recove
 
 ## Abschlusskriterium
 
-T018 bleibt `active`, solange die Kundenpreview absichtlich über den aktuellen GitHub-Pages-Pfad bereitgestellt wird. Der Task darf erst `done` werden, wenn entweder der Previewbedarf endet oder der neue kundenkontrollierte Previewpfad aus T043 revisionsgebunden übernommen wurde und der bisherige Entwickler-Mirror nach erfolgreichem Readback abgelöst/archiviert ist. Eine Produktionsveröffentlichung wird durch T018 ausdrücklich nicht freigegeben und bleibt T009 unterstellt.
+T018 darf `done` werden, wenn entweder der Previewbedarf endet oder der neue kundenkontrollierte Previewpfad aus T043 revisionsgebunden übernommen wurde und der bisherige Entwickler-Mirror nach erfolgreichem Readback abgelöst/archiviert ist. Eine Produktionsveröffentlichung wird durch T018 ausdrücklich nicht freigegeben und bleibt T009/T045 unterstellt.
+
+## Closeout — 2026-08-23
+
+- T043 hat die Kundenpreview revisionsgebunden in `Hall-of-Memory/Hall-of-Memory` übernommen.
+- GitHub Pages aus dem Kundenrepo liefert den erwarteten Preview-Inhalt auf der Root-/Demo-Strecke und `/demo/rahmen/`.
+- Der frühere Entwickler-Mirror `alexdermohr/hall-of-memory-preview` wurde nach erfolgreichem Ersatz archiviert; Historie wurde nicht gelöscht.
+- Damit ist das T018-Abschlusskriterium erfüllt. Die weitere Arbeitsdomain-/Cloudflare-Veröffentlichung liegt ausschließlich in T045; weitere Rahmenentscheidungen liegen in T037/T038/T044.

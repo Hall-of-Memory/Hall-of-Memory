@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "status": "blocked_external",
+  "retentionDays": null,
+  "deletionMode": null,
+  "policyEvidenceRef": "",
+  "enforcementEvidenceRef": "",
+  "blockedBy": ["T008", "T011"],
+  "reason": "Eine konkrete Aufbewahrungsfrist und Löschregel wird erst nach belegter Datenschutz-/Produktfreigabe festgelegt; bis dahin bleibt der Inquiry-Produktivbetrieb fail-closed."
+}

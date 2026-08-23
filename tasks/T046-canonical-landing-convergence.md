@@ -22,9 +22,9 @@ T046 beginnt erst, wenn T038 seine noch offene Rahmen-/Kundenabnahme abgeschloss
 
 ## Ausgangsbefund
 
-- `src/pages/index.astro` verwendet das kanonische Contentmodell, bildet aber noch den technischeren Scaffold-/Entwurfsstand ab.
-- `/demo/` rendert `DemoExperience.astro`, das den kundennahen Designstand enthält, aber eigene Demo-Daten und umfangreiche Frame-/Layoutlogik mitführt.
-- `DemoExperience.astro` bündelt Hero, Angebote, Benefits, Pakete, Galerie, Ablauf, Kundenbereich, Anfrage, FAQ/Kontakt und Rahmenlogik in einer großen Komponente.
+- `src/pages/index.astro` verwendete das kanonische Contentmodell, bildete aber noch den technischeren Scaffold-/Entwurfsstand ab.
+- `/demo/` renderte `DemoExperience.astro` mit dem kundennahen Designstand und einer früher separaten Demo-Datenprojektion.
+- `DemoExperience.astro` bündelt weiterhin Hero, Angebote, Benefits, Pakete, Galerie, Ablauf, Kundenbereich, Anfrage, FAQ/Kontakt und Rahmenlogik in einer großen Komponente.
 - Der Stage-1-Vertrag aus T045 bleibt während T046 unverändert: `/` darf auf Cloudflare weiter per temporärem `302` nach `/demo/` führen; `/demo/` bleibt `noindex` und das Anfrageformular bleibt fail-closed.
 
 ## Umsetzung
@@ -37,6 +37,18 @@ T046 beginnt erst, wenn T038 seine noch offene Rahmen-/Kundenabnahme abgeschloss
 6. Keine Preise, Kontaktdaten, Rechtsangaben, Bildrechte oder Geschäftsregeln erfinden. Extern fehlende Inhalte bleiben den bestehenden Tasks T008/T010/T011 zugeordnet.
 7. Bestehende Stage-1-Routing-, Pages-, Frame-, Security- und Performanceverträge während der Migration erhalten.
 
+## Shared-Core-Evidenz — 2026-08-23
+
+- Der erste T046-Slice wurde über PR #6 gemergt: Angebote, Benefits, Prozessschritte und FAQ besitzen nun eine einzige Zod-validierte Wahrheit unter `src/content/`; `src/data/demo.ts` ist nur noch eine temporäre Formprojektion und enthält keine eigenständigen Produkttexte.
+- Der zweite Slice stellt `/` und `/demo/` auf denselben `DemoExperience`-Kern. `/` setzt explizit `mode="production"`; `/demo/` und die Rahmenvarianten verwenden weiterhin den fail-closed Preview-Default.
+- Preview/Production unterscheiden sich nur noch explizit in Betriebsaspekten: Preview-Bar, `noindex`, Canonical/Structured Data, CSP-`form-action` sowie Inquiry-/Turnstile-Aktivierung. Die inhaltliche Landingpage-Struktur ist gemeinsam.
+- `public/_redirects` bleibt unverändert auf dem Stage-1-Vertrag `/ /demo/ 302`; der Pages-Artefakttest pinnt diesen Redirect weiterhin revisionsgebunden und beweist zugleich, dass Source-Root und Preview-Root unterschiedliche Betriebsmodi desselben Kerns bleiben.
+- Production-spezifische Consent-/Turnstile-/Feedback-Regeln liegen in `src/styles/inquiry-production.css`; der Preview-/Frame-Vertrag wird dadurch nicht fachlich verändert.
+- Required-`verify`-Lauf `32626529351` auf Head `d0e24a629953fae505c9e98f2a51a84f84375a90`: PASS. Enthalten sind Inquiry-/Migration-/Domain-/Gallery-/Form-/Quality-/Demo-/Fundus-/Preview-/Pages-Gates, Astro Check, Build sowie Worker- und Site-Dry-Runs.
+- Revisionsgebundene Messwerte des grünen Laufs: Production HTML 23.219 B, CSS 26.601 B, JS 6.779 B, initial gzip 16.653 B; Preview HTML 20.415 B, CSS 26.601 B, JS 0 B, initial gzip 13.275 B. Damit bleibt der Preview-CSS-Vertrag unter 26 KiB und besitzt 2.071 B Abstand zum T042-Hard-Max von 28 KiB; der 20-KiB-gzip-Deckel bleibt deutlich eingehalten.
+- Astro Check im gleichen Lauf: 43 Dateien, 0 Fehler, 0 Warnungen, 0 Hinweise.
+- Noch offen innerhalb T046: `DemoExperience.astro` in sinnvolle gröbere Sektionen zerlegen und den finalen Desktop-/Tablet-/Mobile-Browser-Readback für den konvergierten Root/Preview-Kern dokumentieren. Deshalb bleibt T046 `active`.
+
 ## Nicht-Ziel
 
 - kein Cloudflare-/DNS-Cutover;
@@ -48,14 +60,14 @@ T046 beginnt erst, wenn T038 seine noch offene Rahmen-/Kundenabnahme abgeschloss
 
 ## Akzeptanz
 
-- [ ] `/` und `/demo/` verwenden denselben Landingpage-Seitenkern.
-- [ ] Preview-/Produktionsunterschiede sind explizite Konfiguration, keine duplizierte Seitengeschäftslogik.
-- [ ] Produkt-/Landingtexte besitzen keine zweite kanonische Wahrheit in `src/data/demo`.
+- [x] `/` und `/demo/` verwenden denselben Landingpage-Seitenkern.
+- [x] Preview-/Produktionsunterschiede sind explizite Konfiguration, keine duplizierte Seitengeschäftslogik.
+- [x] Produkt-/Landingtexte besitzen keine zweite kanonische Wahrheit in `src/data/demo`.
 - [ ] `DemoExperience.astro` ist auf sinnvolle Sektionen bzw. Orchestrierung reduziert.
-- [ ] `/demo/rahmen/` und seine Einzelvarianten bleiben funktional und vom Landingpage-Refactor isoliert.
-- [ ] T045 Stage 1 bleibt fail-closed: Preview `noindex`, kein produktiver Demo-Submit, temporärer Root-Redirect unverändert bis Stage 2.
-- [ ] bestehende Accessibility-, Asset-, Performance- und Security-Invarianten bleiben grün.
-- [ ] `npm ci` und `npm run verify` PASS.
+- [x] `/demo/rahmen/` und seine Einzelvarianten bleiben funktional und vom Landingpage-Refactor isoliert.
+- [x] T045 Stage 1 bleibt fail-closed: Preview `noindex`, kein produktiver Demo-Submit, temporärer Root-Redirect unverändert bis Stage 2.
+- [x] bestehende Accessibility-, Asset-, Performance- und Security-Invarianten bleiben grün.
+- [x] `npm ci` und `npm run verify` PASS.
 - [ ] Diff und Browser-Readback für Desktop, Tablet und Mobile revisionsgebunden dokumentiert.
 
 ## Folge

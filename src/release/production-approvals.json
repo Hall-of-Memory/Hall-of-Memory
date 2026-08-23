@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "legal": {
+    "approved": false,
+    "evidenceRef": ""
+  },
+  "publicMedia": {
+    "approved": false,
+    "evidenceRef": ""
+  },
+  "productContent": {
+    "approved": false,
+    "evidenceRef": ""
+  }
+}

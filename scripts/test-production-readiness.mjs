@@ -7,6 +7,14 @@ import {
 } from './check-production-readiness.mjs';
 
 const approval = (evidenceRef) => ({ approved: true, evidenceRef });
+const approvedDataPolicy = () => ({
+  schemaVersion: 1,
+  status: 'approved',
+  retentionDays: 30,
+  deletionMode: 'approved-enforcement-mode',
+  policyEvidenceRef: 'review:data-policy:example',
+  enforcementEvidenceRef: 'verification:data-lifecycle:example',
+});
 const readyFixture = () => ({
   launchStatus: 'production',
   approvals: {
@@ -15,6 +23,7 @@ const readyFixture = () => ({
     publicMedia: approval('review:media:example'),
     productContent: approval('review:content:example'),
   },
+  inquiryDataPolicy: approvedDataPolicy(),
   legalSources: {
     'impressum': '<main><h1>Impressum</h1><p>Finale Anbieterangaben.</p></main>',
     'datenschutz': '<main><h1>Datenschutz</h1><p>Finale Datenschutzinformationen.</p></main>',
@@ -37,6 +46,7 @@ for (const expectedCode of [
   'approvals.legal',
   'approvals.publicMedia',
   'approvals.productContent',
+  'inquiry.data_policy',
   'routing.stage_one_redirect',
   'origin.public_site',
   'inquiry.api',
@@ -77,4 +87,29 @@ const legacyWorkerResult = evaluateProductionReadiness(legacyWorkerEntry);
 assert.equal(legacyWorkerResult.ready, false, 'legacy production Worker entry must block production');
 assert.ok(legacyWorkerResult.blockers.some((item) => item.code === 'inquiry.worker_config'));
 
-console.log(`production-readiness-gate-ok current_blockers=${currentStageOne.blockers.length} synthetic_ready=true privacy_entry_required=true`);
+const blockedPolicy = readyFixture();
+blockedPolicy.inquiryDataPolicy = {
+  schemaVersion: 1,
+  status: 'blocked_external',
+  retentionDays: null,
+  deletionMode: null,
+  policyEvidenceRef: '',
+  enforcementEvidenceRef: '',
+};
+const blockedPolicyResult = evaluateProductionReadiness(blockedPolicy);
+assert.equal(blockedPolicyResult.ready, false, 'externally blocked data policy must block production');
+assert.ok(blockedPolicyResult.blockers.some((item) => item.code === 'inquiry.data_policy'));
+
+const missingEnforcement = readyFixture();
+missingEnforcement.inquiryDataPolicy.enforcementEvidenceRef = '';
+assert.equal(
+  evaluateProductionReadiness(missingEnforcement).ready,
+  false,
+  'policy approval without enforcement evidence must block production',
+);
+
+const invalidRetention = readyFixture();
+invalidRetention.inquiryDataPolicy.retentionDays = 0;
+assert.equal(evaluateProductionReadiness(invalidRetention).ready, false, 'non-positive retention must block production');
+
+console.log(`production-readiness-gate-ok current_blockers=${currentStageOne.blockers.length} synthetic_ready=true privacy_entry_required=true data_policy_required=true`);

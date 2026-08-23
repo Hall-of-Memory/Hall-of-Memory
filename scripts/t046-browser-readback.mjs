@@ -202,5 +202,9 @@ try {
     delay(3000),
   ]);
   if (chrome.exitCode === null) chrome.kill('SIGKILL');
-  rmSync(profile, { recursive: true, force: true });
+  try {
+    rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+  } catch (error) {
+    console.warn(`T046_BROWSER_CLEANUP_WARNING=${error instanceof Error ? error.message : String(error)}`);
+  }
 }

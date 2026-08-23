@@ -50,5 +50,5 @@
 | T045 | active | `hallofmemory.de` als Produktions-/Primärdomain aktivieren und Source-Privatsphäre getrennt entscheiden |
 | T046 | done | Kanonische Landingpage: Demo- und Produktionsarchitektur auf gemeinsamen Seitenkern und gemeinsames Contentmodell konvergieren |
 | T047 | done | Release-Safety-Gates: Production-Readiness, verify→deploy, Actions-/Header-Härtung |
-| T048 | active | Testarchitektur in Contract-, Visual- und Performance-Gates entkoppeln |
+| T048 | done | Testarchitektur in Contract-, Visual- und Performance-Gates entkoppeln |
 | T049 | blocked_external | Inquiry-/Admin-Datenschutz technisch gehärtet; konkrete Retention-/Löschpolicy wartet auf T008/T011 |

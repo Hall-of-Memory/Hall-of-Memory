@@ -1,6 +1,6 @@
 ---
 id: T048
-status: active
+status: done
 priority: P1
 dependencies: [T047]
 ---
@@ -37,8 +37,9 @@ Die bestehende starke Testsuite bleibt fail-closed, wird aber weniger an konkret
 - Der erste reale PR-Run `32663588219` bewies den Browserteil auch auf GitHub `ubuntu-24.04`: Chrome 151 führte den kompletten visuellen Vertrag erfolgreich aus und Artifact `visual-regression-32663588219` (`9499397335`, `11947253` Bytes) wurde hochgeladen. Der Run wurde erst danach durch eine `ENOTEMPTY`-Race beim Entfernen des temporären Chrome-Profils rot.
 - Diese Runner-spezifische Cleanup-Race wird fail-closed behoben: Nach `SIGTERM` wird der echte Chrome-Prozessausstieg abgewartet, nötigenfalls nach `SIGKILL` erneut gebunden gewartet; das Profil wird anschließend mit begrenzten `rm`-Retries entfernt. Die visuelle Prüfsemantik bleibt unverändert.
 - Der korrigierte Zwischenhead `d657cc98d6bd0ae3e75e36e1c1b0d3094f32971a` bestand den realen PR-Run `32663993883` vollständig; Artifact `visual-regression-32663993883` (`9499509456`, `11759930` Bytes) wurde erfolgreich veröffentlicht. Der nachgelagerte Portabilitätsreview aktualisiert die Artifact-Action zusätzlich von der bereits Node-20-deprecated v4.6.2 auf die aktuelle v7.0.1-Pin; deren verwendete Inputs bleiben unverändert kompatibel.
+- Der technische Abschlusshead `f41ebc3c3cf73a9d944dd293a1b9413deb43aca2` bestand danach den realen PR-Run `32664217390` mit Required-`verify=success`; `pages-runtime` blieb auf dem PR korrekt übersprungen. Das v7-Artefakt `visual-regression-32664217390` (`9499568352`, `11765928` Bytes) wurde erfolgreich veröffentlicht.
 
-T048 bleibt bis zum revisionsgebundenen PR-`verify` und finalen Review `active`. Danach wird dieser Task im selben PR auf `done` gesetzt und erneut auf dem finalen Head geprüft.
+Damit ist T048 technisch terminal `done`. Der nachfolgende reine Task-Closeout-Head bleibt vor Merge weiterhin an Required-`verify` und den diffgebundenen finalen Review gebunden; ein dortiger Fehler würde den Closeout wieder blockieren.
 
 ## Akzeptanz
 

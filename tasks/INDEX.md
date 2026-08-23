@@ -19,7 +19,7 @@
 | T015 | done | Premium-Polish für die isolierte Sales-Demo |
 | T016 | done | Classy-Premium-Frame-Redesign der isolierten Sales-Demo |
 | T017 | done | Luxury-Editorial-Micro-Polish der isolierten Sales-Demo |
-| T018 | active | Kundenpreview-Lifecycle der isolierten Sales-Demo |
+| T018 | done | Kundenpreview-Lifecycle der isolierten Sales-Demo |
 | T019 | done | Ornamentiertes Luxury-Frame- und Line-Art-Redesign der Sales-Demo |
 | T020 | done | Responsive Offer-Motif Precision Polish |
 | T021 | done | Luxury Engraving Detail Polish |
@@ -45,6 +45,10 @@
 | T040 | done | Kundenpreview von interner Entwicklungsansicht zu kundennaher Conversion-/UX-Preview poliert |
 | T041 | done | Preview-Pfade für Root- und GitHub-Pages-Unterpfad portabel gemacht und regressionsgesichert |
 | T042 | done | Demo-CSS-Reserve vor weiteren Styling-Erweiterungen wieder auf mindestens 2 KiB anheben |
-| T043 | active | Kundenkontrolliertes GitHub-Repo, Codex-/CI-Readiness und Publication Gate |
+| T043 | blocked_external | Kundenkontrolliertes GitHub-Repo, Codex-/CI-Readiness und Publication Gate |
 | T044 | planned | Preview-Legacy-Sternenrahmen V7–V9 in Fundus überführen oder bewusst ausmustern |
 | T045 | active | `hallofmemory.de` als Produktions-/Primärdomain aktivieren und Source-Privatsphäre getrennt entscheiden |
+| T046 | planned | Kanonische Landingpage: Demo- und Produktionsarchitektur auf gemeinsamen Seitenkern und gemeinsames Contentmodell konvergieren |
+| T047 | planned | Release-Safety-Gates: Production-Readiness, verify→deploy, Actions-/Header-Härtung |
+| T048 | planned | Testarchitektur in Contract-, Visual- und Performance-Gates entkoppeln |
+| T049 | planned | Inquiry-/Admin-Datenschutz vor Produktivaktivierung härten |

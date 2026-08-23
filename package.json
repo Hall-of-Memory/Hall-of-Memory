@@ -28,7 +28,7 @@
     "spike:inquiry": "WRANGLER_LOG_PATH=/tmp/hall-of-memory-spike-wrangler.log node --experimental-strip-types scripts/smoke-inquiry-spike.mjs",
     "spike:admin": "WRANGLER_LOG_PATH=/tmp/hall-of-memory-spike-wrangler.log node --experimental-strip-types scripts/smoke-inquiry-spike.mjs",
     "test:preview-base": "astro --base /hall-of-memory-preview build --outDir .preview-base-test-dist && node scripts/test-preview-base.mjs",
-    "test:pages-artifact": "astro --base /hall-of-memory-preview build --outDir .pages-artifact-source-test-dist && node scripts/test-pages-artifact.mjs"
+    "test:pages-artifact": "astro --base /Hall-of-Memory build --outDir .pages-artifact-source-test-dist && node scripts/test-pages-artifact.mjs"
   },
   "dependencies": {
     "astro": "7.2.4",

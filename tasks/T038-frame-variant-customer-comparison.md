@@ -236,3 +236,30 @@ Die Bildgrößen-Slider bleiben erhalten und wurden auf die neuen Randgeometrien
 - [x] öffentlicher Mobile-CDP-Readback V2 bei 390×844: `scrollWidth=390`, direkte neue Assetquelle, kein horizontaler Overflow.
 
 Aktuelle Vergleichsseite: `https://alexdermohr.github.io/hall-of-memory-preview/demo/rahmen/`.
+
+
+## GitHub-Pages-Härtung der Rahmenübersicht — 23.08.2026
+
+Nutzerfeedback auf der aktuellen kundenkontrollierten GitHub-Pages-Deployment-URL: Die Vergleichskarten unter `/Hall-of-Memory/demo/rahmen/` waren sichtbar, die Rahmen wirkten in der realen Nutzeransicht jedoch nicht mitgeladen.
+
+### Belegter Live-Befund vor der Härtung
+
+- Deployment-Source `7b702822376cc45ab78b3f766ec2d556bd854fe5`; die Vergleichsseite selbst war erreichbar und enthielt V1–V10.
+- Repräsentative direkte Asset-Readbacks V1, V6, V9 und V10 lieferten jeweils HTTP 200 mit `content-type: image/png` und nichtleerer Payload; der verschachtelte V10-Pfad war damit ebenfalls erreichbar.
+- Ein direkter Browser-Ladetest auf der Live-Seite lud V1 als echtes `Image` mit `naturalWidth=1254` und `naturalHeight=1254` erfolgreich.
+- Frische Headless-Readbacks mit Google Chrome und Brave berechneten die korrekte Fundus-URL und zeichneten den bisherigen CSS-Pseudoelement-Consumer sichtbar. Damit gibt es keinen Beleg für einen allgemeinen 404-, BASE_URL-, CSP- oder Chromium/Brave-Fehler.
+- Die genaue client-/cache-/darstellungsspezifische Ursache der gemeldeten Nutzeransicht blieb nicht reproduzierbar. Dieser Unsicherheitsrest wird nicht als falsche Root-Cause geschlossen.
+
+### Robusterer Übersicht-Consumer
+
+Die Rahmenübersicht verwendet V1–V10 nun als echte `<img>`-Elemente statt über `--comparison-frame` + `::before` + `background-image`. Die bestehenden `import.meta.env.BASE_URL`-gebundenen Assetpfade bleiben die Pfadautorität. V10 behält über `object-fit: contain` die Portrait-Sonderbehandlung; die übrigen Varianten füllen die quadratische Vergleichsfläche wie zuvor. Die neutrale dunkle Vergleichsfläche wurde nur leicht angehoben. Detailseiten und Fundus-Assets bleiben unverändert.
+
+Nutzen: Der Browser besitzt jetzt einen expliziten Bild-Lifecycle (`src`, `complete`, `naturalWidth`), und Tests können nicht mehr nur CSS-Text prüfen, sondern die tatsächlich erzeugten Bildreferenzen und Dateien im Pages-Artefakt. Trade-off: Der Consumer ist semantisch etwas expliziter im DOM, vermeidet dafür eine unnötige CSS-Indirektion.
+
+### Regressionssicherung
+
+- [x] `npm run test:demo -- --frame-image-consumer` PASS, Receipt `17a07da6ff88b008dd2b97ad0b1dfe229ca1703d8fb3da7bd23d9e3935d96f59`: Übersicht erzwingt 10 echte `.frame-comparison-image`-Elemente, korrekte lokale Quellen und keinen Rückfall auf `--comparison-frame`.
+- [x] `npm run check` PASS, Receipt `1489eb6f9396cdab5147f1090aada72b482b8f7cbb1934b47b8479ee950b06c5`.
+- [x] `npm run test:pages-artifact -- --frame-image-consumer-v2` PASS, Receipt `63ec0f42bba774bac88eb05eacde86efa4fa06581447ba315f6fd31316c7dd3e`: Build-Basis ist exakt `/Hall-of-Memory`; alle zehn `img src` liegen darunter, jede referenzierte Datei existiert nichtleer im Build und nach dem Pages-Packaging, einschließlich des verschachtelten V10-Pfads.
+
+Post-Merge bleibt als Acceptance erforderlich: exakten `main`-Deploy abwarten und auf der öffentlichen GitHub-Pages-URL für alle zehn Bilder `complete=true` und `naturalWidth>0` browserseitig readbacken.

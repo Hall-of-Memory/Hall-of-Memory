@@ -105,7 +105,9 @@ try {
   const comparison = parse(comparisonHtml);
   const comparisonText = textContent(elements(comparison, 'body')[0]);
   assert.doesNotMatch(comparisonText, /VTracer|Fundus|Alpha Mask|SHA|Construction Master/i);
-  assert.match(comparisonHtml, /--comparison-frame:\s*url\(&quot;\/fundus\//, 'local comparison frames must resolve through Astro BASE_URL');
+  const comparisonFrameImages = descendants(comparison, (node) => hasClass(node, 'frame-comparison-image'));
+  assert.equal(comparisonFrameImages.length, 10, 'comparison overview must render all ten frame assets as explicit images');
+  assert.doesNotMatch(comparisonHtml, /--comparison-frame/, 'comparison overview must not fall back to the CSS custom-property frame consumer');
   const comparisonLinks = elements(comparison, 'a').filter((node) => /^\/demo\/rahmen\/(?:[1-9]|10)\/$/.test(attr(node, 'href') ?? ''));
   assert.equal(comparisonLinks.length, 10, 'comparison overview must link all ten frame variants');
   assert.doesNotMatch(comparisonText, /Innenlinie|Bis Außenlinie|Zusatzkasten|Bildgröße/);
@@ -124,6 +126,10 @@ try {
     assert.ok(preview, `overview preview ${variant} is missing`);
     assert.equal(descendants(preview, (node) => hasClass(node, 'frame-comparison-metal-profile')).length, 0, `overview variant ${variant} must render the supplied asset directly`);
     assert.equal(attr(preview, 'data-frame-kind'), variant === 6 ? 'floral-source' : variant === 10 ? 'asset-source-portrait' : 'asset-source');
+    const frameImage = descendants(preview, (node) => hasClass(node, 'frame-comparison-image'))[0];
+    assert.ok(frameImage, `overview variant ${variant} must expose its frame as an img element`);
+    assert.equal(attr(frameImage, 'src'), expectedFrameMasks[variant], `overview variant ${variant} must resolve through Astro BASE_URL`);
+    assert.equal(attr(frameImage, 'alt'), '', `overview variant ${variant} image stays decorative because the link already has an accessible name`);
   }
 
   assert.equal(attr(elements(demo, 'html')[0], 'lang'), 'de');
@@ -348,10 +354,11 @@ try {
   assert.match(demoExperienceSource, /data-frame-variant=\"10\"[\s\S]*?max-width: 520px;[\s\S]*?aspect-ratio: 1122 \/ 1402/);
   assert.match(demoExperienceSource, /asset-source-portrait/);
   assert.match(comparisonSource, /asset-source-portrait/);
-  assert.match(comparisonSource, /background-size: contain/);
+  assert.match(comparisonSource, /object-fit: contain/);
   assert.match(demoExperienceSource, /asset-source/);
   assert.doesNotMatch(demoExperienceSource, /demo-frame-metal-profile/);
-  assert.match(comparisonSource, /--comparison-frame/);
+  assert.match(comparisonSource, /frame-comparison-image/);
+  assert.doesNotMatch(comparisonSource, /--comparison-frame/);
   assert.doesNotMatch(comparisonSource, /frame-comparison-metal-profile/);
   const frameComparisonJs = readFileSync(join(repo, 'public', 'frame-comparison.js'), 'utf8');
   assert.match(frameComparisonJs, /data-frame-size/);

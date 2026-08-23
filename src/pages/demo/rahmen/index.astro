@@ -27,7 +27,9 @@ const frames = {
     </header>
     {variants.map((variant) => (
       <a class="frame-comparison-card" href={`${assetBase}demo/rahmen/${variant}/`} aria-label={`Variante ${variant} öffnen`}>
-        <span class="frame-comparison-preview" data-frame-kind={variant === 6 ? 'floral-source' : variant === 10 ? 'asset-source-portrait' : 'asset-source'} data-frame-variant={variant} style={`--comparison-frame: url("${frames[variant]}")`} aria-hidden="true"></span>
+        <span class="frame-comparison-preview" data-frame-kind={variant === 6 ? 'floral-source' : variant === 10 ? 'asset-source-portrait' : 'asset-source'} data-frame-variant={variant} aria-hidden="true">
+          <img class="frame-comparison-image" src={frames[variant]} alt="" decoding="async" />
+        </span>
         <strong>Variante {variant}</strong>
       </a>
     ))}
@@ -63,17 +65,17 @@ const frames = {
     display: grid;
     place-items: center;
     aspect-ratio: 1;
-    background: #050505;
+    background: #0f0d0a;
     overflow: hidden;
   }
-  .frame-comparison-preview::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: var(--comparison-frame) center / 100% 100% no-repeat;
+  .frame-comparison-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
   }
-  .frame-comparison-preview[data-frame-kind="asset-source-portrait"]::before {
-    background-size: contain;
+  .frame-comparison-preview[data-frame-kind="asset-source-portrait"] .frame-comparison-image {
+    object-fit: contain;
   }
   .frame-comparison-card strong { text-align: center; font: 500 .78rem/1.2 Arial,sans-serif; letter-spacing: .12em; text-transform: uppercase; }
   .frame-comparison-card:focus-visible { outline: 2px solid #ead39b; outline-offset: 5px; }

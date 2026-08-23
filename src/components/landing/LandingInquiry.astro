@@ -1,0 +1,138 @@
+---
+import InquiryEventFields from '../InquiryEventFields.astro';
+import { inquiryLimits } from '../../lib/inquiry';
+
+interface Offer {
+  id: string;
+  title: string;
+}
+
+interface Package {
+  id: string;
+  name: string;
+}
+
+interface InquiryConfig {
+  apiUrl?: string;
+  siteKey?: string;
+  configured: boolean;
+}
+
+interface Props {
+  isPreview: boolean;
+  offers: Offer[];
+  packages: Package[];
+  inquiryConfig: InquiryConfig;
+}
+
+const { isPreview, offers, packages, inquiryConfig } = Astro.props;
+---
+<section class="demo-section demo-inquiry shell" id="anfrage" aria-labelledby="inquiry-title">
+  <div class="demo-inquiry-intro">
+    <p class="eyebrow">Anfrage</p>
+    <h2 id="inquiry-title">Erzähl uns,<br /><em>was du vorhast.</em></h2>
+    <p>
+      Mit wenigen Angaben können wir deinen Anlass, das gewünschte Erlebnis und den passenden
+      Rahmen für die weitere Abstimmung einordnen.
+    </p>
+    <div class="demo-inquiry-shortcuts">
+      <span>Produkt</span><span>Paket</span><span>Datum</span><span>Ort</span><span>Veranstaltung</span>
+    </div>
+  </div>
+
+  {isPreview ? (
+    <form class="inquiry-card demo-inquiry-card" data-demo-inquiry-disabled autocomplete="off" aria-label="Anfrageformular – noch nicht aktiv" aria-disabled="true">
+      <p class="demo-form-legal" role="status"><strong>Entwicklungsstand:</strong> Das Anfrageformular ist noch nicht aktiv. Bitte noch keine Kontaktdaten eintragen; es werden derzeit keine Anfragen übermittelt.</p>
+      <InquiryEventFields
+        {offers}
+        {packages}
+        showStepLegends={true}
+        emptyPackageLabel="Beratung gewünscht"
+        disabled={true}
+      />
+      <fieldset class="inquiry-field-group inquiry-step" disabled>
+        <legend><span aria-hidden="true">03</span> Kontaktdetails</legend>
+        <div class="form-grid-two">
+          <label>
+            Name
+            <input type="text" name="name" minlength="2" maxlength={inquiryLimits.name} autocomplete="name" required />
+          </label>
+          <label>
+            E-Mail
+            <input type="email" name="email" maxlength={inquiryLimits.email} autocomplete="email" required />
+          </label>
+        </div>
+        <label>
+          Telefonnummer <span class="optional">optional</span>
+          <input type="tel" name="phone" maxlength={inquiryLimits.phone} autocomplete="tel" />
+        </label>
+        <label>
+          Weitere Wünsche <span class="optional">optional</span>
+          <textarea name="message" maxlength={inquiryLimits.message} rows="4" placeholder="Was sollen wir über dein Event noch wissen?"></textarea>
+        </label>
+      </fieldset>
+      <button type="submit" class="button button-primary demo-submit" disabled>Anfrageformular noch nicht aktiv</button>
+      <p class="demo-form-legal">Eine Anfrage ist keine Buchung und keine Verfügbarkeitsbestätigung.</p>
+    </form>
+  ) : (
+    <form
+      class="inquiry-card demo-inquiry-card"
+      aria-label="Anfrageformular"
+      aria-busy="false"
+      data-inquiry-form
+      data-api-url={inquiryConfig.apiUrl}
+      data-turnstile-site-key={inquiryConfig.siteKey}
+    >
+      <InquiryEventFields
+        {offers}
+        {packages}
+        showStepLegends={true}
+        emptyPackageLabel="Pakete folgen"
+      />
+      <fieldset class="inquiry-field-group inquiry-step">
+        <legend><span aria-hidden="true">03</span> Kontaktdetails</legend>
+        <div class="form-grid-two">
+          <label>
+            Name
+            <input type="text" name="name" minlength="2" maxlength={inquiryLimits.name} autocomplete="name" required />
+          </label>
+          <label>
+            E-Mail
+            <input type="email" name="email" maxlength={inquiryLimits.email} autocomplete="email" required />
+          </label>
+        </div>
+        <label>
+          Telefonnummer <span class="optional">optional</span>
+          <input type="tel" name="phone" maxlength={inquiryLimits.phone} autocomplete="tel" />
+        </label>
+        <label>
+          Weitere Wünsche <span class="optional">optional</span>
+          <textarea name="message" maxlength={inquiryLimits.message} rows="4" placeholder="Was sollen wir über dein Event noch wissen?"></textarea>
+        </label>
+      </fieldset>
+      <label class="consent-row">
+        <input type="checkbox" name="privacyConsent" value="true" required aria-describedby="privacy-note" />
+        <span>Datenschutz-Einwilligung erforderlich.</span>
+      </label>
+      <p class="form-note" id="privacy-note">Der verbindliche Datenschutz- und Einwilligungstext wird vor der Produktionsaktivierung ergänzt.</p>
+      <fieldset class="turnstile-field">
+        <legend>Sicherheitsprüfung</legend>
+        <div class="turnstile-wrap" data-turnstile-container tabindex="-1" aria-describedby="turnstile-help turnstile-status"></div>
+        <p class="form-note" id="turnstile-help">Die Prüfung schützt das Formular vor automatisiertem Missbrauch.</p>
+        <p class="turnstile-status" id="turnstile-status" data-turnstile-status aria-live="polite"></p>
+      </fieldset>
+      <div class="form-feedback">
+        <p class="form-error" data-form-error role="alert" tabindex="-1" hidden></p>
+        <p class="form-success" data-form-success role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden></p>
+      </div>
+      <button type="submit" class="button button-primary demo-submit" disabled={!inquiryConfig.configured}>
+        <span data-submit-idle>Anfrage senden</span>
+        <span data-submit-busy hidden>Anfrage wird gesendet …</span>
+      </button>
+      {!inquiryConfig.configured && (
+        <p class="form-note config-note" role="status">Das Anfrageformular ist in diesem Build noch nicht für den Produktionsbetrieb konfiguriert.</p>
+      )}
+      <p class="demo-form-legal">Eine Anfrage ist keine Buchung und keine Verfügbarkeitsbestätigung.</p>
+    </form>
+  )}
+</section>

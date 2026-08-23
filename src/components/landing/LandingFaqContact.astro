@@ -1,0 +1,43 @@
+---
+interface Faq {
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  faqs: Faq[];
+  isPreview: boolean;
+  whatsappHref?: string;
+  contactLogoSrc: string;
+}
+
+const { faqs, isPreview, whatsappHref, contactLogoSrc } = Astro.props;
+---
+<section class="demo-faq-contact" id="kontakt" aria-labelledby="faq-title">
+  <div class="shell demo-faq-contact-grid">
+    <div class="demo-faq">
+      <p class="eyebrow">FAQ</p>
+      <h2 id="faq-title">Kurz gefragt.<br /><em>Klar beantwortet.</em></h2>
+      <div class="demo-faq-list">
+        {faqs.map((faq) => (
+          <details>
+            <summary>{faq.question}<span aria-hidden="true">+</span></summary>
+            <p>{faq.answer}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+    <aside class="demo-contact-card" aria-label="Direkter Kontakt">
+      <img class="demo-contact-logo" src={contactLogoSrc} alt="Hall of Memory – Schwarz-Gold-Variante auf heller Fläche" width="4167" height="4167" loading="lazy" decoding="async" />
+      <p class="eyebrow">Direkter Kontakt</p>
+      <h3>Dein Event beginnt mit einer Nachricht.</h3>
+      <p>{isPreview ? 'Der direkte Anfrageweg wird vor dem Launch aktiviert. Bis dahin zeigt dieser Bereich den vorgesehenen Ablauf.' : 'Nutze den Anfragebereich, damit wir die wichtigsten Eckdaten deiner Veranstaltung gemeinsam einordnen können.'}</p>
+      <a class="button button-primary" href="#anfrage">Anfragebereich ansehen</a>
+      {whatsappHref ? (
+        <a class="button button-ghost" href={whatsappHref} target="_blank" rel="noopener noreferrer">Per WhatsApp schreiben</a>
+      ) : (
+        <span class="demo-whatsapp-pending">WhatsApp</span>
+      )}
+    </aside>
+  </div>
+</section>

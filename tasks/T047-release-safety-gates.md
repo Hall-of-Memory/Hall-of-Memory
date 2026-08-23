@@ -39,6 +39,14 @@ Begonnen am 23.08.2026 auf Basis von `main` `d159b76a6ff118c628e4218cea9531af642
 - PR #25 wurde als Merge-Commit `500e24b9c2f61c71fd26a72a2bb3372de6da15b2` integriert. Der anschließende Main-Lauf `32636739589` bestand sowohl `verify` als auch `pages-runtime`; Build, Artefaktbindung, Upload, Deploy, Runtime-Receipt-Readback und terminaler Runtime-Status waren jeweils erfolgreich.
 - Ein zusätzlicher unabhängiger Live-Readback des veröffentlichten Receipts lieferte exakt `sourceRevision=500e24b9c2f61c71fd26a72a2bb3372de6da15b2`, `verifyRunId=32636739589`, `verifyWorkflow=Verify` und `channel=github-pages-preview`.
 
+## Follow-up — Pages-Actions v5 / Node 24
+
+- Der terminale Main-Lauf `32637259771` auf `d214b179b3502c7190baa88e37b5e6db39198c5c` war funktional vollständig grün, meldete aber weiterhin Node-20-Deprecation-Warnungen aus den bis dahin gepinnten Pages-Actions v4.
+- PR #27 aktualisiert ausschließlich die revisionsgebundenen Pins von `actions/upload-pages-artifact` auf `fc324d3547104276b827a68afc52ff2a11cc49c9` (`v5.0.0`) und `actions/deploy-pages` auf `cd2ce8fcbc39b97be8ca5fce6e763baed58fa128` (`v5.0.0`). Die Verify-/Deploy-Sequenz, Pfade, Receipts und Produktlogik bleiben unverändert.
+- Der revisionsgebundene PR-Verify-Lauf `32637713352` auf Head `25e8b4f95237e59691bec836f8224648183a6b44` war grün. Dabei liefen Checkout, Node-Setup, Installation und der kanonische `npm run verify`-Pfad erfolgreich.
+- Auf dem PR-Event wurden die main-only Schritte `Build verified GitHub Pages artifact`, `Bind Pages artifact to this Verify run` und `Upload verified GitHub Pages artifact` sowie der Job `pages-runtime` erwartungsgemäß übersprungen. Dieser PR-Lauf belegt daher die Workflow-/Contract-Verträglichkeit, aber ausdrücklich **nicht** die reale Ausführung der beiden v5-Pages-Actions oder den Deploy-/Receipt-Readback.
+- Die Runtime-Akzeptanz dieses v5-Follow-ups ist deshalb zweiphasig: Nach Integration muss der erste `push`-Lauf auf `main` revisionsgebunden `verify`, Artefakt-Build/-Bindung/-Upload, `deploy-pages@v5`, Runtime-Receipt-Readback und terminalen `pages-runtime=success` bestehen. Run-ID und exakte Main-Revision sind anschließend hier nachzutragen; ein Merge allein gilt nicht als Runtime-Beweis.
+
 ## Nicht-Ziel
 
 - keine finalen Rechts- oder Kundendaten erfinden;

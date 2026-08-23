@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import {
+  enforceProductionReadiness,
   evaluateProductionReadiness,
   loadRepositoryReadinessInput,
   PRODUCTION_INQUIRY_ENTRY,
@@ -35,6 +37,40 @@ const readyFixture = () => ({
   productionWorkerConfigExists: true,
   productionWorkerConfig: `{"main":"${PRODUCTION_INQUIRY_ENTRY}","vars":{"SPIKE_MODE":"production"}}`,
 });
+
+const draftBuildGate = enforceProductionReadiness({ launchStatus: 'draft' }, { ifProduction: true });
+assert.deepEqual(
+  draftBuildGate,
+  { ready: true, skipped: true, blockers: [] },
+  'normal Stage-1 builds must remain available while the production-only prebuild gate is armed',
+);
+
+const incompleteProductionGate = enforceProductionReadiness(
+  { ...readyFixture(), approvals: { ...readyFixture().approvals, publicMedia: { approved: false, evidenceRef: '' } } },
+  { ifProduction: true },
+);
+assert.equal(incompleteProductionGate.skipped, false, 'production builds must never skip readiness');
+assert.equal(incompleteProductionGate.ready, false, 'incomplete production builds must fail closed');
+
+const packageJson = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+const buildScript = packageJson.scripts?.build ?? '';
+const pagesBuildScript = packageJson.scripts?.['build:pages'] ?? '';
+const deployScript = packageJson.scripts?.deploy ?? '';
+assert.match(
+  buildScript,
+  /^node scripts\/check-production-readiness\.mjs --if-production && astro build$/,
+  'npm run build must execute the production-readiness prebuild gate before Astro',
+);
+assert.match(
+  pagesBuildScript,
+  /^node scripts\/check-production-readiness\.mjs --if-production && astro build --base \/Hall-of-Memory/,
+  'GitHub Pages artifact builds must execute the same production-readiness prebuild gate',
+);
+assert.match(
+  deployScript,
+  /^npm run check:production-readiness && npm run build && wrangler deploy$/,
+  'npm run deploy must require strict readiness and a fresh gated build before Wrangler deploy',
+);
 
 const ready = evaluateProductionReadiness(readyFixture());
 assert.equal(ready.ready, true, JSON.stringify(ready.blockers));
@@ -112,4 +148,4 @@ const invalidRetention = readyFixture();
 invalidRetention.inquiryDataPolicy.retentionDays = 0;
 assert.equal(evaluateProductionReadiness(invalidRetention).ready, false, 'non-positive retention must block production');
 
-console.log(`production-readiness-gate-ok current_blockers=${currentStageOne.blockers.length} synthetic_ready=true privacy_entry_required=true data_policy_required=true`);
+console.log(`production-readiness-gate-ok current_blockers=${currentStageOne.blockers.length} synthetic_ready=true privacy_entry_required=true data_policy_required=true build_path_bound=true pages_build_bound=true deploy_path_bound=true`);

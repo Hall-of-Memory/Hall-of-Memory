@@ -1,6 +1,6 @@
 ---
 id: T047
-status: done
+status: active
 priority: P0
 dependencies: [T046]
 ---
@@ -47,6 +47,12 @@ Begonnen am 23.08.2026 auf Basis von `main` `d159b76a6ff118c628e4218cea9531af642
 - Auf dem PR-Event wurden die main-only Schritte `Build verified GitHub Pages artifact`, `Bind Pages artifact to this Verify run` und `Upload verified GitHub Pages artifact` sowie der Job `pages-runtime` erwartungsgemäß übersprungen. Dieser PR-Lauf belegt daher die Workflow-/Contract-Verträglichkeit, aber ausdrücklich **nicht** die reale Ausführung der beiden v5-Pages-Actions oder den Deploy-/Receipt-Readback.
 - Die Runtime-Akzeptanz dieses v5-Follow-ups ist deshalb zweiphasig: Nach Integration muss der erste `push`-Lauf auf `main` revisionsgebunden `verify`, Artefakt-Build/-Bindung/-Upload, `deploy-pages@v5`, Runtime-Receipt-Readback und terminalen `pages-runtime=success` bestehen. Run-ID und exakte Main-Revision sind anschließend hier nachzutragen; ein Merge allein gilt nicht als Runtime-Beweis.
 
+## Reopen — Production-Build-/Deploy-Gate
+
+Der revisionsgebundene Review-Readback von PR #26 zeigte nach dessen Merge noch einen echten P1-Bypass: `npm run build` und `npm run deploy` waren auf `main` nicht mit `check:production-readiness` verbunden. Damit konnten die synthetischen Readiness-Tests grün sein, ohne dass ein später auf `launchStatus=production` gesetzter realer Site-Build denselben Gate zwingend ausführt.
+
+T047 ist deshalb bis zum revisionsgebundenen Fix samt erfolgreichem Post-Merge-`pages-runtime` wieder `active`. Der Fix muss normale Stage-1-Builds weiter erlauben, aber jeden Production-Build vor Astro fail-closed prüfen; der freigegebene Site-Deploy-Pfad muss zusätzlich einen strikten Readiness-Check und einen frischen gegateten Build vor Wrangler erzwingen.
+
 ## Nicht-Ziel
 
 - keine finalen Rechts- oder Kundendaten erfinden;
@@ -66,4 +72,4 @@ Begonnen am 23.08.2026 auf Basis von `main` `d159b76a6ff118c628e4218cea9531af642
 
 ## Stage-2-Grenze
 
-T047 ist technisch terminal `done`. Das ist notwendig, aber nicht hinreichend für den Launch. T008/T010/T011/T045 und die dort fehlende externe Wahrheit bleiben maßgeblich.
+T047 bleibt bis zum Post-Merge-Nachweis dieses Reopen-Fixes `active`. Das ist notwendig, aber nicht hinreichend für den Launch. T008/T010/T011/T045 und die dort fehlende externe Wahrheit bleiben maßgeblich.

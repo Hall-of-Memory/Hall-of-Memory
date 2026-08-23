@@ -152,6 +152,13 @@ export function evaluateProductionReadiness(input) {
   return { ready: blockers.length === 0, blockers };
 }
 
+export function enforceProductionReadiness(input, { ifProduction = false } = {}) {
+  if (ifProduction && input?.launchStatus !== 'production') {
+    return { ready: true, skipped: true, blockers: [] };
+  }
+  return { ...evaluateProductionReadiness(input), skipped: false };
+}
+
 export function loadRepositoryReadinessInput({ repoRoot, env = process.env } = {}) {
   const root = repoRoot ?? resolve(fileURLToPath(new URL('..', import.meta.url)));
   const site = JSON.parse(readFileSync(resolve(root, 'src/content/site.json'), 'utf8'))[0];
@@ -177,7 +184,20 @@ export function loadRepositoryReadinessInput({ repoRoot, env = process.env } = {
 }
 
 function main() {
-  const result = evaluateProductionReadiness(loadRepositoryReadinessInput());
+  const args = process.argv.slice(2);
+  const unknownArgs = args.filter((arg) => arg !== '--if-production');
+  if (unknownArgs.length > 0) {
+    console.error(`production-readiness: unknown argument(s): ${unknownArgs.join(', ')}`);
+    process.exitCode = 2;
+    return;
+  }
+
+  const input = loadRepositoryReadinessInput();
+  const result = enforceProductionReadiness(input, { ifProduction: args.includes('--if-production') });
+  if (result.skipped) {
+    console.log(`production-readiness: SKIPPED launch_status=${input.launchStatus ?? 'missing'}`);
+    return;
+  }
   if (result.ready) {
     console.log('production-readiness: PASS');
     return;

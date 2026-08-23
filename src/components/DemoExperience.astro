@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import InquiryEventFields from './InquiryEventFields.astro';
+import LandingFaqContact from './landing/LandingFaqContact.astro';
+import LandingInquiry from './landing/LandingInquiry.astro';
+import LandingShowcase from './landing/LandingShowcase.astro';
 import {
   demoBenefits,
   demoFaqs,
@@ -10,7 +12,6 @@ import {
   demoSteps,
 } from '../data/demo';
 import { resolveInquiryPublicConfig } from '../lib/inquiry-config';
-import { inquiryLimits } from '../lib/inquiry';
 import { buildStructuredData, resolveSeoState } from '../lib/seo';
 import '../styles/demo.css';
 
@@ -53,6 +54,7 @@ const productWhatsAppHref = (product: string) =>
 
 const assetBase = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const homeHref = isPreview ? `${assetBase}demo/` : assetBase;
+const contactLogoSrc = `${assetBase}brand/hall-of-memory-logo-dark.jpg`;
 const frameMaskByVariant: Record<FrameVariant, string> = {
   1: `${assetBase}fundus/hall-of-memory-frame-01.png`,
   2: `${assetBase}fundus/hall-of-memory-frame-02.png`,
@@ -259,347 +261,24 @@ const isPortraitAssetFrame = frameVariant === 10;
       </div>
     </section>
 
-    <section class="demo-section demo-offers shell" id="angebote" aria-labelledby="offers-title">
-      <header class="demo-section-heading">
-        <div>
-          <p class="eyebrow">Unsere Erlebnisse</p>
-          <h2 id="offers-title">Drei Angebote.<br /><em>Drei Arten, im Moment zu sein.</em></h2>
-        </div>
-        <p>
-          Entdecke die drei aktuellen Erlebnisse und finde heraus, welche Inszenierung am besten
-          zu deinem Anlass und deinen Gästen passt.
-        </p>
-      </header>
-
-      <div class="demo-offer-grid">
-        {demoOffers.map((offer, index) => (
-          <article class="demo-offer-card">
-            <div class={`demo-offer-media demo-offer-media-${offer.motif}`}>
-              <div class="demo-offer-number" aria-hidden="true">0{index + 1}</div>
-              <svg viewBox="0 0 320 240" aria-hidden="true" focusable="false">
-                {offer.motif === 'flash' && (
-                  <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M89 69h142c10 0 17 7 17 17v98H72V86c0-10 7-17 17-17Z" />
-                    <path d="M104 54h112l11 15H93l11-15ZM104 184v24h112v-24M126 208h68" />
-                    <circle cx="160" cy="122" r="39" /><circle cx="160" cy="122" r="26" /><circle cx="160" cy="122" r="8" />
-                    <path d="M103 85h31M186 85h31M99 170h122M112 98v48M208 98v48" opacity=".48" />
-                    <path d="M141 45h38M150 36h20M155 29h10" opacity=".72" />
-                  </g>
-                )}
-                {offer.motif === 'mirror' && (
-                  <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M102 209V103c0-45 25-72 58-72s58 27 58 72v106H102Z" />
-                    <path d="M118 191v-84c0-33 18-55 42-55s42 22 42 55v84h-84Z" opacity=".78" />
-                    <path d="M92 209h136M112 209l-18 21M208 209l18 21M84 230h43M193 230h43" />
-                    <path d="M129 80c14-12 45-13 61 1M126 99c13-10 50-12 68 2M131 159c15 8 45 8 60 0" opacity=".46" />
-                  </g>
-                )}
-                {offer.motif === 'editorial' && (
-                  <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M82 32h156v176H82zM99 49h122v142H99z" />
-                    <path d="M113 68h94M121 77h78M109 172h102M121 181h78" opacity=".68" />
-                    <circle cx="160" cy="115" r="22" />
-                    <path d="M122 161c6-27 19-42 38-42s32 15 38 42M135 161c4-17 12-27 25-27s21 10 25 27" opacity=".62" />
-                    <path d="M69 208h182M82 32 69 45M238 32l13 13" opacity=".46" />
-                  </g>
-                )}
-              </svg>
-              <span class="demo-media-label">{offer.title}</span>
-            </div>
-            <div class="demo-offer-copy">
-              <p class="offer-kicker">{offer.kicker}</p>
-              <h3>{offer.title}</h3>
-              <p>{offer.description}</p>
-              <ul>
-                {offer.highlights.map((highlight) => <li>{highlight}</li>)}
-              </ul>
-              <details class="demo-offer-details">
-                <summary>Mehr erfahren <span aria-hidden="true">+</span></summary>
-                <p>{offer.moreInfo}</p>
-              </details>
-              <div class="demo-card-actions">
-                <a class="demo-card-cta" href="#anfrage">Anfragebereich ansehen</a>
-                {productWhatsAppHref(offer.title) && (
-                  <a
-                    class="demo-card-whatsapp"
-                    href={productWhatsAppHref(offer.title)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >WhatsApp</a>
-                )}
-              </div>
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
-
-    <section class="demo-benefits" aria-labelledby="benefits-title">
-      <div class="shell">
-        <header class="demo-compact-heading">
-          <p class="eyebrow">Warum Hall of Memory</p>
-          <h2 id="benefits-title">Mehr Erlebnis.<br /><em>Weniger Ablenkung.</em></h2>
-        </header>
-        <div class="demo-benefit-grid">
-          {demoBenefits.map((benefit, index) => (
-            <article>
-              <span aria-hidden="true">0{index + 1}</span>
-              <h3>{benefit.title}</h3>
-              <p>{benefit.text}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <section class="demo-section demo-packages shell" id="pakete" aria-labelledby="packages-title">
-      <header class="demo-section-heading">
-        <div>
-          <p class="eyebrow">Pakete</p>
-          <h2 id="packages-title">Schnell verstehen.<br /><em>Einfach vergleichen.</em></h2>
-        </div>
-        <p>
-          Pakete machen Leistungen und Preise auf einen Blick vergleichbar. Bis die konkreten
-          Varianten feststehen, beraten wir dich persönlich zur passenden Zusammenstellung.
-        </p>
-      </header>
-      <div class="demo-package-grid">
-        <article class="demo-package-card demo-package-card-pending">
-          <div class="demo-package-topline"><span>Pakete & Preise</span><p>Persönlich abgestimmt</p></div>
-          <h3>Klar vergleichen.<br />Passend auswählen.</h3>
-          <p>Die Paketvarianten für Fotobox, Fotospiegel und Magazinbox werden mit Leistungen und Preisen transparent gegenübergestellt.</p>
-          <div class="demo-package-meta">
-            <span>Aktuell</span><strong>Persönliche Paketberatung</strong>
-            <span>Erlebnisse</span><strong>Fotobox · Fotospiegel · Magazinbox</strong>
-          </div>
-          <a href="#anfrage">Paket gemeinsam auswählen <span aria-hidden="true">→</span></a>
-        </article>
-      </div>
-    </section>
-
-    <section class="demo-gallery" id="galerie" aria-labelledby="gallery-title">
-      <div class="shell">
-        <header class="demo-section-heading demo-gallery-heading">
-          <div>
-            <p class="eyebrow">Galerie</p>
-            <h2 id="gallery-title">Momente,<br /><em>die bleiben.</em></h2>
-          </div>
-          <p>
-            Hier stehen die Menschen und ihre Erinnerungen im Mittelpunkt – mit viel Bildfläche,
-            ruhiger Gestaltung und Raum für echte Eventmomente.
-          </p>
-        </header>
-        <div class="demo-gallery-grid" aria-label="Galerievorschau">
-          <figure class="demo-gallery-tile demo-gallery-tile-main demo-gallery-placeholder">
-            <div aria-hidden="true"><span></span><i></i></div>
-            <figcaption><span>Eventgalerie</span><strong>Dein Tag. Deine Erinnerungen.</strong></figcaption>
-          </figure>
-          <figure class="demo-gallery-tile demo-gallery-tile-photo demo-gallery-photo-a">
-            <div aria-hidden="true"><span></span><i></i></div>
-            <figcaption><span>Fotobox</span><strong>Spontane Momente</strong></figcaption>
-          </figure>
-          <figure class="demo-gallery-tile demo-gallery-tile-photo demo-gallery-photo-b">
-            <div aria-hidden="true"><span></span><i></i></div>
-            <figcaption><span>Fotospiegel</span><strong>Elegante Präsenz</strong></figcaption>
-          </figure>
-          <figure class="demo-gallery-tile demo-gallery-tile-photo demo-gallery-photo-c">
-            <div aria-hidden="true"><span></span><i></i></div>
-            <figcaption><span>Magazinbox</span><strong>Editorialer Moment</strong></figcaption>
-          </figure>
-        </div>
-      </div>
-    </section>
-
-    <section class="demo-section demo-process shell" id="ablauf" aria-labelledby="process-title">
-      <header class="demo-section-heading">
-        <div>
-          <p class="eyebrow">So funktioniert’s</p>
-          <h2 id="process-title">Vom ersten Klick<br /><em>bis zur eigenen Galerie.</em></h2>
-        </div>
-        <p>In vier klaren Schritten kommst du vom passenden Erlebnis bis zu deinen Erinnerungen nach dem Event.</p>
-      </header>
-      <ol class="demo-step-grid">
-        {demoSteps.map((step) => (
-          <li>
-            <span>{step.number}</span>
-            <h3>{step.title}</h3>
-            <p>{step.text}</p>
-          </li>
-        ))}
-      </ol>
-    </section>
-
-    <section class="demo-customer-area" id="kundenbereich" aria-labelledby="customer-area-title">
-      <div class="shell demo-customer-area-grid">
-        <div class="demo-customer-copy">
-          <p class="eyebrow">Nach dem Event</p>
-          <h2 id="customer-area-title">Deine Erinnerungen.<br /><em>Nur für dich.</em></h2>
-          <p>
-            Nach deinem Event führt dein persönlicher Zugang direkt zu den Erinnerungen deiner
-            Veranstaltung. Du siehst ausschließlich deine eigene Galerie – bequem auch unterwegs.
-          </p>
-          <ul>
-            <li>persönlicher Link oder Code</li>
-            <li>nur die Bilder deiner Veranstaltung</li>
-            <li>für Smartphone und Tablet gedacht</li>
-            <li>Zugang bei Bedarf erneuerbar</li>
-          </ul>
-        </div>
-        <div class="demo-access-card" aria-label="Visualisierung des persönlichen Galerie-Zugangs">
-          <div class="demo-access-icon" aria-hidden="true">
-            <svg viewBox="0 0 64 64"><path d="M18 29v-9c0-8 6-14 14-14s14 6 14 14v9M12 29h40v29H12z"/><circle cx="32" cy="43" r="4"/><path d="M32 47v6"/></svg>
-          </div>
-          <p>Persönliche Galerie</p>
-          <strong>Deine Veranstaltung</strong>
-          <span>geschützter Zugang</span>
-          <div class="demo-access-rule"><i></i><i></i><i></i></div>
-          <small>Nur deine Veranstaltung.</small>
-          <details class="demo-access-preview">
-            <summary>Beispielzugang ansehen</summary>
-            <div><span>01 · Zugang öffnen</span><span>02 · Event aufrufen</span><span>03 · Erinnerungen ansehen</span></div>
-          </details>
-        </div>
-      </div>
-    </section>
-
-    <section class="demo-section demo-inquiry shell" id="anfrage" aria-labelledby="inquiry-title">
-      <div class="demo-inquiry-intro">
-        <p class="eyebrow">Anfrage</p>
-        <h2 id="inquiry-title">Erzähl uns,<br /><em>was du vorhast.</em></h2>
-        <p>
-          Mit wenigen Angaben können wir deinen Anlass, das gewünschte Erlebnis und den passenden
-          Rahmen für die weitere Abstimmung einordnen.
-        </p>
-        <div class="demo-inquiry-shortcuts">
-          <span>Produkt</span><span>Paket</span><span>Datum</span><span>Ort</span><span>Veranstaltung</span>
-        </div>
-      </div>
-
-      {isPreview ? (
-        <form class="inquiry-card demo-inquiry-card" data-demo-inquiry-disabled autocomplete="off" aria-label="Anfrageformular – noch nicht aktiv" aria-disabled="true">
-          <p class="demo-form-legal" role="status"><strong>Entwicklungsstand:</strong> Das Anfrageformular ist noch nicht aktiv. Bitte noch keine Kontaktdaten eintragen; es werden derzeit keine Anfragen übermittelt.</p>
-          <InquiryEventFields
-            offers={demoOffers}
-            packages={demoPackages}
-            showStepLegends={true}
-            emptyPackageLabel="Beratung gewünscht"
-            disabled={true}
-          />
-          <fieldset class="inquiry-field-group inquiry-step" disabled>
-            <legend><span aria-hidden="true">03</span> Kontaktdetails</legend>
-            <div class="form-grid-two">
-              <label>
-                Name
-                <input type="text" name="name" minlength="2" maxlength={inquiryLimits.name} autocomplete="name" required />
-              </label>
-              <label>
-                E-Mail
-                <input type="email" name="email" maxlength={inquiryLimits.email} autocomplete="email" required />
-              </label>
-            </div>
-            <label>
-              Telefonnummer <span class="optional">optional</span>
-              <input type="tel" name="phone" maxlength={inquiryLimits.phone} autocomplete="tel" />
-            </label>
-            <label>
-              Weitere Wünsche <span class="optional">optional</span>
-              <textarea name="message" maxlength={inquiryLimits.message} rows="4" placeholder="Was sollen wir über dein Event noch wissen?"></textarea>
-            </label>
-          </fieldset>
-          <button type="submit" class="button button-primary demo-submit" disabled>Anfrageformular noch nicht aktiv</button>
-          <p class="demo-form-legal">Eine Anfrage ist keine Buchung und keine Verfügbarkeitsbestätigung.</p>
-        </form>
-      ) : (
-        <form
-          class="inquiry-card demo-inquiry-card"
-          aria-label="Anfrageformular"
-          aria-busy="false"
-          data-inquiry-form
-          data-api-url={inquiryConfig.apiUrl}
-          data-turnstile-site-key={inquiryConfig.siteKey}
-        >
-          <InquiryEventFields
-            offers={demoOffers}
-            packages={demoPackages}
-            showStepLegends={true}
-            emptyPackageLabel="Pakete folgen"
-          />
-          <fieldset class="inquiry-field-group inquiry-step">
-            <legend><span aria-hidden="true">03</span> Kontaktdetails</legend>
-            <div class="form-grid-two">
-              <label>
-                Name
-                <input type="text" name="name" minlength="2" maxlength={inquiryLimits.name} autocomplete="name" required />
-              </label>
-              <label>
-                E-Mail
-                <input type="email" name="email" maxlength={inquiryLimits.email} autocomplete="email" required />
-              </label>
-            </div>
-            <label>
-              Telefonnummer <span class="optional">optional</span>
-              <input type="tel" name="phone" maxlength={inquiryLimits.phone} autocomplete="tel" />
-            </label>
-            <label>
-              Weitere Wünsche <span class="optional">optional</span>
-              <textarea name="message" maxlength={inquiryLimits.message} rows="4" placeholder="Was sollen wir über dein Event noch wissen?"></textarea>
-            </label>
-          </fieldset>
-          <label class="consent-row">
-            <input type="checkbox" name="privacyConsent" value="true" required aria-describedby="privacy-note" />
-            <span>Datenschutz-Einwilligung erforderlich.</span>
-          </label>
-          <p class="form-note" id="privacy-note">Der verbindliche Datenschutz- und Einwilligungstext wird vor der Produktionsaktivierung ergänzt.</p>
-          <fieldset class="turnstile-field">
-            <legend>Sicherheitsprüfung</legend>
-            <div class="turnstile-wrap" data-turnstile-container tabindex="-1" aria-describedby="turnstile-help turnstile-status"></div>
-            <p class="form-note" id="turnstile-help">Die Prüfung schützt das Formular vor automatisiertem Missbrauch.</p>
-            <p class="turnstile-status" id="turnstile-status" data-turnstile-status aria-live="polite"></p>
-          </fieldset>
-          <div class="form-feedback">
-            <p class="form-error" data-form-error role="alert" tabindex="-1" hidden></p>
-            <p class="form-success" data-form-success role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden></p>
-          </div>
-          <button type="submit" class="button button-primary demo-submit" disabled={!inquiryConfig.configured}>
-            <span data-submit-idle>Anfrage senden</span>
-            <span data-submit-busy hidden>Anfrage wird gesendet …</span>
-          </button>
-          {!inquiryConfig.configured && (
-            <p class="form-note config-note" role="status">Das Anfrageformular ist in diesem Build noch nicht für den Produktionsbetrieb konfiguriert.</p>
-          )}
-          <p class="demo-form-legal">Eine Anfrage ist keine Buchung und keine Verfügbarkeitsbestätigung.</p>
-        </form>
-      )}
-    </section>
-
-    <section class="demo-faq-contact" id="kontakt" aria-labelledby="faq-title">
-      <div class="shell demo-faq-contact-grid">
-        <div class="demo-faq">
-          <p class="eyebrow">FAQ</p>
-          <h2 id="faq-title">Kurz gefragt.<br /><em>Klar beantwortet.</em></h2>
-          <div class="demo-faq-list">
-            {demoFaqs.map((faq) => (
-              <details>
-                <summary>{faq.question}<span aria-hidden="true">+</span></summary>
-                <p>{faq.answer}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-        <aside class="demo-contact-card" aria-label="Direkter Kontakt">
-          <img class="demo-contact-logo" src={`${assetBase}brand/hall-of-memory-logo-dark.jpg`} alt="Hall of Memory – Schwarz-Gold-Variante auf heller Fläche" width="4167" height="4167" loading="lazy" decoding="async" />
-          <p class="eyebrow">Direkter Kontakt</p>
-          <h3>Dein Event beginnt mit einer Nachricht.</h3>
-          <p>{isPreview ? 'Der direkte Anfrageweg wird vor dem Launch aktiviert. Bis dahin zeigt dieser Bereich den vorgesehenen Ablauf.' : 'Nutze den Anfragebereich, damit wir die wichtigsten Eckdaten deiner Veranstaltung gemeinsam einordnen können.'}</p>
-          <a class="button button-primary" href="#anfrage">Anfragebereich ansehen</a>
-          {whatsappHref ? (
-            <a class="button button-ghost" href={whatsappHref} target="_blank" rel="noopener noreferrer">Per WhatsApp schreiben</a>
-          ) : (
-            <span class="demo-whatsapp-pending">WhatsApp</span>
-          )}
-        </aside>
-      </div>
-    </section>
+    <LandingShowcase
+      offers={demoOffers}
+      benefits={demoBenefits}
+      steps={demoSteps}
+      {productWhatsAppHref}
+    />
+    <LandingInquiry
+      {isPreview}
+      offers={demoOffers}
+      packages={demoPackages}
+      {inquiryConfig}
+    />
+    <LandingFaqContact
+      faqs={demoFaqs}
+      {isPreview}
+      {whatsappHref}
+      {contactLogoSrc}
+    />
   </main>
 
   {whatsappHref ? (

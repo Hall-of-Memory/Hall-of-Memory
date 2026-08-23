@@ -1,6 +1,6 @@
 ---
 id: T047
-status: active
+status: done
 priority: P0
 dependencies: [T046]
 ---
@@ -29,7 +29,15 @@ Begonnen am 23.08.2026 auf Basis von `main` `d159b76a6ff118c628e4218cea9531af642
 - Technische Readiness prüft zusätzlich Produktions-Origin, Inquiry-API, Nicht-Test-Turnstile-Key, kundenbezogene Production-Worker-Konfiguration und das Entfernen des Stage-1-Root-Redirects.
 - Dokument-CSP/Referrer-Policy werden aus `src/lib/security-policy.ts` erzeugt; ein Test bindet die deploymentseitigen `_headers` an dieselben sicherheitsrelevanten Werte und hält HSTS bis nach dem stabilen TLS-/Domain-Cutover ausdrücklich aus.
 - Checkout/Setup-Node werden in Verify und Pages revisionsgebunden gepinnt; Checkout-Credentials werden nicht persistiert. Dependabot wird für npm und GitHub Actions wöchentlich aktiviert.
-- Deploy-Sequenzierung und vollständige Pinning-Abdeckung der übrigen Pages-Actions bleiben ein eigener Folgeslice innerhalb T047.
+
+## Deploy-Sequenzierung und Runtime-Evidenz
+
+- Die frühere eigenständig getriggerte Pages-Kette wurde entfernt. `Verify` ist für PRs und `push` auf `main` der autoritative Workflow; der Pages-Deploy hängt auf `main` strukturell mit `needs: verify` am erfolgreichen Verify-Job.
+- Das deployte Pages-Artefakt enthält einen Receipt mit exakter Source-Revision und Verify-Run-ID. `pages-runtime` veröffentlicht zuerst `pending` und erst nach Deploy plus erfolgreichem Receipt-Readback terminal `success` oder `failure`.
+- Der erste echte Post-Merge-Lauf dieser Kette, `32632277801` auf `4af05923ff4ce456ccc1e718c4ebbdd94361ada8`, deckte fail-closed eine reale Packaging-Lücke auf: `actions/upload-pages-artifact@v4` schließt Root-Einträge mit führendem Punkt aus, weshalb der damalige Receipt unter `.well-known/` nicht deployt wurde. Der Deploy selbst war erfolgreich, der Runtime-Readback wurde korrekt rot.
+- PR #25, Head `658aea3a4c0233879e67201d00a0bb1df11a0882`, verlegte den Receipt auf den tatsächlich uploadbaren Pfad `/hall-of-memory-deployment.json`, ergänzte Cache-Busting und einen expliziten Contract-Test gegen den versteckten Pfad. Der PR-Verify-Lauf `32636073060` war grün.
+- PR #25 wurde als Merge-Commit `500e24b9c2f61c71fd26a72a2bb3372de6da15b2` integriert. Der anschließende Main-Lauf `32636739589` bestand sowohl `verify` als auch `pages-runtime`; Build, Artefaktbindung, Upload, Deploy, Runtime-Receipt-Readback und terminaler Runtime-Status waren jeweils erfolgreich.
+- Ein zusätzlicher unabhängiger Live-Readback des veröffentlichten Receipts lieferte exakt `sourceRevision=500e24b9c2f61c71fd26a72a2bb3372de6da15b2`, `verifyRunId=32636739589`, `verifyWorkflow=Verify` und `channel=github-pages-preview`.
 
 ## Nicht-Ziel
 
@@ -40,14 +48,14 @@ Begonnen am 23.08.2026 auf Basis von `main` `d159b76a6ff118c628e4218cea9531af642
 
 ## Akzeptanz
 
-- [ ] ein absichtlich unvollständiger Production-Build scheitert reproduzierbar.
-- [ ] Stage-1-Preview bleibt weiterhin baubar und fail-closed.
-- [ ] Deployment hängt revisionsgebunden an erfolgreichen Verify-/Build-Evidenzen.
-- [ ] deploytes Artefakt ist eindeutig auf Source-Revision und Verifikation zurückführbar.
-- [ ] Actions-Härtung verändert keine fachliche Websitefunktion.
-- [ ] Security-Header/CSP können nicht unbemerkt auseinanderlaufen.
-- [ ] `npm ci` und `npm run verify` PASS.
+- [x] ein absichtlich unvollständiger Production-Build scheitert reproduzierbar.
+- [x] Stage-1-Preview bleibt weiterhin baubar und fail-closed.
+- [x] Deployment hängt revisionsgebunden an erfolgreichen Verify-/Build-Evidenzen.
+- [x] deploytes Artefakt ist eindeutig auf Source-Revision und Verifikation zurückführbar.
+- [x] Actions-Härtung verändert keine fachliche Websitefunktion.
+- [x] Security-Header/CSP können nicht unbemerkt auseinanderlaufen.
+- [x] `npm ci` und `npm run verify` PASS.
 
 ## Stage-2-Grenze
 
-Ein bestandenes T047 ist notwendig, aber nicht hinreichend für den Launch. T008/T010/T011/T045 und die dort fehlende externe Wahrheit bleiben maßgeblich.
+T047 ist technisch terminal `done`. Das ist notwendig, aber nicht hinreichend für den Launch. T008/T010/T011/T045 und die dort fehlende externe Wahrheit bleiben maßgeblich.

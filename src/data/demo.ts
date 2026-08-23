@@ -22,8 +22,9 @@ type CanonicalSite = {
  * preview and production routes. All actual text/business truth remains in the
  * Zod-validated src/content files; this module only adapts their shape.
  */
-export const demoSite = site[0] as CanonicalSite | undefined;
-if (!demoSite) throw new Error('Hall of Memory site settings are missing.');
+const siteEntry = site[0] as CanonicalSite | undefined;
+if (!siteEntry) throw new Error('Hall of Memory site settings are missing.');
+export const demoSite: CanonicalSite = siteEntry;
 
 export const demoOffers = [...offers].sort(bySortOrder).map((offer) => ({
   id: offer.id,

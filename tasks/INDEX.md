@@ -52,3 +52,4 @@
 | T047 | done | Release-Safety-Gates: Production-Readiness, verify→deploy, Actions-/Header-Härtung |
 | T048 | done | Testarchitektur in Contract-, Visual- und Performance-Gates entkoppeln |
 | T049 | blocked_external | Inquiry-/Admin-Datenschutz technisch gehärtet; konkrete Retention-/Löschpolicy wartet auf T008/T011 |
+| T050 | done | Lokalen kanonischen Verify gegen stale direkte Installationsstände fail-closed härten |

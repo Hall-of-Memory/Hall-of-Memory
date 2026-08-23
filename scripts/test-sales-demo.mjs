@@ -331,10 +331,6 @@ try {
   assert.doesNotMatch(demoExperienceSource, /loadSiteContent|content\/offers|content\/site/);
 
   const demoCss = readFileSync(join(repo, 'src', 'styles', 'demo.css'), 'utf8');
-  assert.match(demoCss, /\.demo-header \{\s*min-height: 112px;/, 'desktop demo header must reserve room for the stronger primary logo');
-  assert.match(demoCss, /\.demo-brand > img \{\s*width: 72px;\s*height: 84px;/, 'desktop primary logo must remain visually present');
-  assert.match(demoCss, /@media \(max-width: 860px\)[\s\S]*?\.demo-brand > img \{ width: 54px; height: 63px; \}/, 'tablet logo must retain a deliberate responsive presence');
-  assert.match(demoCss, /@media \(max-width: 860px\)[\s\S]*?\.demo-nav > a:not\(\.nav-cta\), \.demo-nav > \.nav-cta \{ display: inline-flex;/, 'mobile demo nav must explicitly override the more-specific base and 1080px hide rules');
   const baseCss = readFileSync(join(repo, 'src', 'styles', 'base.css'), 'utf8');
   assert.match(demoCss, /--demo-frame-light/);
   assert.match(demoCss, /--demo-frame-mask/);
@@ -343,15 +339,6 @@ try {
   assert.match(demoExperienceSource, /hall-of-memory-stellar-frame-primary\/package\/assets\/hall-of-memory-stellar-frame-primary-raster\.png/);
   assert.match(comparisonSource, /hall-of-memory-stellar-frame-primary\/package\/assets\/hall-of-memory-stellar-frame-primary-raster\.png/);
   assert.match(demoExperienceSource, /floral-source/);
-  assert.match(demoExperienceSource, /framePhotoInsets/);
-  assert.match(demoExperienceSource, /1: \{ inner: 10, outer: 4 \}/);
-  assert.match(demoExperienceSource, /5: \{ inner: 15, outer: 5 \}/);
-  assert.match(demoExperienceSource, /6: \{ inner: 17, outer: 5 \}/);
-  assert.match(demoExperienceSource, /7: \{ inner: 15, outer: 5 \}/);
-  assert.match(demoExperienceSource, /8: \{ inner: 14, outer: 4 \}/);
-  assert.match(demoExperienceSource, /9: \{ inner: 17, outer: 5 \}/);
-  assert.match(demoExperienceSource, /10: \{ inner: 17, outer: 5 \}/);
-  assert.match(demoExperienceSource, /data-frame-variant=\"10\"[\s\S]*?max-width: 520px;[\s\S]*?aspect-ratio: 1122 \/ 1402/);
   assert.match(demoExperienceSource, /asset-source-portrait/);
   assert.match(comparisonSource, /asset-source-portrait/);
   assert.match(comparisonSource, /object-fit: contain/);
@@ -368,9 +355,6 @@ try {
   assert.doesNotMatch(frameComparisonJs, /data-frame-mode|data-frame-shell-toggle/);
   assert.match(demoCss, /\.demo-offer-card::before/);
   assert.match(demoCss, /\.demo-access-card::before/);
-  for (const breakpoint of ['1080px', '860px', '620px', '380px']) {
-    assert.match(demoCss, new RegExp(`@media \\(max-width: ${breakpoint.replace('.', '\\.')}\\)`));
-  }
   assert.match(demoCss, /@media \(prefers-reduced-motion: reduce\)/);
   assert.match(demoCss, /@media \(forced-colors: active\)/);
   assert.match(demoCss, /\.demo-offer-card:focus-within/);

@@ -1,6 +1,6 @@
 ---
 id: T048
-status: planned
+status: active
 priority: P1
 dependencies: [T047]
 ---
@@ -23,14 +23,28 @@ Die bestehende starke Testsuite bleibt fail-closed, wird aber weniger an konkret
 4. Bestehende HTML-, CSS-, JS- und gzip-Budgets als explizite Performance-Gates erhalten und nach dem T046-Refactor einmal neu baselinen, ohne Budgetaufweichung allein zur Testberuhigung.
 5. Keine zweite divergierende Testpipeline neben `npm run verify` einführen; neue Checks in den kanonischen Verify-Pfad integrieren.
 
+## Umsetzung und Evidenz — 23.08.2026
+
+- Contract/Security/Content bleibt in den bestehenden fail-closed Tests. Production-Readiness, Security-Policy, Pages-Deployment, Inquiry/Admin-Privacy, Inhalts- und Asset-Digests wurden nicht gelockert.
+- Accessibility-Source-Invarianten wie `prefers-reduced-motion`, `forced-colors` und `:focus-visible` bleiben als gezielte Source-Verträge bestehen.
+- Reine Darstellungsdetails wurden aus `scripts/test-sales-demo.mjs` entkoppelt: konkrete Logo-CSS-Reihenfolge, der 860px-Override, konkrete Breakpoint-Quelltexte und bereits im gebauten DOM geprüfte Frame-Inset-Sourcewerte werden nicht mehr doppelt als Regex auf die Implementierungsform geprüft.
+- `scripts/test-visual-regression.mjs` prüft stattdessen mit lokalem Chrome/Chromium über CDP die gebaute Seite in Desktop 1440×1000, Tablet 834×1112 und Mobil 390×844. Geprüft werden Logo-Geometrie, Header, Navigation, horizontaler Overflow, Hero-/Frame-Geometrie und Rahmenvariante 1.
+- Der Browsertest erzeugt sechs Full-Page-Screenshots (`/demo/` und `/demo/rahmen/1/` je Viewport). Der normale `Verify`-Workflow lädt sie über die voll gepinnte `actions/upload-artifact`-Revision `ea165f8d65b6e75b540449e92b4886f43607fa02` als inspizierbares CI-Artefakt hoch.
+- Kontrollierter Refactor: Die unveränderten Logo-Maße wurden lediglich in anderer CSS-Property-Reihenfolge formuliert. Der frühere Source-Regex wäre dadurch rot, obwohl die Browser-Geometrie unverändert bleibt.
+- Kontrollierte Gegenprobe: Der Browsertest injiziert ausschließlich im Testkontext eine 4×4-px-Logo-Regressionsregel und beweist, dass derselbe Geometrievertrag diese absichtliche visuelle Regression erkennt.
+- Performancebudget blieb unverändert: Demo-CSS `26601` Bytes bei weiter bestehendem 26-KiB-Gate; kein Budget wurde erhöht. Quality-Baseline: HTML `23219`, CSS `26601`, JS `6779`, gzip `16653` Bytes.
+- Lokale Verifikation auf Base `d870520de98b0f7f0e4dd992c07c6e7d31abeacc`: frisches `npm ci`, `npm run verify` PASS, `npm audit --audit-level=high` → `0 vulnerabilities`. Browservertrag: `viewports=3 screenshots=6 controlled_regression_detected=true`.
+
+T048 bleibt bis zum revisionsgebundenen PR-`verify` und finalen Review `active`. Danach wird dieser Task im selben PR auf `done` gesetzt und erneut auf dem finalen Head geprüft.
+
 ## Akzeptanz
 
-- [ ] sicherheits- und produktrelevante Contract-Tests bleiben mindestens gleich streng.
-- [ ] rein strukturelle CSS-/Komponentenrefactorings können bei unverändertem Verhalten grün bleiben.
-- [ ] Desktop-, Tablet- und Mobile-Visualregressionen werden reproduzierbar erkannt.
-- [ ] Performancebudgets bleiben explizit und messbar.
-- [ ] `npm ci` und `npm run verify` PASS.
-- [ ] ein kleiner kontrollierter Refactor und eine absichtliche visuelle Regression belegen beide Seiten des neuen Testvertrags.
+- [x] sicherheits- und produktrelevante Contract-Tests bleiben mindestens gleich streng.
+- [x] rein strukturelle CSS-/Komponentenrefactorings können bei unverändertem Verhalten grün bleiben.
+- [x] Desktop-, Tablet- und Mobile-Visualregressionen werden reproduzierbar erkannt.
+- [x] Performancebudgets bleiben explizit und messbar.
+- [x] `npm ci` und `npm run verify` PASS.
+- [x] ein kleiner kontrollierter Refactor und eine absichtliche visuelle Regression belegen beide Seiten des neuen Testvertrags.
 
 ## Nicht-Ziel
 

@@ -165,6 +165,9 @@ export function loadRepositoryReadinessInput({ repoRoot, env = process.env } = {
   const approvals = JSON.parse(readFileSync(resolve(root, 'src/release/production-approvals.json'), 'utf8'));
   const inquiryDataPolicy = JSON.parse(readFileSync(resolve(root, 'src/release/inquiry-data-policy.json'), 'utf8'));
   const workerPath = resolve(root, 'spikes/inquiry-worker/wrangler.production.jsonc');
+  const injectedWorkerConfig = env.PRODUCTION_WORKER_CONFIG_JSON?.trim() ?? '';
+  const fileWorkerConfigExists = existsSync(workerPath);
+  const productionWorkerConfig = injectedWorkerConfig || (fileWorkerConfigExists ? readFileSync(workerPath, 'utf8') : '');
 
   return {
     launchStatus: site?.launchStatus,
@@ -178,8 +181,8 @@ export function loadRepositoryReadinessInput({ repoRoot, env = process.env } = {
     publicSiteUrl: env.PUBLIC_SITE_URL,
     inquiryApiUrl: env.PUBLIC_INQUIRY_API_URL,
     turnstileSiteKey: env.PUBLIC_TURNSTILE_SITE_KEY,
-    productionWorkerConfigExists: existsSync(workerPath),
-    productionWorkerConfig: existsSync(workerPath) ? readFileSync(workerPath, 'utf8') : '',
+    productionWorkerConfigExists: productionWorkerConfig.length > 0,
+    productionWorkerConfig,
   };
 }
 

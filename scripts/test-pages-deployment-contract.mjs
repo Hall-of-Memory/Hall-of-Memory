@@ -28,10 +28,10 @@ try {
   assert.match(workflow, /statuses: write/, 'runtime readback needs only the explicit commit-status write capability');
   assert.match(workflow, /\.well-known\/hall-of-memory-deployment\.json/);
   assert.match(workflow, /verify-pages-runtime-receipt\.mjs/);
-  assert.match(workflow, /context:\"pages-runtime\"/);
-  assert.match(workflow, /state:\"pending\"/);
-  assert.match(workflow, /state:\"success\"/);
-  assert.match(workflow, /state:\"failure\"/);
+  assert.match(workflow, /context:"pages-runtime"/);
+  assert.match(workflow, /state:"pending"/);
+  assert.match(workflow, /state:"success"/);
+  assert.match(workflow, /state:"failure"/);
   assert.match(workflow, /statuses\/\$\{SOURCE_SHA\}/);
   assert.match(workflow, /needs: deploy/);
   assert.match(workflow, /page_url: \$\{\{ steps\.deployment\.outputs\.page_url \}\}/);

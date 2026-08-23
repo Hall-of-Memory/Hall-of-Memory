@@ -60,7 +60,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: verify
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -111,7 +111,7 @@ jobs:
           set -euo pipefail
           receipt_url="${PAGE_URL%/}/.well-known/hall-of-memory-deployment.json"
           for attempt in $(seq 1 30); do
-            if curl --fail --silent --show-error --location --max-time 10 "$receipt_url" --output /tmp/hall-of-memory-deployment.json; then
+            if curl --fail --silent --show-error --location --max-time 5 "$receipt_url" --output /tmp/hall-of-memory-deployment.json; then
               if node scripts/verify-pages-runtime-receipt.mjs /tmp/hall-of-memory-deployment.json "$SOURCE_SHA" "$VERIFY_RUN_ID"; then
                 exit 0
               fi

@@ -5,6 +5,7 @@ import packages from '../content/packages.json';
 import steps from '../content/steps.json';
 
 const bySortOrder = <T extends { sortOrder: number }>(a: T, b: T) => a.sortOrder - b.sortOrder;
+type CanonicalPackage = { id: string; name: string; sortOrder: number };
 
 /**
  * Compatibility projection for the existing preview components.
@@ -24,7 +25,7 @@ export const demoOffers = [...offers].sort(bySortOrder).map((offer) => ({
   highlights: offer.highlights,
 }));
 
-export const demoPackages = [...packages].sort(bySortOrder).map((item) => ({
+export const demoPackages = [...(packages as CanonicalPackage[])].sort(bySortOrder).map((item) => ({
   id: item.id,
   name: item.name,
 }));

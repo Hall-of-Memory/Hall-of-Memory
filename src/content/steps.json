@@ -1,0 +1,34 @@
+[
+  {
+    "id": "erlebnis-waehlen",
+    "number": "01",
+    "title": "Erlebnis wählen",
+    "text": "Fotobox, Fotospiegel, Magazinbox oder später ein weiteres Event-Angebot auswählen.",
+    "sortOrder": 10,
+    "source": "internal-draft"
+  },
+  {
+    "id": "anfrage-senden",
+    "number": "02",
+    "title": "Anfrage senden",
+    "text": "Datum, Ort, Veranstaltungsart, Produkt, Paket und Kontaktdaten übermitteln.",
+    "sortOrder": 20,
+    "source": "internal-draft"
+  },
+  {
+    "id": "details-abstimmen",
+    "number": "03",
+    "title": "Details abstimmen",
+    "text": "Der konkrete Leistungsrahmen wird persönlich für den Anlass abgestimmt.",
+    "sortOrder": 30,
+    "source": "internal-draft"
+  },
+  {
+    "id": "erinnerungen-wiedersehen",
+    "number": "04",
+    "title": "Erinnerungen wiedersehen",
+    "text": "Nach der Veranstaltung führt der persönliche Zugang ausschließlich zur eigenen Galerie.",
+    "sortOrder": 40,
+    "source": "internal-draft"
+  }
+]

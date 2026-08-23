@@ -1,6 +1,7 @@
 ---
 import '../styles/base.css';
 import { serializeStructuredData } from '../lib/seo';
+import { buildDocumentSecurityPolicy, REFERRER_POLICY } from '../lib/security-policy';
 
 interface Props {
   title?: string;
@@ -24,18 +25,7 @@ const {
   formActionSource = "'self'",
 } = Astro.props;
 
-const contentSecurityPolicy = [
-  "default-src 'self'",
-  "base-uri 'self'",
-  "object-src 'none'",
-  `form-action ${formActionSource}`,
-  "script-src 'self' https://challenges.cloudflare.com",
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data:",
-  "font-src 'self'",
-  `connect-src 'self' https://challenges.cloudflare.com ${apiConnectSource}`,
-  "frame-src https://challenges.cloudflare.com",
-].join('; ');
+const contentSecurityPolicy = buildDocumentSecurityPolicy({ formActionSource, apiConnectSource });
 const assetBase = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 ---
 <!doctype html>
@@ -44,7 +34,7 @@ const assetBase = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta http-equiv="Content-Security-Policy" content={contentSecurityPolicy} />
-    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="referrer" content={REFERRER_POLICY} />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#090806" />
     <link rel="icon" href={`${assetBase}brand/hall-of-memory-logo-primary.svg`} />

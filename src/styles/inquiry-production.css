@@ -1,0 +1,47 @@
+.demo-inquiry-card .consent-row {
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.demo-inquiry-card .consent-row input {
+  width: 18px;
+  min-height: 18px;
+  margin-top: 2px;
+}
+.demo-inquiry-card .turnstile-field {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.demo-inquiry-card .turnstile-field legend {
+  margin-bottom: 8px;
+  color: #d9d1c5;
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+}
+.demo-inquiry-card .turnstile-wrap {
+  min-height: 65px;
+  max-width: 100%;
+  overflow: hidden;
+}
+.demo-inquiry-card .turnstile-status {
+  min-height: 1.2em;
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: .72rem;
+}
+.demo-inquiry-card .form-error,
+.demo-inquiry-card .form-success {
+  margin: 0;
+  padding: 12px 14px;
+  border-left: 3px solid;
+  font-size: .86rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.demo-inquiry-card .form-error { color: #ffd4cf; background: rgba(143,39,28,.22); border-color: #e57c70; }
+.demo-inquiry-card .form-success { color: #e9f7d2; background: rgba(73,111,34,.22); border-color: #a7ce72; }
+.demo-inquiry-card .config-note { padding-left: 12px; border-left: 2px solid var(--gold); }

@@ -314,11 +314,21 @@ try {
     content: { readable: true, writable: false, reason: 'cms-path-pending-t011' },
   });
   const list = await adminFetch('/api/admin/inquiries', token);
+  assert.equal(list.status, 200);
   const listBody = await list.json();
   assert.equal(listBody.inquiries.length, 1);
   assert.equal(listBody.inquiries[0].notification_status, 'sent');
-  assert.equal(listBody.inquiries[0].phone, null);
-  assert.equal(listBody.inquiries[0].message, null);
+  for (const privateKey of ['email', 'phone', 'message']) {
+    assert.equal(privateKey in listBody.inquiries[0], false, `admin list leaked ${privateKey}`);
+  }
+  assert.equal((await adminFetch(`/api/admin/inquiries/${accepted.inquiryId}`, null)).status, 403);
+  const detailResponse = await adminFetch(`/api/admin/inquiries/${accepted.inquiryId}`, token);
+  assert.equal(detailResponse.status, 200);
+  const detailBody = await detailResponse.json();
+  assert.equal(detailBody.inquiry.id, accepted.inquiryId);
+  assert.equal(detailBody.inquiry.email, 'frontend-smoke@example.invalid');
+  assert.equal(detailBody.inquiry.phone, null);
+  assert.equal(detailBody.inquiry.message, null);
   const updated = await adminFetch(`/api/admin/inquiries/${accepted.inquiryId}`, token, {
     method: 'PATCH',
     headers: { 'content-type': 'application/json' },

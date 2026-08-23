@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {
   evaluateProductionReadiness,
   loadRepositoryReadinessInput,
+  PRODUCTION_INQUIRY_ENTRY,
   PRODUCTION_SITE_ORIGIN,
 } from './check-production-readiness.mjs';
 
@@ -23,7 +24,7 @@ const readyFixture = () => ({
   inquiryApiUrl: 'https://inquiry.hallofmemory.de/api/inquiries',
   turnstileSiteKey: '0x4AAAAA-production-site-key',
   productionWorkerConfigExists: true,
-  productionWorkerConfig: '{"vars":{"SPIKE_MODE":"production"}}',
+  productionWorkerConfig: `{"main":"${PRODUCTION_INQUIRY_ENTRY}","vars":{"SPIKE_MODE":"production"}}`,
 });
 
 const ready = evaluateProductionReadiness(readyFixture());
@@ -70,4 +71,10 @@ const draftLegal = readyFixture();
 draftLegal.legalSources.impressum = '<p>Entwurfsstand: Kundendaten folgen.</p>';
 assert.equal(evaluateProductionReadiness(draftLegal).ready, false, 'draft legal marker must block production');
 
-console.log(`production-readiness-gate-ok current_blockers=${currentStageOne.blockers.length} synthetic_ready=true`);
+const legacyWorkerEntry = readyFixture();
+legacyWorkerEntry.productionWorkerConfig = '{"main":"src/index.ts","vars":{"SPIKE_MODE":"production"}}';
+const legacyWorkerResult = evaluateProductionReadiness(legacyWorkerEntry);
+assert.equal(legacyWorkerResult.ready, false, 'legacy production Worker entry must block production');
+assert.ok(legacyWorkerResult.blockers.some((item) => item.code === 'inquiry.worker_config'));
+
+console.log(`production-readiness-gate-ok current_blockers=${currentStageOne.blockers.length} synthetic_ready=true privacy_entry_required=true`);

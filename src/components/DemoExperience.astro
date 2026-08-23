@@ -6,14 +6,37 @@ import {
   demoFaqs,
   demoOffers,
   demoPackages,
+  demoSite,
   demoSteps,
 } from '../data/demo';
+import { resolveInquiryPublicConfig } from '../lib/inquiry-config';
 import { inquiryLimits } from '../lib/inquiry';
+import { buildStructuredData, resolveSeoState } from '../lib/seo';
 import '../styles/demo.css';
 
-const pageTitle = 'Hall of Memory — Event-Erlebnisse';
-const description =
-  'Private Designpreview für Hall of Memory mit Fotobox, Fotospiegel, Magazinbox, Anfrageweg und persönlichem Galerie-Zugang.';
+type FrameVariant = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+type LandingMode = 'preview' | 'production';
+interface Props {
+  frameVariant?: FrameVariant;
+  mode?: LandingMode;
+}
+
+const { frameVariant, mode = 'preview' } = Astro.props;
+const isPreview = mode === 'preview';
+const pageTitle = `${demoSite.name} — Event-Erlebnisse`;
+const description = demoSite.description;
+const seo = resolveSeoState(Astro.site?.href, demoSite.launchStatus, Astro.url.pathname);
+const structuredData = buildStructuredData({
+  canonicalUrl: seo.canonicalUrl,
+  name: pageTitle,
+  description,
+  offers: demoOffers,
+});
+const inquiryConfig = resolveInquiryPublicConfig({
+  apiUrl: isPreview ? undefined : import.meta.env.PUBLIC_INQUIRY_API_URL,
+  siteKey: isPreview ? undefined : import.meta.env.PUBLIC_TURNSTILE_SITE_KEY,
+  development: !isPreview && import.meta.env.DEV,
+});
 
 const whatsappNumber = String(import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? '').replace(/\D/g, '');
 const genericWhatsAppText =
@@ -27,11 +50,9 @@ const productWhatsAppHref = (product: string) =>
         `Hallo, ich interessiere mich für Hall of Memory – ${product} und möchte gerne eine Anfrage stellen.`,
       )}`
     : undefined;
-type FrameVariant = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
-interface Props { frameVariant?: FrameVariant; }
 
-const { frameVariant } = Astro.props;
 const assetBase = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const homeHref = isPreview ? `${assetBase}demo/` : assetBase;
 const frameMaskByVariant: Record<FrameVariant, string> = {
   1: `${assetBase}fundus/hall-of-memory-frame-01.png`,
   2: `${assetBase}fundus/hall-of-memory-frame-02.png`,
@@ -65,9 +86,12 @@ const isPortraitAssetFrame = frameVariant === 10;
 <BaseLayout
   title={pageTitle}
   description={description}
-  noIndex={true}
+  noIndex={isPreview || !seo.indexable}
+  apiConnectSource={isPreview ? "'self'" : inquiryConfig.apiConnectSource}
+  canonicalUrl={isPreview ? undefined : seo.canonicalUrl}
+  structuredData={isPreview ? undefined : structuredData}
   bodyClass="demo-page"
-  formActionSource="'none'"
+  formActionSource={isPreview ? "'none'" : "'self'"}
 >
   {frameVariant && (
     <style is:inline>
@@ -160,26 +184,28 @@ const isPortraitAssetFrame = frameVariant === 10;
       }
     </style>
   )}
-  <div class="demo-preview-bar" role="note">
-    <div class="shell">
-      <span>Private Designpreview</span>
-      <p>Beispielbild · Originalfotos, Pakete und Preise folgen nach Freigabe</p>
-      {frameVariant && (
-        <div class="demo-frame-consumer-controls" aria-label="Bildgröße im Rahmen">
-          <label class="demo-frame-size-control">
-            <span>Bildgröße</span>
-            <small>Kleiner</small>
-            <input type="range" min="0" max="100" step="1" value="50" data-frame-size aria-label="Bildgröße stufenlos einstellen" />
-            <small>Größer</small>
-          </label>
-        </div>
-      )}
+  {isPreview && (
+    <div class="demo-preview-bar" role="note">
+      <div class="shell">
+        <span>Private Designpreview</span>
+        <p>Beispielbild · Originalfotos, Pakete und Preise folgen nach Freigabe</p>
+        {frameVariant && (
+          <div class="demo-frame-consumer-controls" aria-label="Bildgröße im Rahmen">
+            <label class="demo-frame-size-control">
+              <span>Bildgröße</span>
+              <small>Kleiner</small>
+              <input type="range" min="0" max="100" step="1" value="50" data-frame-size aria-label="Bildgröße stufenlos einstellen" />
+              <small>Größer</small>
+            </label>
+          </div>
+        )}
+      </div>
     </div>
-  </div>
+  )}
 
   <header class="site-header demo-header shell">
-    <a href={`${assetBase}demo/`} class="demo-brand" aria-label="Hall of Memory Start">
-      <img src={`${assetBase}brand/hall-of-memory-logo-primary.svg`} alt="Hall of Memory" width="406" height="475" />
+    <a href={homeHref} class="demo-brand" aria-label="Hall of Memory Start">
+      <img src={`${assetBase}brand/hall-of-memory-logo-primary.svg`} alt="Hall of Memory" width="406" height="475" loading="eager" decoding="async" />
       <span class="demo-brand-copy"><small>Every Star Has a Memory</small></span>
     </a>
     <nav class="demo-nav" aria-label="Hauptnavigation">
@@ -214,7 +240,7 @@ const isPortraitAssetFrame = frameVariant === 10;
 
       <figure class="demo-hero-media">
         <div class="demo-hero-image-wrap" style={frameMaskStyle} data-frame-consumer={frameVariant ? 'comparison' : undefined} data-frame-kind={frameVariant ? (isDirectFloralFrame ? 'floral-source' : isPortraitAssetFrame ? 'asset-source-portrait' : 'asset-source') : undefined} data-frame-variant={frameVariant} data-frame-inset-inner={framePhotoInset?.inner} data-frame-inset-outer={framePhotoInset?.outer}>
-          <img class="demo-hero-event-photo" src={`${assetBase}demo/hall-of-memory-example-event.webp`} alt="Beispielhafte Hall-of-Memory Eventaufnahme" width="1122" height="1402" fetchpriority="high" decoding="async" />
+          <img class="demo-hero-event-photo" src={`${assetBase}demo/hall-of-memory-example-event.webp`} alt="Beispielhafte Hall-of-Memory Eventaufnahme" width="1122" height="1402" loading="eager" fetchpriority="high" decoding="async" />
           <div class="demo-hero-glow" aria-hidden="true"></div>
         </div>
         <figcaption>
@@ -449,39 +475,101 @@ const isPortraitAssetFrame = frameVariant === 10;
         </div>
       </div>
 
-      <form class="inquiry-card demo-inquiry-card" data-demo-inquiry-disabled autocomplete="off" aria-label="Anfrageformular – noch nicht aktiv" aria-disabled="true">
-        <p class="demo-form-legal" role="status"><strong>Entwicklungsstand:</strong> Das Anfrageformular ist noch nicht aktiv. Bitte noch keine Kontaktdaten eintragen; es werden derzeit keine Anfragen übermittelt.</p>
-        <InquiryEventFields
-          offers={demoOffers}
-          packages={demoPackages}
-          showStepLegends={true}
-          emptyPackageLabel="Beratung gewünscht"
-          disabled={true}
-        />
-        <fieldset class="inquiry-field-group inquiry-step" disabled>
-          <legend><span aria-hidden="true">03</span> Kontaktdetails</legend>
-          <div class="form-grid-two">
+      {isPreview ? (
+        <form class="inquiry-card demo-inquiry-card" data-demo-inquiry-disabled autocomplete="off" aria-label="Anfrageformular – noch nicht aktiv" aria-disabled="true">
+          <p class="demo-form-legal" role="status"><strong>Entwicklungsstand:</strong> Das Anfrageformular ist noch nicht aktiv. Bitte noch keine Kontaktdaten eintragen; es werden derzeit keine Anfragen übermittelt.</p>
+          <InquiryEventFields
+            offers={demoOffers}
+            packages={demoPackages}
+            showStepLegends={true}
+            emptyPackageLabel="Beratung gewünscht"
+            disabled={true}
+          />
+          <fieldset class="inquiry-field-group inquiry-step" disabled>
+            <legend><span aria-hidden="true">03</span> Kontaktdetails</legend>
+            <div class="form-grid-two">
+              <label>
+                Name
+                <input type="text" name="name" minlength="2" maxlength={inquiryLimits.name} autocomplete="name" required />
+              </label>
+              <label>
+                E-Mail
+                <input type="email" name="email" maxlength={inquiryLimits.email} autocomplete="email" required />
+              </label>
+            </div>
             <label>
-              Name
-              <input type="text" name="name" minlength="2" maxlength={inquiryLimits.name} autocomplete="name" required />
+              Telefonnummer <span class="optional">optional</span>
+              <input type="tel" name="phone" maxlength={inquiryLimits.phone} autocomplete="tel" />
             </label>
             <label>
-              E-Mail
-              <input type="email" name="email" maxlength={inquiryLimits.email} autocomplete="email" required />
+              Weitere Wünsche <span class="optional">optional</span>
+              <textarea name="message" maxlength={inquiryLimits.message} rows="4" placeholder="Was sollen wir über dein Event noch wissen?"></textarea>
             </label>
+          </fieldset>
+          <button type="submit" class="button button-primary demo-submit" disabled>Anfrageformular noch nicht aktiv</button>
+          <p class="demo-form-legal">Eine Anfrage ist keine Buchung und keine Verfügbarkeitsbestätigung.</p>
+        </form>
+      ) : (
+        <form
+          class="inquiry-card demo-inquiry-card"
+          aria-label="Anfrageformular"
+          aria-busy="false"
+          data-inquiry-form
+          data-api-url={inquiryConfig.apiUrl}
+          data-turnstile-site-key={inquiryConfig.siteKey}
+        >
+          <InquiryEventFields
+            offers={demoOffers}
+            packages={demoPackages}
+            showStepLegends={true}
+            emptyPackageLabel="Pakete folgen"
+          />
+          <fieldset class="inquiry-field-group inquiry-step">
+            <legend><span aria-hidden="true">03</span> Kontaktdetails</legend>
+            <div class="form-grid-two">
+              <label>
+                Name
+                <input type="text" name="name" minlength="2" maxlength={inquiryLimits.name} autocomplete="name" required />
+              </label>
+              <label>
+                E-Mail
+                <input type="email" name="email" maxlength={inquiryLimits.email} autocomplete="email" required />
+              </label>
+            </div>
+            <label>
+              Telefonnummer <span class="optional">optional</span>
+              <input type="tel" name="phone" maxlength={inquiryLimits.phone} autocomplete="tel" />
+            </label>
+            <label>
+              Weitere Wünsche <span class="optional">optional</span>
+              <textarea name="message" maxlength={inquiryLimits.message} rows="4" placeholder="Was sollen wir über dein Event noch wissen?"></textarea>
+            </label>
+          </fieldset>
+          <label class="consent-row">
+            <input type="checkbox" name="privacyConsent" value="true" required aria-describedby="privacy-note" />
+            <span>Datenschutz-Einwilligung erforderlich.</span>
+          </label>
+          <p class="form-note" id="privacy-note">Der verbindliche Datenschutz- und Einwilligungstext wird vor der Produktionsaktivierung ergänzt.</p>
+          <fieldset class="turnstile-field">
+            <legend>Sicherheitsprüfung</legend>
+            <div class="turnstile-wrap" data-turnstile-container tabindex="-1" aria-describedby="turnstile-help turnstile-status"></div>
+            <p class="form-note" id="turnstile-help">Die Prüfung schützt das Formular vor automatisiertem Missbrauch.</p>
+            <p class="turnstile-status" id="turnstile-status" data-turnstile-status aria-live="polite"></p>
+          </fieldset>
+          <div class="form-feedback">
+            <p class="form-error" data-form-error role="alert" tabindex="-1" hidden></p>
+            <p class="form-success" data-form-success role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden></p>
           </div>
-          <label>
-            Telefonnummer <span class="optional">optional</span>
-            <input type="tel" name="phone" maxlength={inquiryLimits.phone} autocomplete="tel" />
-          </label>
-          <label>
-            Weitere Wünsche <span class="optional">optional</span>
-            <textarea name="message" maxlength={inquiryLimits.message} rows="4" placeholder="Was sollen wir über dein Event noch wissen?"></textarea>
-          </label>
-        </fieldset>
-        <button type="submit" class="button button-primary demo-submit" disabled>Anfrageformular noch nicht aktiv</button>
-        <p class="demo-form-legal">Eine Anfrage ist keine Buchung und keine Verfügbarkeitsbestätigung.</p>
-      </form>
+          <button type="submit" class="button button-primary demo-submit" disabled={!inquiryConfig.configured}>
+            <span data-submit-idle>Anfrage senden</span>
+            <span data-submit-busy hidden>Anfrage wird gesendet …</span>
+          </button>
+          {!inquiryConfig.configured && (
+            <p class="form-note config-note" role="status">Das Anfrageformular ist in diesem Build noch nicht für den Produktionsbetrieb konfiguriert.</p>
+          )}
+          <p class="demo-form-legal">Eine Anfrage ist keine Buchung und keine Verfügbarkeitsbestätigung.</p>
+        </form>
+      )}
     </section>
 
     <section class="demo-faq-contact" id="kontakt" aria-labelledby="faq-title">
@@ -502,7 +590,7 @@ const isPortraitAssetFrame = frameVariant === 10;
           <img class="demo-contact-logo" src={`${assetBase}brand/hall-of-memory-logo-dark.jpg`} alt="Hall of Memory – Schwarz-Gold-Variante auf heller Fläche" width="4167" height="4167" loading="lazy" decoding="async" />
           <p class="eyebrow">Direkter Kontakt</p>
           <h3>Dein Event beginnt mit einer Nachricht.</h3>
-          <p>Der direkte Anfrageweg wird vor dem Launch aktiviert. Bis dahin zeigt dieser Bereich den vorgesehenen Ablauf.</p>
+          <p>{isPreview ? 'Der direkte Anfrageweg wird vor dem Launch aktiviert. Bis dahin zeigt dieser Bereich den vorgesehenen Ablauf.' : 'Nutze den Anfragebereich, damit wir die wichtigsten Eckdaten deiner Veranstaltung gemeinsam einordnen können.'}</p>
           <a class="button button-primary" href="#anfrage">Anfragebereich ansehen</a>
           {whatsappHref ? (
             <a class="button button-ghost" href={whatsappHref} target="_blank" rel="noopener noreferrer">Per WhatsApp schreiben</a>
@@ -533,8 +621,8 @@ const isPortraitAssetFrame = frameVariant === 10;
   )}
 
   <footer class="site-footer demo-footer shell">
-    <a href={`${assetBase}demo/`} class="demo-brand" aria-label="Hall of Memory Start">
-      <img src={`${assetBase}brand/hall-of-memory-logo-primary.svg`} alt="Hall of Memory" width="406" height="475" />
+    <a href={homeHref} class="demo-brand" aria-label="Hall of Memory Start">
+      <img src={`${assetBase}brand/hall-of-memory-logo-primary.svg`} alt="Hall of Memory" width="406" height="475" loading="lazy" decoding="async" />
       <span class="demo-brand-copy"><small>Every Star Has a Memory</small></span>
     </a>
     <p>Event-Erlebnisse mit Raum für Erinnerungen. · <a href={`${assetBase}impressum/`}>Impressum</a> · <a href={`${assetBase}datenschutz/`}>Datenschutz</a></p>
@@ -542,4 +630,5 @@ const isPortraitAssetFrame = frameVariant === 10;
   </footer>
 
   {frameVariant && <script is:inline src={`${assetBase}frame-comparison.js`} defer></script>}
+  {!isPreview && inquiryConfig.configured && <script src="../scripts/inquiry-form.ts"></script>}
 </BaseLayout>

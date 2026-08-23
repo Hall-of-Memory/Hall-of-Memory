@@ -3,7 +3,7 @@ import {
   ADMIN_INQUIRY_DETAIL_SQL,
   ADMIN_INQUIRY_SUMMARY_SQL,
   handleAdminPrivacyRead,
-} from '../spikes/inquiry-worker/src/privacy-entry.ts';
+} from '../spikes/inquiry-worker/src/admin-privacy.ts';
 
 const identity = { email: 'admin@example.invalid', subject: 'admin-1' };
 const summary = {

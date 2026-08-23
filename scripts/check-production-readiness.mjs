@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 
 export const PRODUCTION_SITE_ORIGIN = 'https://hallofmemory.de/';
+export const PRODUCTION_INQUIRY_ENTRY = 'src/privacy-entry.ts';
 
 const TURNSTILE_TEST_SITE_KEYS = new Set([
   '1x00000000000000000000AA',
@@ -70,6 +71,7 @@ function productionWorkerLooksBound(input) {
   if (!input.productionWorkerConfigExists) return false;
   const content = input.productionWorkerConfig ?? '';
   return (
+    new RegExp(`"main"\\s*:\\s*"${PRODUCTION_INQUIRY_ENTRY.replace('.', '\\.') }"`).test(content) &&
     /"SPIKE_MODE"\s*:\s*"production"/.test(content) &&
     !/REPLACE_WITH|example\.invalid|local-only/i.test(content)
   );
@@ -119,7 +121,10 @@ export function evaluateProductionReadiness(input) {
     add('inquiry.turnstile', 'PUBLIC_TURNSTILE_SITE_KEY must be configured with a non-test production key.');
   }
   if (!productionWorkerLooksBound(input)) {
-    add('inquiry.worker_config', 'customer-bound production Worker config is missing or still contains placeholder/local values.');
+    add(
+      'inquiry.worker_config',
+      `customer-bound production Worker config must use ${PRODUCTION_INQUIRY_ENTRY}, SPIKE_MODE=production, and no placeholder/local values.`,
+    );
   }
 
   return { ready: blockers.length === 0, blockers };

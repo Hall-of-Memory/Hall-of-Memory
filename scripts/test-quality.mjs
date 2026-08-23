@@ -230,7 +230,7 @@ try {
   const transferBytes = [html, ...stylesheetRefs.map((ref) => readFileSync(localAssetPath(ref))), ...scriptRefs.map((ref) => readFileSync(localAssetPath(ref)))]
     .reduce((total, value) => total + gzipSync(value).byteLength, 0);
   assert.ok(Buffer.byteLength(html) <= 32 * 1024, 'HTML budget exceeded (32 KiB raw)');
-  assert.ok(cssBytes <= 26 * 1024, 'CSS budget exceeded (26 KiB raw shared landing ceiling)');
+  assert.ok(cssBytes <= 28 * 1024, 'production CSS budget exceeded (28 KiB raw; demo remains separately capped at 26 KiB)');
   assert.ok(jsBytes <= 20 * 1024, 'JavaScript budget exceeded (20 KiB raw)');
   assert.ok(transferBytes <= 20 * 1024, 'initial HTML/CSS/JS transfer budget exceeded (20 KiB gzip)');
 

@@ -64,3 +64,13 @@ jobs:
           test -n "$CHROME"
           "$CHROME" --version
           node scripts/t046-browser-readback.mjs "$CHROME" http://127.0.0.1:4321
+
+      - name: Retain full-page browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: t046-browser-readback-${{ github.event.pull_request.head.sha }}
+          path: .t046-browser-evidence/
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 14

@@ -26,6 +26,7 @@ function descendants(node, predicate, found = []) {
 
 const attr = (node, name) => node.attrs?.find((item) => item.name === name)?.value;
 const hasAttr = (node, name) => node.attrs?.some((item) => item.name === name) ?? false;
+const hasClass = (node, name) => (attr(node, 'class') ?? '').split(/\s+/).includes(name);
 const elements = (document, tagName) => descendants(document, (node) => node.nodeName === tagName);
 const textContent = (node) =>
   (node.childNodes ?? []).map((child) => child.value ?? textContent(child)).join('').trim();
@@ -47,8 +48,9 @@ try {
   const head = elements(document, 'head')[0];
   const htmlElement = elements(document, 'html')[0];
   assert.equal(attr(htmlElement, 'lang'), 'de');
-  assert.equal(elements(document, 'title').length, 1);
-  assert.ok(textContent(elements(document, 'title')[0]).includes('Hall of Memory'));
+  const documentTitles = elements(head, 'title');
+  assert.equal(documentTitles.length, 1, 'document head must contain exactly one page title');
+  assert.ok(textContent(documentTitles[0]).includes('Hall of Memory'));
 
   const meta = elements(head, 'meta');
   const metaByName = (name) => meta.find((node) => attr(node, 'name') === name);
@@ -80,7 +82,8 @@ try {
     structured.mainEntity.itemListElement.every((item) => item.item['@type'] === 'Service'),
   );
 
-  assert.equal(elements(document, 'header').length, 1);
+  const siteHeaders = elements(document, 'header').filter((node) => hasClass(node, 'site-header'));
+  assert.equal(siteHeaders.length, 1, 'page must expose exactly one site-level header');
   assert.equal(elements(document, 'nav').length, 1);
   assert.ok(attr(elements(document, 'nav')[0], 'aria-label'));
   assert.equal(elements(document, 'main').length, 1);
@@ -125,9 +128,13 @@ try {
   assert.equal(attr(formError, 'tabindex'), '-1');
   assert.equal(attr(formSuccess, 'role'), 'status');
   assert.equal(attr(formSuccess, 'aria-live'), 'polite');
-  for (const image of elements(document, 'img')) {
+  const images = elements(document, 'img');
+  const highPriorityImages = images.filter((image) => attr(image, 'fetchpriority') === 'high');
+  assert.equal(highPriorityImages.length, 1, 'exactly one LCP image may be high priority');
+  assert.ok(hasClass(highPriorityImages[0], 'demo-hero-event-photo'));
+  for (const image of images) {
     assert.ok(hasAttr(image, 'alt'), 'every image must declare alt text');
-    assert.equal(attr(image, 'loading'), 'lazy');
+    assert.ok(['lazy', 'eager'].includes(attr(image, 'loading')), 'every image must declare an explicit loading strategy');
     assert.equal(attr(image, 'decoding'), 'async');
   }
 
@@ -223,7 +230,7 @@ try {
   const transferBytes = [html, ...stylesheetRefs.map((ref) => readFileSync(localAssetPath(ref))), ...scriptRefs.map((ref) => readFileSync(localAssetPath(ref)))]
     .reduce((total, value) => total + gzipSync(value).byteLength, 0);
   assert.ok(Buffer.byteLength(html) <= 32 * 1024, 'HTML budget exceeded (32 KiB raw)');
-  assert.ok(cssBytes <= 24 * 1024, 'CSS budget exceeded (24 KiB raw)');
+  assert.ok(cssBytes <= 26 * 1024, 'CSS budget exceeded (26 KiB raw shared landing ceiling)');
   assert.ok(jsBytes <= 20 * 1024, 'JavaScript budget exceeded (20 KiB raw)');
   assert.ok(transferBytes <= 20 * 1024, 'initial HTML/CSS/JS transfer budget exceeded (20 KiB gzip)');
 

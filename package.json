@@ -31,7 +31,7 @@
     "test:pages-artifact": "astro --base /hall-of-memory-preview build --outDir .pages-artifact-source-test-dist && node scripts/test-pages-artifact.mjs"
   },
   "dependencies": {
-    "astro": "7.2.0",
+    "astro": "7.2.4",
     "jose": "6.2.8",
     "zod": "4.4.3"
   },

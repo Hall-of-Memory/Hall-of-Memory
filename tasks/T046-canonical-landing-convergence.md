@@ -1,6 +1,6 @@
 ---
 id: T046
-status: planned
+status: active
 priority: P0
 dependencies: [T038]
 ---
@@ -11,6 +11,14 @@ dependencies: [T038]
 Die gestalterisch reife `/demo/`-Website und die technische Produktionsseite `/` werden auf einen gemeinsamen Landingpage-Kern und ein gemeinsames validiertes Contentmodell gestellt. Preview und Produktion dürfen unterschiedliche Betriebsmodi besitzen, aber keine zweite Produkt-, Text- oder Seitenwahrheit mehr pflegen.
 
 T046 beginnt erst, wenn T038 seine noch offene Rahmen-/Kundenabnahme abgeschlossen oder die verbleibende Rahmenarbeit klar von der Landingpage entkoppelt hat. Dadurch wird `DemoExperience.astro` nicht parallel von zwei Schreib-Lanes umgebaut.
+
+## Entkopplungs-Readback — 2026-08-23
+
+- T038 ist technisch implementiert und mehrfach gegen Build, Astro Check, Desktop/Mobile-Readback, GitHub Pages sowie den Slider-/Frame-Vertrag validiert.
+- Sein dokumentierter Restpunkt ist ausschließlich die visuelle Kundenauswahl einer Variante und der gewünschten Bildgröße; diese Entscheidung ist keine aktuell ausführbare Code-Mutation.
+- T037 ist technisch ebenfalls validiert und wartet nur auf ästhetische Abnahme/Fundus-Acceptance.
+- Für T046 wird deshalb der bestehende Frame-Consumer-Vertrag eingefroren: Varianten, Assetpfade, Insets, Sliderparameter und `/demo/rahmen/` werden nicht gestalterisch verändert.
+- Damit ist die im Zieltext vorgesehene Alternative „verbleibende Rahmenarbeit klar von der Landingpage entkoppelt“ erfüllt. Eine spätere Kundenauswahl kann auf dem erhaltenen Frame-Interface erfolgen, ohne den Landingpage-Kern erneut zu spalten.
 
 ## Ausgangsbefund
 

@@ -1,1 +1,30 @@
-[]
+[
+  {
+    "id": "angebote",
+    "question": "Welche Event-Angebote gibt es aktuell?",
+    "answer": "Zum Start stehen Fotobox, Fotospiegel und Magazinbox im Mittelpunkt. Weitere Event-Erlebnisse können das Angebot später ergänzen.",
+    "sortOrder": 10,
+    "source": "internal-draft"
+  },
+  {
+    "id": "anfrage",
+    "question": "Wie stelle ich eine Anfrage?",
+    "answer": "Im Anfrageformular werden gewünschtes Produkt, Paket, Veranstaltungsdatum, Ort, Veranstaltungsart und Kontaktdaten zusammengeführt. Eine Anfrage ist noch keine verbindliche Buchung.",
+    "sortOrder": 20,
+    "source": "internal-draft"
+  },
+  {
+    "id": "galerie-zugang",
+    "question": "Wie erhalte ich nach dem Event meine Bilder?",
+    "answer": "Vorgesehen ist ein geschützter persönlicher Link oder Code. Der Zugriff wird pro Veranstaltung getrennt, sodass ausschließlich die eigene Galerie erreichbar ist.",
+    "sortOrder": 30,
+    "source": "internal-draft"
+  },
+  {
+    "id": "paket",
+    "question": "Kann ich direkt ein Paket auswählen?",
+    "answer": "Die konkreten Paketvarianten werden nach Freigabe mit Leistungen und Preisen vergleichbar angeboten. Bis dahin wählen wir das passende Paket im Anfrageweg gemeinsam aus.",
+    "sortOrder": 40,
+    "source": "internal-draft"
+  }
+]

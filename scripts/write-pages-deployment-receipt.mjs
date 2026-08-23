@@ -1,8 +1,10 @@
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+
+export const PAGES_DEPLOYMENT_RECEIPT = 'hall-of-memory-deployment.json';
 
 function resolveArtifactPath(value) {
   const artifact = resolve(repo, value);
@@ -22,8 +24,7 @@ export function writePagesDeploymentReceipt(artifactValue, sourceRevision, verif
   }
 
   const artifact = resolveArtifactPath(artifactValue);
-  const receiptDir = join(artifact, '.well-known');
-  const receiptPath = join(receiptDir, 'hall-of-memory-deployment.json');
+  const receiptPath = join(artifact, PAGES_DEPLOYMENT_RECEIPT);
   const receipt = {
     schemaVersion: 1,
     sourceRevision,
@@ -32,7 +33,6 @@ export function writePagesDeploymentReceipt(artifactValue, sourceRevision, verif
     channel: 'github-pages-preview',
   };
 
-  mkdirSync(receiptDir, { recursive: true });
   writeFileSync(receiptPath, `${JSON.stringify(receipt, null, 2)}\n`, 'utf8');
   return { receiptPath, receipt };
 }
@@ -43,6 +43,6 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const verifyRunId = process.argv[4] ?? '';
   const result = writePagesDeploymentReceipt(artifact, sourceRevision, verifyRunId);
   console.log(
-    `pages-deployment-receipt-ready source=${result.receipt.sourceRevision} verify_run=${result.receipt.verifyRunId} channel=${result.receipt.channel}`,
+    `pages-deployment-receipt-ready source=${result.receipt.sourceRevision} verify_run=${result.receipt.verifyRunId} channel=${result.receipt.channel} path=${PAGES_DEPLOYMENT_RECEIPT}`,
   );
 }

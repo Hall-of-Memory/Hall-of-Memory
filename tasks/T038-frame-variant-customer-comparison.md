@@ -262,4 +262,11 @@ Nutzen: Der Browser besitzt jetzt einen expliziten Bild-Lifecycle (`src`, `compl
 - [x] `npm run check` PASS, Receipt `1489eb6f9396cdab5147f1090aada72b482b8f7cbb1934b47b8479ee950b06c5`.
 - [x] `npm run test:pages-artifact -- --frame-image-consumer-v2` PASS, Receipt `63ec0f42bba774bac88eb05eacde86efa4fa06581447ba315f6fd31316c7dd3e`: Build-Basis ist exakt `/Hall-of-Memory`; alle zehn `img src` liegen darunter, jede referenzierte Datei existiert nichtleer im Build und nach dem Pages-Packaging, einschließlich des verschachtelten V10-Pfads.
 
-Post-Merge bleibt als Acceptance erforderlich: exakten `main`-Deploy abwarten und auf der öffentlichen GitHub-Pages-URL für alle zehn Bilder `complete=true` und `naturalWidth>0` browserseitig readbacken.
+### Post-Merge-Readback — 24.08.2026
+
+- [x] Öffentliche Deployment-Receipt frisch und cache-busted gelesen: `sourceRevision=137df9a2149ff5583d64a700c06acb2b9ccb9ced`, `verifyRunId=32672725279`, Channel `github-pages-preview`. Damit ist der geprüfte Browserzustand an den zu diesem Zeitpunkt aktuellen `main`-Deploy gebunden.
+- [x] Echter Google-Chrome/CDP-Readback auf `https://hall-of-memory.github.io/Hall-of-Memory/demo/rahmen/`: exakt 10 `.frame-comparison-image`-Elemente; alle zehn `complete=true`, `naturalWidth>0` und `naturalHeight>0`; kein horizontaler Overflow.
+- [x] V1–V9 melden jeweils `1254×1254` natürliche Pixelmaße. V10 meldet `1122×1402` und lädt aus dem erwarteten verschachtelten Fundus-Package-Pfad.
+- [x] Dauerhafter Grabowski-Verifikationsjob `grabowski-job-075e98a93fcb` terminal `succeeded`; Finalization Receipt SHA-256 `99dd9949fce105bc7eac3a95cd784834fe9dad72304b2579ac3c60d697d01095`.
+
+Der technische Post-Merge-Acceptancepunkt der Pages-Härtung ist damit erfüllt. T038 bleibt dennoch `active`: die bewusste Kundenauswahl eines Rahmens und die anschließende finale Bildgrößenfestlegung sind weiterhin offen und werden durch diesen Runtime-Nachweis nicht vorweggenommen.

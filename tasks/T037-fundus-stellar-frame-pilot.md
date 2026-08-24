@@ -1,6 +1,6 @@
 ---
 id: T037
-status: active
+status: cancelled
 priority: P0
 dependencies: [T036]
 ---
@@ -51,3 +51,15 @@ Der 1024×1536-Construction-Master darf auf der quadratischen Hero-Fläche nicht
 - Chromium-Readback: Desktop 1440×1000 → Hero 601,5×601,5; Tablet 834×1112 → 640×640; Mobile 390×844 → 362×362; jeweils horizontaler Overflow 0.
 - CSS-Masken-Readback referenziert `hall-of-memory-stellar-frame-01-square.svg` bei allen drei Viewports, `mask-size: 100% 100%`, Opazität 0,72.
 - isolierte Review-URL: `https://heim-pc.tail6dbb90.ts.net:10001/demo/` (Tailnet-only); bestehende T018-Preview auf 10000/4334 blieb unverändert.
+
+## Closeout — 24.08.2026: durch späteres Rahmensystem superseded
+
+T037 wird bewusst **nicht** als `done` gewertet: Die damals geforderte direkte visuelle Abnahme des isolierten square-mask-Piloten fand nicht statt. Der konkrete Pilotpfad wurde anschließend durch die breitere Rahmenentwicklung in T038 ersetzt und ist auf aktuellem `main` kein aktiver Consumer mehr.
+
+Frischer Readback auf `main` `c2895dcaa8199c55e4e0a30a247db68c81e497e1`:
+
+- `hall-of-memory-stellar-frame-01-square.svg`, der damalige T037-Consumer, wird in `src/`, `public/` und `scripts/` nirgends mehr referenziert oder ausgeliefert; Treffer bestehen nur noch in dieser historischen Taskdatei.
+- Die aktuelle Demo und `/demo/rahmen/` konsumieren stattdessen die V1–V10-Pfade `hall-of-memory-frame-01.png` bis V5, den botanischen V6-Master, die Sternenrahmen V7–V9 und das immutable Stellar-Primary-Package V10.
+- Der öffentliche T038-Readback hat für genau diese zehn aktuellen Bilder vollständiges Laden mit positiven natürlichen Abmessungen belegt.
+
+Folge: Eine nachträgliche „Abnahme“ des alten T037-Piloten oder die Erzeugung seines damaligen Consumer-Packages wäre keine Fertigstellung mehr, sondern Wiederbelebung supersedierter Arbeit. T037 endet deshalb `cancelled`; T038 bleibt als aktueller Rahmenentscheidungs- und Kundenabnahmepfad `active`.

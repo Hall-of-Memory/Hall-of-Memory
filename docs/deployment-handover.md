@@ -1,6 +1,6 @@
 # Deployment- und Handover-Runbook
 
-Stand: 2026-08-22
+Stand: 2026-08-24
 
 Dieses Runbook trennt zwei Stufen:
 
@@ -61,6 +61,50 @@ Vor Mutation:
 - **vor dem Nameserverwechsel** sämtliche weiterhin benötigten nicht-provider-spezifischen RRsets aus dem STRATO-Snapshot in Cloudflare anlegen/importieren. Mail-/Verifikationsrecords (`MX`, zugehörige `A`/`AAAA`, `TXT`, `SRV`) bleiben DNS-only; nur bewusst gewählte Webrecords dürfen proxied werden;
 - den normalisierten STRATO-Snapshot und die Cloudflare-Zone recordweise vergleichen. Abgesehen von bewusst dokumentierten providerbedingten `NS`/`SOA`-/Proxy-Unterschieden darf kein benötigter Record fehlen oder unerklärt abweichen. `CAA` muss mit der vorgesehenen TLS-Zertifikatsausstellung vereinbar sein; bei Unklarheit bleibt der Cutover blockiert;
 - vollständigen Zonen-Snapshot, DNSSEC-Ausgangszustand und vorherige Nameserver als Rollbackevidenz außerhalb von Secrets protokollieren. Die bekannten Apex-`A`- und `www`-Records allein sind ausdrücklich **kein** vollständiger DNS-Sicherungsnachweis.
+
+### Maschinenlesbares Vollzonen-/DNSSEC-Gate
+
+Die Provider-Sicherung wird vor dem Nameserverwechsel nicht nur textuell, sondern mit `scripts/dns-zone-cutover.mjs` fail-closed geprüft. Das Werkzeug erwartet zwei **vollständige, lokal bereitgestellte JSON-Snapshots**; es ruft keinen Provider auf und nimmt selbst keine DNS-Mutation vor. Ein `complete: true` ist dabei eine vom Provider-Export zu belegende Eingangsbehauptung und ersetzt nicht den Nachweis, dass der Export tatsächlich vollständig war.
+
+Quellsnapshot STRATO:
+
+```json
+{
+  "schemaVersion": 1,
+  "provider": "strato",
+  "zone": "hallofmemory.de",
+  "complete": true,
+  "capturedAt": "<ISO-8601 mit Zeitzone>",
+  "dnssec": { "dsRecords": [] },
+  "records": [{ "name": "@", "type": "A", "ttl": 3600, "values": ["..."] }]
+}
+```
+
+Zielsnapshot Cloudflare:
+
+```json
+{
+  "schemaVersion": 1,
+  "provider": "cloudflare",
+  "zone": "hallofmemory.de",
+  "complete": true,
+  "capturedAt": "<ISO-8601 mit Zeitzone>",
+  "dnssec": { "migrationReady": false },
+  "proxiedWebOwners": ["@", "www"],
+  "allowedWebValueChanges": [],
+  "records": [{ "name": "@", "type": "A", "ttl": 300, "values": ["..."], "proxied": true }]
+}
+```
+
+Für beide Snapshots sind `NS` und `SOA` am Zonenapex als Authority-Evidenz Pflicht; nur diese Apex-RRsets werden anschließend als providerverwaltete Unterschiede vom Inhaltsvergleich ausgenommen. Delegierte oder sonstige subdomainbezogene `NS`/`SOA` bleiben regulärer Vergleichsinhalt. Absolute Recordnamen außerhalb der deklarierten Zone werden abgewiesen. `capturedAt` muss ISO-8601 mit expliziter Zeitzone sein. Ein Snapshot darf für eine Cutover-Entscheidung höchstens sechs Stunden alt sein, und Quell-/Zielsnapshot dürfen höchstens eine Stunde auseinanderliegen. Für Cloudflare müssen `A`/`AAAA`/`CNAME` explizit `proxied: true|false` tragen. Jeder tatsächlich proxied Web-Owner muss zusätzlich in `proxiedWebOwners` ausdrücklich freigegeben sein; damit können etwa `imap`, `autodiscover` oder Verifikations-CNAMEs nicht allein deshalb proxied passieren, weil sie kein direktes `MX`-/`SRV`-Ziel sind. Ungenutzte Proxy-Freigaben blockieren. Von `MX` oder `SRV` referenzierte Ziele müssen unabhängig davon DNS-only bleiben. Alle übrigen RRsets werden owner-/typgebunden verglichen. TTL-Abweichungen sind sichtbar, aber allein nicht blockierend. Bewusste Webzieländerungen sind nur für `A`/`AAAA`/`CNAME` über `allowedWebValueChanges` mit begründetem Eintrag zulässig; Mail-/SRV-Ziele können darüber nicht freigegeben werden, und ungenutzte Freigaben blockieren. Existieren im STRATO-Snapshot DS-Records, bleibt das Gate rot, bis `dnssec.migrationReady=true` revisionsgebunden belegt ist.
+
+Prüfung:
+
+```sh
+node scripts/dns-zone-cutover.mjs <strato-snapshot.json> <cloudflare-snapshot.json>
+```
+
+Nur Exit-Code `0` **und** `passed: true` gelten als PASS. Der Report bindet beide normalisierten Vollsnapshots über SHA-256, nennt Recordschlüssel und Fehlerklassen, gibt aber absichtlich keine RRset-Werte, TXT-Verifikationstokens, Freigabegründe oder sonstigen DNS-Inhalt wieder. Auch Datei-/JSON-Parsefehler werden nur generisch gemeldet, damit malformed Snapshots keine Tokenfragmente über Parserdiagnosen in Logs tragen. Die vollständigen Snapshots können solche Werte enthalten und werden deshalb nicht ins Repository committed, sondern ausschließlich in einem freigegebenen Evidenz-/Rollbackpfad außerhalb von Git gehalten.
 
 Dann:
 

@@ -54,6 +54,27 @@ Der Kunde möchte die Website jetzt direkt auf der vorhandenen Domain veröffent
 - Der aktuelle Codex-Review präzisierte zusätzlich die Secret-Bindung: `TURNSTILE_SECRET_KEY` muss mit `--config spikes/inquiry-worker/wrangler.production.jsonc` ausdrücklich am Inquiry-Worker gesetzt werden; ein configloser Root-Befehl könnte sonst den statischen Site-Worker treffen. Der Quality-Gate prüft diese Bindung und die Reihenfolge Secret vor Worker-Deploy.
 - Der darauf folgende Review fand einen DNS-Cutover-P1: Apex-`A` und `www` reichen vor einem Nameserverwechsel nicht als Sicherung. T045 verlangt deshalb vor jeder Delegationsmutation einen vollständigen autoritativen STRATO-Zonen-Snapshot einschließlich Mail-/Verifikationsrecords und DNSSEC/DS-Zustand, vollständige Abbildung in Cloudflare und einen recordweisen Vergleich; erst ein `PASS` dieses Vollzonen-/DNSSEC-Gates erlaubt den Nameserverwechsel.
 
+## Technische Hardening-Evidenz — 24.08.2026
+
+Frischer Readback auf `main` `a0dfa8f4c46da7be1c8ecff6a95a955e843ffe3c` bestätigt weiterhin die externe Cutover-Grenze:
+
+- `wrangler 4.124.0` ist auf dem Heim-PC nicht am Cloudflare-Kundenkonto authentifiziert.
+- Der isolierte vorhandene Cloudflare-Browserpfad konnte die gespeicherte Google-Kontoidentität wiedererkennen, verlangte aber eine erneute Geräte-/Identitätsbestätigung. Es wurde kein Passwort gelesen oder eingegeben und keine Provider-Mutation ausgelöst.
+- Die öffentliche DNS-Sicht zeigt weiterhin STRATO/rzone als Autorität: `docks09.rzone.de` und `shades16.rzone.de`; Apex `A=217.160.0.152`, `AAAA=2001:8d8:100f:f000::200`, `MX 5 smtpin.rzone.de`, `www` als CNAME zum Apex und `_dmarc` mit `p=reject`. Öffentlich war kein DS sichtbar. Dieser öffentliche Readback ist ausdrücklich **kein vollständiger autoritativer Zonenexport** und entsperrt keinen Nameserverwechsel.
+
+Die zuvor nur dokumentierte Vollzonen-/DNSSEC-Anforderung besitzt deshalb jetzt einen echten fail-closed Prüfpfad:
+
+- `scripts/dns-zone-cutover.mjs` vergleicht deklarierte vollständige STRATO-/Cloudflare-Snapshots owner-/typgebunden.
+- `NS`/`SOA` müssen in beiden Vollsnapshots am Zonenapex als Authority-Evidenz vorhanden sein; nur diese Apex-RRsets werden als providerverwaltete Unterschiede aus dem Inhaltsvergleich ausgenommen. Delegierte oder sonstige subdomainbezogene `NS`/`SOA` sowie alle übrigen RRsets müssen vorhanden und erklärbar sein.
+- Absolute Ownernamen außerhalb der Zone sowie nicht ISO-8601-/zeitzonengebundene Zeitstempel werden abgewiesen; Snapshots über sechs Stunden Alter sowie Quell-/Zielsnapshots mit mehr als einer Stunde Abstand blockieren; der PASS-Report bindet beide normalisierten Snapshots über SHA-256.
+- Cloudflare-Webrecords müssen ihren Proxyzustand explizit deklarieren und jeder tatsächlich proxied Owner muss zusätzlich in `proxiedWebOwners` allowlist-gebunden sein; damit bleiben auch Mail-/Verifikations-Aliases fail-closed. Von `MX`/`SRV` referenzierte Ziele müssen DNS-only bleiben.
+- Bewusste Webzieländerungen sind nur eng für `A`/`AAAA`/`CNAME` mit begründetem Snapshot-Eintrag zulässig; Mail-/Serviceziele können so nicht freigegeben werden.
+- Vorhandene STRATO-DS-Records blockieren, solange Cloudflare-DNSSEC-Migrationsreife nicht explizit bestätigt ist.
+- Der Prüfbericht gibt keine RRset-Werte, TXT-Verifikationstokens oder Freigabegründe aus; malformed JSON wird mit generischer Parse-/Read-Fehlerklasse statt roher Parserdiagnose gemeldet. Ungenutzte Web- oder Proxy-Ausnahmen blockieren statt als stille Dauerfreigabe liegenzubleiben.
+- Regressionen für fehlende Authority-/RRsets, stale oder zeitlich auseinanderliegende Snapshots, unerklärte Werte, unerwartete Records, Proxyfehler, unsichere/ungenutzte Web-Ausnahmen, DNSSEC-Blockade, Digest-Bindung und Report-Redaktion sind Bestandteil des kanonischen `npm run verify`.
+
+Damit ist die technische Vorbedingung für den späteren Zonenvergleich gehärtet. Der reale Cutover bleibt dennoch bis zum authentifizierten Cloudflare-Readback und zur autorisierten STRATO-Mutation offen.
+
 ## Zielarchitektur
 
 ```text

@@ -39,7 +39,7 @@
 | T035 | done | Kontextabhängige Logofassung und kuratiertes Vintage-Rahmensystem |
 | T036 | done | Rahmen auf Tiefe, konkave Fassung und kontrollierte Materialität verfeinern |
 
-| T037 | active | Schauwerk-Fundus Stellar-Frame Pilot als isolierte Review-Preview |
+| T037 | cancelled | Schauwerk-Fundus Stellar-Frame Pilot als isolierte Review-Preview; durch T038 superseded |
 | T038 | active | Rahmenvarianten-Vergleich mit neutraler Übersicht, Einzelvarianten mit Eventfoto und stufenloser Bildgröße |
 | T039 | done | Primärlogo im Demo-Header als stärkeren, responsiven Markenanker kalibriert |
 | T040 | done | Kundenpreview von interner Entwicklungsansicht zu kundennaher Conversion-/UX-Preview poliert |

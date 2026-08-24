@@ -1,7 +1,7 @@
 # T038 — Frame-Variant Customer Comparison
 
 Status: active
-Abhängigkeit: T037
+Abhängigkeit: keine aktive; T037 war der historische Pilot und ist inzwischen superseded/cancelled
 
 ## Ziel
 

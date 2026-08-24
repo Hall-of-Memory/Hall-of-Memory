@@ -65,12 +65,12 @@ Frischer Readback auf `main` `a0dfa8f4c46da7be1c8ecff6a95a955e843ffe3c` bestäti
 Die zuvor nur dokumentierte Vollzonen-/DNSSEC-Anforderung besitzt deshalb jetzt einen echten fail-closed Prüfpfad:
 
 - `scripts/dns-zone-cutover.mjs` vergleicht deklarierte vollständige STRATO-/Cloudflare-Snapshots owner-/typgebunden.
-- `NS`/`SOA` müssen in beiden Vollsnapshots am Zonenapex als Authority-Evidenz vorhanden sein und werden erst danach als providerverwaltete Unterschiede aus dem Inhaltsvergleich ausgenommen; alle anderen RRsets müssen vorhanden und erklärbar sein.
+- `NS`/`SOA` müssen in beiden Vollsnapshots am Zonenapex als Authority-Evidenz vorhanden sein; nur diese Apex-RRsets werden als providerverwaltete Unterschiede aus dem Inhaltsvergleich ausgenommen. Delegierte oder sonstige subdomainbezogene `NS`/`SOA` sowie alle übrigen RRsets müssen vorhanden und erklärbar sein.
 - Absolute Ownernamen außerhalb der Zone sowie nicht ISO-8601-/zeitzonengebundene Zeitstempel werden abgewiesen; Snapshots über sechs Stunden Alter sowie Quell-/Zielsnapshots mit mehr als einer Stunde Abstand blockieren; der PASS-Report bindet beide normalisierten Snapshots über SHA-256.
-- Cloudflare-Webrecords müssen ihren Proxyzustand explizit deklarieren; von `MX`/`SRV` referenzierte Ziele müssen DNS-only bleiben.
+- Cloudflare-Webrecords müssen ihren Proxyzustand explizit deklarieren und jeder tatsächlich proxied Owner muss zusätzlich in `proxiedWebOwners` allowlist-gebunden sein; damit bleiben auch Mail-/Verifikations-Aliases fail-closed. Von `MX`/`SRV` referenzierte Ziele müssen DNS-only bleiben.
 - Bewusste Webzieländerungen sind nur eng für `A`/`AAAA`/`CNAME` mit begründetem Snapshot-Eintrag zulässig; Mail-/Serviceziele können so nicht freigegeben werden.
 - Vorhandene STRATO-DS-Records blockieren, solange Cloudflare-DNSSEC-Migrationsreife nicht explizit bestätigt ist.
-- Der Prüfbericht gibt keine RRset-Werte, TXT-Verifikationstokens oder Freigabegründe aus; ungenutzte Web-Ausnahmen blockieren statt als stille Dauerfreigabe liegenzubleiben.
+- Der Prüfbericht gibt keine RRset-Werte, TXT-Verifikationstokens oder Freigabegründe aus; malformed JSON wird mit generischer Parse-/Read-Fehlerklasse statt roher Parserdiagnose gemeldet. Ungenutzte Web- oder Proxy-Ausnahmen blockieren statt als stille Dauerfreigabe liegenzubleiben.
 - Regressionen für fehlende Authority-/RRsets, stale oder zeitlich auseinanderliegende Snapshots, unerklärte Werte, unerwartete Records, Proxyfehler, unsichere/ungenutzte Web-Ausnahmen, DNSSEC-Blockade, Digest-Bindung und Report-Redaktion sind Bestandteil des kanonischen `npm run verify`.
 
 Damit ist die technische Vorbedingung für den späteren Zonenvergleich gehärtet. Der reale Cutover bleibt dennoch bis zum authentifizierten Cloudflare-Readback und zur autorisierten STRATO-Mutation offen.

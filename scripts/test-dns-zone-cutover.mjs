@@ -35,6 +35,7 @@ const targetSnapshot = () => ({
   complete: true,
   capturedAt: new Date(Date.now() - 60 * 1000).toISOString(),
   dnssec: { migrationReady: false },
+  proxiedWebOwners: ['@', 'www'],
   allowedWebValueChanges: [
     { name: '@', type: 'A', reason: 'web apex moves from STRATO hosting to the verified Cloudflare custom-domain target' },
   ],
@@ -84,6 +85,18 @@ const targetSnapshot = () => ({
 
 {
   const source = sourceSnapshot();
+  source.records.push(
+    { name: 'delegated', type: 'NS', ttl: 3600, values: ['ns1.delegate.example.net.'] },
+    { name: 'internal', type: 'SOA', ttl: 3600, values: ['ns1.internal.example.net. hostmaster.example.com. 2 3600 600 86400 300'] },
+  );
+  const report = compareDnsZoneSnapshots(source, targetSnapshot());
+  assert.equal(report.passed, false);
+  assert.ok(report.errors.some(({ code, key }) => code === 'missing_rrset' && key === 'delegated.example.com|NS'));
+  assert.ok(report.errors.some(({ code, key }) => code === 'missing_rrset' && key === 'internal.example.com|SOA'));
+}
+
+{
+  const source = sourceSnapshot();
   source.records = source.records.map((record) =>
     record.type === 'TXT' ? { ...record, values: ['secret-verification-value'] } : record,
   );
@@ -121,6 +134,33 @@ const targetSnapshot = () => ({
   const report = compareDnsZoneSnapshots(sourceSnapshot(), target);
   assert.equal(report.passed, false);
   assert.ok(report.errors.some(({ code, key }) => code === 'service_target_proxied' && key === 'service.example.com|A'));
+}
+
+{
+  const source = sourceSnapshot();
+  source.records.push({ name: 'autodiscover', type: 'CNAME', ttl: 3600, values: ['provider.example.net.'] });
+  const target = targetSnapshot();
+  target.records.push({ name: 'autodiscover', type: 'CNAME', ttl: 3600, values: ['provider.example.net.'], proxied: true });
+  const report = compareDnsZoneSnapshots(source, target);
+  assert.equal(report.passed, false);
+  assert.ok(report.errors.some(({ code, key }) => code === 'unapproved_proxied_web_owner' && key === 'autodiscover.example.com|CNAME'));
+}
+
+{
+  const target = targetSnapshot();
+  target.proxiedWebOwners.push('unused');
+  const report = compareDnsZoneSnapshots(sourceSnapshot(), target);
+  assert.equal(report.passed, false);
+  assert.ok(report.errors.some(({ code, key }) => code === 'unused_proxied_web_owner' && key === 'unused.example.com'));
+}
+
+{
+  const target = targetSnapshot();
+  delete target.proxiedWebOwners;
+  const report = compareDnsZoneSnapshots(sourceSnapshot(), target);
+  assert.equal(report.passed, false);
+  assert.equal(report.errors[0].code, 'snapshot_invalid');
+  assert.match(report.errors[0].detail, /proxiedWebOwners/);
 }
 
 {
@@ -220,6 +260,14 @@ const targetSnapshot = () => ({
     assert.equal(result.status, 0, result.stderr || result.stdout);
     const report = JSON.parse(result.stdout);
     assert.equal(report.passed, true);
+
+    await writeFile(sourcePath, '{"schemaVersion":1,"token":"SECRET-VERIFY-TOKEN",');
+    const malformed = spawnSync(process.execPath, [scriptPath, sourcePath, targetPath], { encoding: 'utf8' });
+    assert.equal(malformed.status, 1);
+    assert.ok(!malformed.stderr.includes('SECRET-VERIFY-TOKEN'));
+    assert.ok(!malformed.stderr.includes('Unexpected'));
+    const malformedReport = JSON.parse(malformed.stderr);
+    assert.equal(malformedReport.errors[0].detail, 'snapshot files could not be read or parsed');
   } finally {
     await rm(directory, { recursive: true, force: true });
   }

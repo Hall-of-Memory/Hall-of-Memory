@@ -100,6 +100,16 @@ function canonicalDnssec(snapshot, provider) {
   return { migrationReady: snapshot.dnssec.migrationReady };
 }
 
+function canonicalProxiedWebOwners(snapshot, zone) {
+  if (!Array.isArray(snapshot.proxiedWebOwners)) {
+    throw new Error('Cloudflare proxiedWebOwners must be an explicit array');
+  }
+  const owners = snapshot.proxiedWebOwners.map((value) => canonicalOwner(value, zone));
+  const unique = [...new Set(owners)];
+  if (unique.length !== owners.length) throw new Error('Cloudflare proxiedWebOwners must not contain duplicates');
+  return unique.sort();
+}
+
 function canonicalAllowedChanges(snapshot, zone) {
   const raw = snapshot.allowedWebValueChanges ?? [];
   if (!Array.isArray(raw)) throw new Error('allowedWebValueChanges must be an array when present');
@@ -154,6 +164,7 @@ function canonicalSnapshot(snapshot, expectedProvider, nowMs) {
     capturedAtMs,
     records,
     dnssec: canonicalDnssec(snapshot, expectedProvider),
+    proxiedWebOwners: expectedProvider === 'cloudflare' ? canonicalProxiedWebOwners(snapshot, zone) : [],
     allowedWebValueChanges: expectedProvider === 'cloudflare' ? canonicalAllowedChanges(snapshot, zone) : [],
   };
 }
@@ -165,6 +176,7 @@ function snapshotSha256(snapshot) {
     capturedAt: snapshot.capturedAt,
     records: snapshot.records,
     dnssec: snapshot.dnssec,
+    proxiedWebOwners: snapshot.proxiedWebOwners,
     allowedWebValueChanges: snapshot.allowedWebValueChanges,
   };
   return createHash('sha256').update(JSON.stringify(digestInput)).digest('hex');
@@ -185,6 +197,10 @@ function serviceTargets(records) {
     }
   }
   return targets;
+}
+
+function isIgnoredProviderAuthorityRecord(record, zone) {
+  return record.name === zone && IGNORED_PROVIDER_TYPES.has(record.type);
 }
 
 export function compareDnsZoneSnapshots(sourceInput, targetInput, options = {}) {
@@ -220,10 +236,12 @@ export function compareDnsZoneSnapshots(sourceInput, targetInput, options = {}) 
   const sourceRecords = new Map(source.records.map((record) => [record.key, record]));
   const targetRecords = new Map(target.records.map((record) => [record.key, record]));
   const allowedChanges = new Map(target.allowedWebValueChanges.map((entry) => [entry.key, entry.reason]));
+  const proxiedWebOwners = new Set(target.proxiedWebOwners);
+  const usedProxiedWebOwners = new Set();
   const serviceTargetNames = serviceTargets(source.records);
 
   for (const [key, sourceRecord] of sourceRecords) {
-    if (IGNORED_PROVIDER_TYPES.has(sourceRecord.type)) continue;
+    if (isIgnoredProviderAuthorityRecord(sourceRecord, source.zone)) continue;
     const targetRecord = targetRecords.get(key);
     if (!targetRecord) {
       errors.push({ code: 'missing_rrset', key, detail: 'required source RRset is missing from Cloudflare' });
@@ -249,15 +267,29 @@ export function compareDnsZoneSnapshots(sourceInput, targetInput, options = {}) 
   }
 
   for (const [key, targetRecord] of targetRecords) {
-    if (IGNORED_PROVIDER_TYPES.has(targetRecord.type)) continue;
+    if (isIgnoredProviderAuthorityRecord(targetRecord, target.zone)) continue;
     if (!sourceRecords.has(key)) {
       errors.push({ code: 'unexpected_rrset', key, detail: 'Cloudflare contains a non-provider RRset absent from the STRATO snapshot' });
     }
     if (DNS_ONLY_TYPES.has(targetRecord.type) && targetRecord.proxied === true) {
       errors.push({ code: 'dns_only_record_proxied', key, detail: 'mail/verification/TLS-control RRsets must stay DNS-only' });
     }
-    if (WEB_TYPES.has(targetRecord.type) && serviceTargetNames.has(targetRecord.name) && targetRecord.proxied !== false) {
-      errors.push({ code: 'service_target_proxied', key, detail: 'A/AAAA/CNAME target referenced by MX/SRV must stay DNS-only' });
+    if (WEB_TYPES.has(targetRecord.type) && targetRecord.proxied === true) {
+      if (serviceTargetNames.has(targetRecord.name)) {
+        errors.push({ code: 'service_target_proxied', key, detail: 'A/AAAA/CNAME target referenced by MX/SRV must stay DNS-only' });
+      } else if (!proxiedWebOwners.has(targetRecord.name)) {
+        errors.push({ code: 'unapproved_proxied_web_owner', key, detail: 'proxied web records require an explicit proxiedWebOwners owner allowlist entry' });
+      } else {
+        usedProxiedWebOwners.add(targetRecord.name);
+      }
+    }
+  }
+
+  for (const owner of proxiedWebOwners) {
+    if (serviceTargetNames.has(owner)) {
+      errors.push({ code: 'unsafe_proxied_web_owner', key: owner, detail: 'MX/SRV target owners cannot be allowlisted for Cloudflare proxying' });
+    } else if (!usedProxiedWebOwners.has(owner)) {
+      errors.push({ code: 'unused_proxied_web_owner', key: owner, detail: 'proxiedWebOwners must describe an actually proxied A/AAAA/CNAME owner' });
     }
   }
 
@@ -281,8 +313,8 @@ export function compareDnsZoneSnapshots(sourceInput, targetInput, options = {}) 
     targetCapturedAt: target.capturedAt,
     sourceSnapshotSha256,
     targetSnapshotSha256,
-    sourceRrsetCount: [...sourceRecords.values()].filter((record) => !IGNORED_PROVIDER_TYPES.has(record.type)).length,
-    targetRrsetCount: [...targetRecords.values()].filter((record) => !IGNORED_PROVIDER_TYPES.has(record.type)).length,
+    sourceRrsetCount: [...sourceRecords.values()].filter((record) => !isIgnoredProviderAuthorityRecord(record, source.zone)).length,
+    targetRrsetCount: [...targetRecords.values()].filter((record) => !isIgnoredProviderAuthorityRecord(record, target.zone)).length,
     ignoredProviderTypes: [...IGNORED_PROVIDER_TYPES].sort(),
     dnssec: {
       sourceDsCount,
@@ -310,8 +342,8 @@ async function main() {
     const report = compareDnsZoneSnapshots(source, target);
     console.log(JSON.stringify(report, null, 2));
     process.exitCode = report.passed ? 0 : 1;
-  } catch (error) {
-    console.error(JSON.stringify({ schemaVersion: 1, passed: false, errors: [{ code: 'input_error', detail: error instanceof Error ? error.message : 'input error' }] }, null, 2));
+  } catch {
+    console.error(JSON.stringify({ schemaVersion: 1, passed: false, errors: [{ code: 'input_error', detail: 'snapshot files could not be read or parsed' }] }, null, 2));
     process.exitCode = 1;
   }
 }

@@ -1,0 +1,3 @@
+.demo-header{min-height:112px}
+.demo-brand>img{width:72px;height:84px}
+@media(max-width:860px){.demo-header{min-height:88px}.demo-brand>img{width:54px;height:63px}}

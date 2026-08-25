@@ -3,6 +3,12 @@
 @media(max-width:860px){
   .demo-header{min-height:88px;flex-wrap:wrap;align-content:center;gap:6px}
   .demo-brand>img{width:54px;height:63px}
-  .demo-nav{width:100%;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px}
-  .demo-nav a,.demo-nav a:not(.nav-cta){display:flex!important;min-width:0;justify-content:center;align-items:center;padding:5px 2px!important;font-size:.5rem;line-height:1.1;text-align:center;white-space:normal}
+  .demo-nav{width:100%;max-width:100%;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px;box-sizing:border-box}
+  .demo-nav a,.demo-nav a:not(.nav-cta){display:flex!important;min-width:0;justify-content:center;align-items:center;padding:5px 2px!important;font-size:.5rem;line-height:1.1;text-align:center;white-space:normal;overflow-wrap:anywhere}
+}
+@media(max-width:640px){
+  .demo-page{overflow-x:clip}
+  .demo-header{width:100%;max-width:100%;box-sizing:border-box}
+  .demo-hero,.demo-hero-media,.demo-hero-image-wrap{min-width:0;max-width:100%}
+  .demo-hero-media{margin-inline:0!important}
 }

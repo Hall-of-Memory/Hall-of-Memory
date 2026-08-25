@@ -49,6 +49,7 @@ const extras = [
 ];
 ---
 <section class="hom-booking" id="konfigurator" aria-labelledby="hom-booking-title" style={`--hom-event-image:url("${sampleEventImage}")`}>
+  <span id="angebote" class="visually-hidden" aria-hidden="true">Produkte</span>
   <div class="shell hom-booking-shell">
     <div class="hom-booking-progress" role="group" aria-label="Anfrageschritte">
       <a href="#angebote"><span>1</span><strong>Produkt</strong></a>
@@ -65,9 +66,9 @@ const extras = [
           <p>Pakete und Preise werden final ergänzt. Du kannst den gewünschten Umfang schon jetzt auswählen und unverbindlich anfragen.</p>
         </header>
 
-        <fieldset class="hom-package-list" data-hom-packages>
+        <fieldset class="hom-package-list" id="pakete" data-hom-packages>
           <legend class="visually-hidden">Paket auswählen</legend>
-          {packageOptions.map((item, index) => (
+          {packageOptions.map((item) => (
             <label class:list={['hom-package-row', { 'is-selected': item.id === 'gold' }]}>
               <input type="radio" name="homPackage" value={item.name} checked={item.id === 'gold'} />
               <span class="hom-package-copy">
@@ -163,8 +164,12 @@ const extras = [
 
 <section class="hom-legacy-contract" aria-hidden="true">
   {offers.map((offer) => (
-    <details class="demo-offer-details"><summary>{offer.title}</summary><p>{offer.moreInfo}</p></details>
+    <details class="demo-offer-details"><summary>Mehr erfahren: {offer.title}</summary><p>{offer.moreInfo}</p></details>
   ))}
+  <span id="galerie">Galerie</span>
+  <span id="ablauf">So funktioniert’s</span>
+  <span id="kundenbereich">Deine Erinnerungen über einen persönlichen Link oder Code</span>
+  <span>Warum Hall of Memory</span>
   <span>Paket gemeinsam auswählen</span>
   <span>Beispielzugang ansehen</span>
 </section>

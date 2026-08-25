@@ -17,8 +17,10 @@ export class BrowserStartupError extends Error {
   }
 }
 
+const hasProcessExited = (child) => child.exitCode !== null || child.signalCode !== null;
+
 const waitForProcessExit = async (child, timeoutMs) => {
-  if (child.exitCode !== null) return true;
+  if (hasProcessExited(child)) return true;
   return new Promise((resolveExit) => {
     const onExit = () => {
       clearTimeout(timer);
@@ -26,7 +28,7 @@ const waitForProcessExit = async (child, timeoutMs) => {
     };
     const timer = setTimeout(() => {
       child.off('exit', onExit);
-      resolveExit(child.exitCode !== null);
+      resolveExit(hasProcessExited(child));
     }, timeoutMs);
     child.once('exit', onExit);
   });
@@ -41,7 +43,7 @@ export const stopBrowser = async (
   } = {},
 ) => {
   const { child, profile } = browser;
-  if (child.exitCode === null) child.kill('SIGTERM');
+  if (!hasProcessExited(child)) child.kill('SIGTERM');
   if (!(await waitForProcessExit(child, gracefulTimeoutMs))) {
     child.kill('SIGKILL');
     if (!(await waitForProcessExit(child, forceTimeoutMs))) {
@@ -117,11 +119,11 @@ export const launchBrowserAttempt = async (
         const match = stderr.match(DEVTOOLS_ENDPOINT);
         if (match) finish(null, match[1]);
       };
-      const onExit = (code) => {
+      const onExit = (code, signal) => {
         finish(
           new BrowserStartupError(
             'exit-before-devtools',
-            `Chrome exited before DevTools startup (code ${code}). ${stderr.slice(-2000)}`,
+            `Chrome exited before DevTools startup (code ${code}, signal ${signal ?? 'none'}). ${stderr.slice(-2000)}`,
             { retryable: true },
           ),
         );

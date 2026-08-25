@@ -39,6 +39,14 @@ Die bestehende starke Testsuite bleibt fail-closed, wird aber weniger an konkret
 - Der korrigierte Zwischenhead `d657cc98d6bd0ae3e75e36e1c1b0d3094f32971a` bestand den realen PR-Run `32663993883` vollständig; Artifact `visual-regression-32663993883` (`9499509456`, `11759930` Bytes) wurde erfolgreich veröffentlicht. Der nachgelagerte Portabilitätsreview aktualisiert die Artifact-Action zusätzlich von der bereits Node-20-deprecated v4.6.2 auf die aktuelle v7.0.1-Pin; deren verwendete Inputs bleiben unverändert kompatibel.
 - Der technische Abschlusshead `f41ebc3c3cf73a9d944dd293a1b9413deb43aca2` bestand danach den realen PR-Run `32664217390` mit Required-`verify=success`; `pages-runtime` blieb auf dem PR korrekt übersprungen. Das v7-Artefakt `visual-regression-32664217390` (`9499568352`, `11765928` Bytes) wurde erfolgreich veröffentlicht.
 
+## Nachhärtung der Browser-Startup-Grenze — 25.08.2026
+
+- Der aus `OPERATOR-INTEGRATION-LOOP-V1-FB-HALL-OF-MEMORY-VISUAL-CI-STARTUP-20260824` übernommene Scope gehört fachlich zu T048: Runner-Flakes dürfen ausschließlich vor dem erfolgreichen Chrome-DevTools-Start einmalig abgefangen werden; der visuelle Vertrag selbst bleibt fail-closed.
+- `scripts/visual-browser-startup.mjs` kapselt deshalb nur den Chrome-Startup. Genau `exit-before-devtools` und `devtools-timeout` sind retrybar, insgesamt gibt es höchstens zwei Startup-Versuche und jeder Versuch verwendet einen frischen Prozess sowie ein frisches Profil. Spawn-, CDP-, Navigation-, DOM-, Screenshot- und Visual-Assertion-Fehler werden nicht in diesen Retry-Pfad aufgenommen.
+- Der Review von PR #36 identifizierte zusätzlich den Signal-Exit-Randfall: Node kann nach einem bereits ausgelösten `exit` bei signalbeendetem Chrome `exitCode === null` und gleichzeitig `signalCode !== null` liefern. Cleanup erkennt jetzt beide terminalen Zustände, entfernt das Profil ohne auf ein bereits vergangenes `exit`-Event zu warten und erhält damit den vorgesehenen zweiten Startup-Versuch.
+- `scripts/test-visual-browser-startup.mjs` deckt Exit→Erfolg, Signal-Exit→Erfolg, Exit→Exit, Startup-Timeout, nicht retrybaren Spawn-Fehler und einen simulierten CDP-Fehler nach erfolgreichem Startup deterministisch ab. Fokussierte Verifikation am 25.08.2026: `visual-browser-startup-ok bounded_retry=true signal_exit_cleanup=true post_start_retry=false`.
+- Der Startup-Test ist Teil des kanonischen `npm run verify`; die bestehende reale Visual Regression mit drei Viewports, sechs Full-Page-Screenshots, `/demo/`, `/demo/rahmen/10/` und kontrollierter Gegenregression bleibt unverändert Teil desselben Gates. PR #36 bleibt bis zum finalen Required-`verify`, diffgebundenen Review und Merge-Readback offen.
+
 Damit ist T048 technisch terminal `done`. Der nachfolgende reine Task-Closeout-Head bleibt vor Merge weiterhin an Required-`verify` und den diffgebundenen finalen Review gebunden; ein dortiger Fehler würde den Closeout wieder blockieren.
 
 ## Akzeptanz

@@ -16,14 +16,15 @@ class FakeChild extends EventEmitter {
     super();
     this.stderr = new FakeStream();
     this.exitCode = null;
+    this.signalCode = null;
     this.kills = [];
   }
 
   kill(signal) {
     this.kills.push(signal);
-    if (this.exitCode === null) {
+    if (this.exitCode === null && this.signalCode === null) {
       this.exitCode = 0;
-      queueMicrotask(() => this.emit('exit', 0));
+      queueMicrotask(() => this.emit('exit', 0, null));
     }
     return true;
   }
@@ -60,7 +61,10 @@ const makeHarness = (modes) => {
         );
       } else if (mode === 'exit') {
         child.exitCode = 17;
-        child.emit('exit', 17);
+        child.emit('exit', 17, null);
+      } else if (mode === 'signal') {
+        child.signalCode = 'SIGKILL';
+        child.emit('exit', null, 'SIGKILL');
       }
     });
     return child;
@@ -91,6 +95,24 @@ const makeHarness = (modes) => {
     harness.events.indexOf('remove:/tmp/hall-of-memory-visual-test-profile-1')
       < harness.events.indexOf('spawn:/tmp/hall-of-memory-visual-test-profile-2:success'),
     'failed startup must be cleaned before retry starts',
+  );
+  await stopBrowser(browser, {
+    removeProfile: harness.removeProfile,
+    gracefulTimeoutMs: 5,
+    forceTimeoutMs: 5,
+  });
+}
+
+{
+  const harness = makeHarness(['signal', 'success']);
+  const browser = await launchBrowserWithStartupRetry('/fake/chrome', {
+    launchAttempt: harness.launchAttempt,
+  });
+  assert.equal(browser.profile, '/tmp/hall-of-memory-visual-test-profile-2');
+  assert.deepEqual(
+    harness.removedProfiles,
+    ['/tmp/hall-of-memory-visual-test-profile-1'],
+    'signal-terminated startup must be recognized as exited and cleaned before retry',
   );
   await stopBrowser(browser, {
     removeProfile: harness.removeProfile,
@@ -151,4 +173,4 @@ const makeHarness = (modes) => {
   assert.equal(attempts, 1, 'post-start failures must not re-enter startup retry');
 }
 
-console.log('visual-browser-startup-ok bounded_retry=true post_start_retry=false');
+console.log('visual-browser-startup-ok bounded_retry=true signal_exit_cleanup=true post_start_retry=false');

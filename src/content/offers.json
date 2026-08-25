@@ -3,36 +3,36 @@
     "id": "fotobox",
     "slug": "fotobox",
     "title": "Fotobox",
-    "kicker": "Spontan & nahbar",
-    "description": "Ein eigener Fotomoment für Gäste, Gruppen und kleine Geschichten – klar präsentiert und direkt anfragbar.",
-    "moreInfo": "Die Fotobox schafft einen unkomplizierten Ort für spontane Gruppenbilder und persönliche Erinnerungen. Details und gewünschter Rahmen werden passend zum Anlass abgestimmt.",
+    "kicker": "Der Klassiker für dein Event",
+    "description": "Der Klassiker für dein Event. Hochwertige Fotos, einfache Bedienung und auf Wunsch Sofortdruck.",
+    "moreInfo": "Die Hall of Memory Fotobox schafft einen unkomplizierten Fotomoment für Hochzeiten, Geburtstage, Firmenfeiern und besondere Events. Details wie Druck, Layout, Requisiten und Galerie werden passend zum gewählten Paket abgestimmt.",
     "motif": "flash",
-    "highlights": ["Für Eventmomente", "Persönlich abstimmbar", "Eigene Galerie danach"],
+    "highlights": ["Hochwertige Fotos", "Auf Wunsch Sofortdruck", "Individuell fürs Event"],
     "sortOrder": 10,
-    "source": "internal-draft"
+    "source": "customer-provided"
   },
   {
     "id": "fotospiegel",
     "slug": "fotospiegel",
     "title": "Fotospiegel",
-    "kicker": "Elegant & präsent",
-    "description": "Ein raumprägendes Fotoerlebnis mit einer besonders eleganten Präsenz für den Anlass.",
-    "moreInfo": "Der Fotospiegel verbindet das Fotoerlebnis mit einer präsenten, eleganten Inszenierung. Die konkrete Ausgestaltung wird persönlich auf Veranstaltung und Umgebung abgestimmt.",
+    "kicker": "Dein Event im Rampenlicht",
+    "description": "Der interaktive Fotospiegel wird selbst zum Highlight deiner Veranstaltung und verbindet hochwertige Fotos mit einem besonderen Erlebnis.",
+    "moreInfo": "Der Hall of Memory Fotospiegel verbindet hochwertige Fototechnik mit einer auffälligen, eleganten Inszenierung. Je nach Paket und Wunsch können Sofortdruck, individuelles Fotolayout, Requisiten sowie roter Teppich und Personenleitsystem ergänzt werden.",
     "motif": "mirror",
-    "highlights": ["Präsente Inszenierung", "Persönlich abstimmbar", "Eigene Galerie danach"],
+    "highlights": ["Interaktives Erlebnis", "Hochwertige Fototechnik", "VIP-Extras möglich"],
     "sortOrder": 20,
-    "source": "internal-draft"
+    "source": "customer-provided"
   },
   {
     "id": "magazinbox",
     "slug": "magazinbox",
     "title": "Magazinbox",
-    "kicker": "Editorial & besonders",
-    "description": "Ein inszenierter Fotomoment mit Magazincharakter, bei dem Gäste selbst zum Motiv werden.",
-    "moreInfo": "Die Magazinbox setzt Gäste bewusst in Szene und verbindet den gemeinsamen Fotomoment mit einem klaren Magazincharakter. Einzelheiten werden passend zum Anlass abgestimmt.",
+    "kicker": "Dein Moment. Dein Cover.",
+    "description": "Der besondere Fotospot: Deine Gäste werden selbst zum Cover-Star.",
+    "moreInfo": "Die Hall of Memory Magazinbox ist eine begehbare Fotokulisse im Stil eines Magazin-Covers. Namen, Veranstaltungsdatum, Beschriftung und Gestaltung können passend zum Event individualisiert werden.",
     "motif": "editorial",
-    "highlights": ["Magazin-Look", "Persönlich abstimmbar", "Eigene Galerie danach"],
+    "highlights": ["Begehbare Fotokulisse", "Personalisierbares Cover", "Besonderer Event-Fotospot"],
     "sortOrder": 30,
-    "source": "internal-draft"
+    "source": "customer-provided"
   }
 ]

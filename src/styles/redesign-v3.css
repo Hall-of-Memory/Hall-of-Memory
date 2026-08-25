@@ -1,0 +1,234 @@
+/* T051 V3: stärkerer Premium-Look für Header, Hero und erste Conversion-Strecke. */
+.demo-page {
+  --hom-v3-cream: #f7f0e5;
+  --hom-v3-paper: #fffaf3;
+  --hom-v3-ink: #17130f;
+  --hom-v3-taupe: #786a5d;
+  --hom-v3-gold: #b58a4a;
+}
+
+.demo-header {
+  min-height: 94px;
+  background: rgba(247,240,229,.96);
+  border-bottom: 1px solid rgba(48,38,28,.10);
+  backdrop-filter: blur(14px);
+}
+.demo-header .demo-brand-copy small { color: #796958; }
+.demo-nav a { color: #4f4439; }
+.demo-nav a:hover { color: #17130f; }
+.demo-nav .nav-cta {
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 999px;
+  background: #191510;
+  color: #fffaf1;
+}
+
+.demo-hero {
+  min-height: 760px;
+  grid-template-columns: minmax(0,.82fr) minmax(500px,1.18fr);
+  gap: clamp(54px,7vw,110px);
+  padding-block: clamp(72px,8vw,120px);
+}
+.demo-hero::before {
+  background:
+    radial-gradient(circle at 82% 14%, rgba(187,145,79,.18), transparent 27rem),
+    radial-gradient(circle at 16% 82%, rgba(255,255,255,.82), transparent 25rem),
+    linear-gradient(118deg,#fffaf3 0%,#f6ecdd 56%,#ead7bd 100%);
+}
+.demo-hero-copy { max-width: 670px; }
+.demo-hero .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  color: #7b5c31;
+}
+.demo-hero .eyebrow::before {
+  content: "★";
+  color: var(--hom-v3-gold);
+  font-size: .75rem;
+}
+.demo-signature {
+  margin-bottom: 10px;
+  color: #826d56;
+  font-size: .98rem;
+}
+.demo-page .demo-hero h1 {
+  max-width: 720px;
+  font-size: clamp(4.2rem,7vw,7.4rem);
+  line-height: .86;
+  letter-spacing: -.06em;
+}
+.demo-page .demo-hero h1 em { color: #8d6937; }
+.demo-hero-text {
+  max-width: 560px;
+  margin-top: 26px;
+  font-size: 1.05rem;
+  line-height: 1.68;
+}
+.demo-hero .hero-actions {
+  margin-top: 34px;
+  gap: 12px;
+}
+.demo-hero .button {
+  min-height: 52px;
+  padding-inline: 22px;
+  border-radius: 999px;
+}
+.demo-hero .button-primary {
+  background: #191510;
+  border-color: #191510;
+  color: #fffaf1;
+}
+.demo-hero .button-primary:hover { background: #32291f; color: #fffaf1; }
+.demo-hero .button-ghost {
+  background: rgba(255,255,255,.65);
+  border-color: rgba(42,34,27,.18);
+}
+.demo-hero-points { margin-top: 26px; }
+.demo-hero-points span {
+  padding: 8px 13px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255,255,255,.58);
+  box-shadow: inset 0 0 0 1px rgba(52,41,31,.10);
+}
+
+.demo-hero-media { transform: translateY(8px); }
+.demo-hero-image-wrap {
+  aspect-ratio: 4 / 5;
+  max-height: 670px;
+  border: 12px solid rgba(255,255,255,.84);
+  border-radius: 28px 28px 92px 28px;
+  outline: 1px solid rgba(67,50,31,.12);
+  box-shadow: 0 40px 90px rgba(79,57,32,.20);
+}
+.demo-hero-image-wrap::after {
+  background: linear-gradient(155deg,rgba(255,255,255,.04) 35%,rgba(19,15,11,.42));
+}
+.demo-hero-image-wrap img { object-position: 50% 38%; }
+.demo-hero-media figcaption {
+  margin: 12px 0 0 12px;
+  color: #7d6d5e;
+}
+
+.demo-intro-strip { background: #1b1712; }
+.demo-intro-strip .shell { min-height: 68px; }
+.demo-intro-strip p {
+  font-family: inherit;
+  font-size: .82rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.demo-offers { padding-top: clamp(78px,9vw,118px); }
+.demo-offers .demo-section-heading {
+  align-items: start;
+  margin-bottom: 42px;
+}
+.demo-offers .demo-section-heading h2 {
+  max-width: 780px;
+  font-size: clamp(3rem,5vw,5.3rem);
+}
+.demo-offer-grid { gap: 28px; }
+.demo-offer-card {
+  border-radius: 24px;
+  background: #fffaf3;
+  box-shadow: 0 22px 55px rgba(55,40,25,.10);
+}
+.demo-offer-media { min-height: 390px; }
+.hom-offer-photo { filter: saturate(.92) contrast(1.02) brightness(.96); }
+.demo-offer-card:nth-child(1) .hom-offer-photo { object-position: 34% 35%; }
+.demo-offer-card:nth-child(2) .hom-offer-photo { object-position: 52% 37%; }
+.demo-offer-card:nth-child(3) .hom-offer-photo { object-position: 70% 42%; }
+.hom-offer-photo-shade {
+  background: linear-gradient(180deg,rgba(12,10,8,.02),rgba(12,10,8,.64));
+}
+.hom-offer-icon {
+  width: 56px;
+  height: 56px;
+  border-color: rgba(255,255,255,.44);
+  background: rgba(20,16,12,.48);
+}
+.demo-media-label {
+  padding: 8px 12px;
+  background: rgba(20,16,12,.52);
+}
+.demo-offer-copy { padding: 30px 30px 32px; }
+.demo-offer-copy h3 {
+  margin-top: 8px;
+  font-size: clamp(2rem,2.4vw,2.65rem);
+}
+.demo-offer-copy > p:not(.offer-kicker) {
+  max-width: 36rem;
+  font-size: .94rem;
+}
+.demo-card-actions { margin-top: 26px; }
+.demo-card-actions .demo-card-cta {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding-inline: 17px;
+}
+
+.demo-benefits { padding-block: clamp(76px,8vw,108px); }
+.demo-benefit-grid { border-radius: 22px; overflow: hidden; }
+.demo-benefit-grid article { min-height: 188px; }
+
+.demo-packages::before,
+.demo-process::before,
+.demo-inquiry::before { background: #f7f0e5; }
+.demo-package-card { border-radius: 24px; }
+
+.hom-lookbook { background: #15120e; }
+.hom-lookbook .demo-gallery-grid { gap: 14px; }
+.hom-photo-tile { border-radius: 22px; }
+
+@media (max-width: 1050px) {
+  .demo-hero {
+    grid-template-columns: minmax(0,1fr) minmax(390px,.9fr);
+    gap: 38px;
+  }
+  .demo-page .demo-hero h1 { font-size: clamp(3.7rem,7vw,6rem); }
+}
+
+@media (max-width: 800px) {
+  .demo-header { min-height: 82px; }
+  .demo-hero {
+    grid-template-columns: 1fr;
+    padding-block: 52px 70px;
+  }
+  .demo-hero-copy { max-width: 100%; }
+  .demo-page .demo-hero h1 { font-size: clamp(3.5rem,13vw,5.8rem); }
+  .demo-hero-text { max-width: 42rem; }
+  .demo-hero-media { transform: none; }
+  .demo-hero-image-wrap {
+    width: min(100%,620px);
+    margin-inline: auto;
+    max-height: none;
+    border-radius: 22px 22px 60px 22px;
+  }
+  .demo-offer-card { grid-template-columns: minmax(250px,.95fr) minmax(0,1.05fr); }
+}
+
+@media (max-width: 640px) {
+  .demo-header { background: rgba(247,240,229,.98); }
+  .demo-page .demo-hero h1 {
+    font-size: clamp(3.25rem,15vw,4.6rem);
+    line-height: .9;
+  }
+  .demo-signature { font-size: .9rem; }
+  .demo-hero-text { font-size: .98rem; }
+  .demo-hero .hero-actions { align-items: stretch; flex-direction: column; }
+  .demo-hero .button { width: 100%; justify-content: center; }
+  .demo-hero-image-wrap {
+    border-width: 8px;
+    border-radius: 18px 18px 48px 18px;
+  }
+  .demo-intro-strip .shell { padding-block: 14px; }
+  .demo-offers .demo-section-heading { margin-bottom: 30px; }
+  .demo-offer-card { display: block; border-radius: 20px; }
+  .demo-offer-media { min-height: 340px; }
+  .demo-offer-copy { padding: 26px 24px 28px; }
+}

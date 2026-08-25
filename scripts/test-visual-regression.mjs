@@ -1,10 +1,9 @@
 import assert from 'node:assert/strict';
-import { spawn } from 'node:child_process';
 import { createServer } from 'node:http';
-import { access, mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { access, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import { extname, join, resolve } from 'node:path';
-import { tmpdir } from 'node:os';
+import { launchBrowserWithStartupRetry, stopBrowser } from './visual-browser-startup.mjs';
 
 const root = resolve(process.argv[2] ?? '.visual-test-dist');
 const artifacts = resolve(process.argv[3] ?? 'visual-test-artifacts');
@@ -83,46 +82,6 @@ const startStaticServer = async () => {
   const address = server.address();
   assert.ok(address && typeof address !== 'string');
   return { server, origin: `http://127.0.0.1:${address.port}` };
-};
-
-const launchBrowser = async (executable) => {
-  const profile = await mkdtemp(join(tmpdir(), 'hall-of-memory-visual-chrome-'));
-  const child = spawn(executable, [
-    '--headless=new',
-    '--disable-background-networking',
-    '--disable-component-update',
-    '--disable-default-apps',
-    '--disable-dev-shm-usage',
-    '--disable-extensions',
-    '--disable-gpu',
-    '--disable-sync',
-    '--hide-scrollbars',
-    '--metrics-recording-only',
-    '--mute-audio',
-    '--no-default-browser-check',
-    '--no-first-run',
-    '--remote-debugging-port=0',
-    `--user-data-dir=${profile}`,
-    'about:blank',
-  ], { stdio: ['ignore', 'ignore', 'pipe'] });
-  child.stderr.setEncoding('utf8');
-  let stderr = '';
-  const websocketUrl = await new Promise((resolveUrl, rejectUrl) => {
-    const timer = setTimeout(() => rejectUrl(new Error(`Chrome DevTools endpoint did not start. ${stderr.slice(-2000)}`)), 12_000);
-    child.stderr.on('data', (chunk) => {
-      stderr = `${stderr}${chunk}`.slice(-8000);
-      const match = stderr.match(/DevTools listening on (ws:\/\/[^\s]+)/);
-      if (match) {
-        clearTimeout(timer);
-        resolveUrl(match[1]);
-      }
-    });
-    child.once('exit', (code) => {
-      clearTimeout(timer);
-      rejectUrl(new Error(`Chrome exited before DevTools startup (code ${code}). ${stderr.slice(-2000)}`));
-    });
-  });
-  return { child, profile, websocketUrl };
 };
 
 const connectCdp = async (websocketUrl) => {
@@ -289,27 +248,20 @@ const captureFullPage = async (cdp, sessionId, file) => {
 
 const normalizeUrl = (origin, pathname) => new URL(pathname, origin);
 
-const waitForProcessExit = async (child, timeoutMs) => {
-  if (child.exitCode !== null) return true;
-  return new Promise((resolveExit) => {
-    const onExit = () => { clearTimeout(timer); resolveExit(true); };
-    const timer = setTimeout(() => {
-      child.off('exit', onExit);
-      resolveExit(child.exitCode !== null);
-    }, timeoutMs);
-    child.once('exit', onExit);
-  });
-};
-
 const main = async () => {
   await stat(join(root, 'demo', 'index.html'));
   await rm(artifacts, { recursive: true, force: true });
   await mkdir(artifacts, { recursive: true });
   const browserExecutable = await resolveBrowser();
   const { server, origin } = await startStaticServer();
-  const browser = await launchBrowser(browserExecutable);
+  let browser;
   let cdp;
   try {
+    browser = await launchBrowserWithStartupRetry(browserExecutable, {
+      onRetry: ({ attempt, error }) => {
+        console.warn(`visual-browser-startup-retry attempt=${attempt} code=${error.code}`);
+      },
+    });
     cdp = await connectCdp(browser.websocketUrl);
     const browserVersion = await cdp.send('Browser.getVersion');
     const summaries = [];
@@ -380,16 +332,12 @@ const main = async () => {
     }, null, 2)}\n`);
     console.log(`visual-regression-ok viewports=${viewports.length} screenshots=${summaries.length} controlled_regression_detected=true frame_variant=10 browser=${browserVersion.product}`);
   } finally {
-    if (cdp?.socket?.readyState === WebSocket.OPEN) cdp.socket.close();
-    if (browser.child.exitCode === null) browser.child.kill('SIGTERM');
-    if (!(await waitForProcessExit(browser.child, 3000))) {
-      browser.child.kill('SIGKILL');
-      if (!(await waitForProcessExit(browser.child, 3000))) {
-        throw new Error('Chrome did not exit after SIGKILL');
-      }
+    try {
+      if (cdp?.socket?.readyState === WebSocket.OPEN) cdp.socket.close();
+      if (browser) await stopBrowser(browser);
+    } finally {
+      await new Promise((resolveClose) => server.close(resolveClose));
     }
-    await new Promise((resolveClose) => server.close(resolveClose));
-    await rm(browser.profile, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
   }
 };
 

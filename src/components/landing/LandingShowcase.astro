@@ -26,173 +26,131 @@ interface Props {
   productWhatsAppHref: (product: string) => string | undefined;
 }
 
-const { offers, benefits, productWhatsAppHref } = Astro.props;
-const assetBase = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
-const sampleEventImage = `${assetBase}demo/hall-of-memory-example-event.webp`;
-const whatsappHref = productWhatsAppHref('Fotobox');
-
-const packageOptions = [
-  { id: 'digital', name: 'Digital', detail: 'Alle Bilder digital in hochwertiger Qualität.' },
-  { id: 'starter', name: 'Starter', detail: 'Für kompakte Events und einen klaren Einstieg.' },
-  { id: 'gold', name: 'Gold', detail: 'Der ausgewogene Hall-of-Memory Favorit.', popular: true },
-  { id: 'star', name: 'Star', detail: 'Mehr Umfang für große Erinnerungen.' },
-  { id: 'all-inclusive', name: 'All Inclusive', detail: 'Das Rundum-Paket für dein Event.' },
-];
-
-const extras = [
-  { id: 'background', name: 'Hintergrundsystem', detail: 'Fotohintergrund passend zu deinem Event.', icon: '▥' },
-  { id: 'guestbook', name: 'Gästebuch-Set', detail: 'Erinnerungen und persönliche Grüße gesammelt.', icon: '▤' },
-  { id: 'homescreen', name: 'Personalisierter Homescreen', detail: 'Startbildschirm mit Namen, Logo oder Eventdesign.', icon: '▣' },
-  { id: 'redcarpet', name: 'Roter Teppich & Personenleitsystem', detail: 'VIP-Auftritt für deine Gäste.', icon: '★' },
-  { id: 'support', name: 'Betreuung vor Ort', detail: 'Persönliche Unterstützung während des Events.', icon: '◉' },
-  { id: 'layout', name: 'Zusätzliches Drucklayout', detail: 'Eine weitere Layoutvariante für deine Bilder.', icon: '▦' },
-];
+const { offers, benefits, steps, productWhatsAppHref } = Astro.props;
 ---
-<section class="hom-booking" id="konfigurator" aria-labelledby="hom-booking-title" style={`--hom-event-image:url("${sampleEventImage}")`}>
-  <span id="angebote" class="visually-hidden" aria-hidden="true">Produkte</span>
-  <div class="shell hom-booking-shell">
-    <div class="hom-booking-progress" role="group" aria-label="Anfrageschritte">
-      <a href="#angebote"><span>1</span><strong>Produkt</strong></a>
-      <a href="#anfrage"><span>2</span><strong>Event</strong></a>
-      <a class="is-active" href="#konfigurator" aria-current="step"><span>3</span><strong>Paket</strong></a>
-      <a href="#anfrage"><span>4</span><strong>Kontakt</strong></a>
-    </div>
+<section class="hom-products" id="angebote" aria-labelledby="hom-products-title">
+  <div class="shell">
+    <header class="hom-section-heading">
+      <p class="eyebrow">Drei Erlebnisse · ein Erinnerungsgefühl</p>
+      <h2 id="hom-products-title">Welcher Moment passt <em>zu deinem Event?</em></h2>
+      <p>Fotobox, Fotospiegel oder Magazinbox: Alle drei Angebote setzen den Fotomoment anders in Szene. Die Details stimmen wir passend zu deinem Anlass ab.</p>
+    </header>
 
-    <div class="hom-booking-layout">
-      <div class="hom-booking-main">
-        <header class="hom-booking-heading">
-          <p class="eyebrow">Fotobox</p>
-          <h2 id="hom-booking-title">Wähle dein Paket</h2>
-          <p>Pakete und Preise werden final ergänzt. Du kannst den gewünschten Umfang schon jetzt auswählen und unverbindlich anfragen.</p>
-        </header>
-
-        <fieldset class="hom-package-list" id="pakete" data-hom-packages>
-          <legend class="visually-hidden">Paket auswählen</legend>
-          {packageOptions.map((item) => (
-            <label class:list={['hom-package-row', { 'is-selected': item.id === 'gold' }]}>
-              <input type="radio" name="homPackage" value={item.name} checked={item.id === 'gold'} />
-              <span class="hom-package-copy">
-                <span class="hom-package-title">
-                  <strong>{item.name}</strong>
-                  {item.popular && <em>Beliebt</em>}
-                </span>
-                <small>{item.detail}</small>
-              </span>
-              <span class="hom-package-price">Preis folgt</span>
-              <i aria-hidden="true">{item.id === 'gold' ? '✓' : ''}</i>
-            </label>
-          ))}
-        </fieldset>
-
-        <div class="hom-extras-heading">
-          <h3>Beliebte Extras <span>(optional)</span></h3>
-        </div>
-        <fieldset class="hom-extra-grid" data-hom-extras>
-          <legend class="visually-hidden">Extras auswählen</legend>
-          {extras.map((extra) => (
-            <label class="hom-extra-card">
-              <input type="checkbox" value={extra.name} />
-              <span class="hom-extra-image" aria-hidden="true"><b>{extra.icon}</b></span>
-              <span class="hom-extra-copy">
-                <strong>{extra.name}</strong>
-                <small>{extra.detail}</small>
-                <em>Preis folgt</em>
-              </span>
-              <i aria-hidden="true">✓</i>
-            </label>
-          ))}
-        </fieldset>
-
-        <div class="hom-booking-actions">
-          <a href="#angebote" class="hom-back">← Zurück</a>
-          <a href="#anfrage" class="hom-next">Weiter zu Kontakt</a>
-        </div>
-      </div>
-
-      <aside class="hom-summary" aria-label="Deine Anfrage">
-        <p class="hom-summary-label">Deine Anfrage</p>
-        <dl>
-          <div><dt>Produkt</dt><dd>Fotobox</dd></div>
-          <div><dt>Paket</dt><dd data-hom-summary-package>Gold</dd></div>
-          <div><dt>Anlass</dt><dd>Event</dd></div>
-          <div><dt>Datum</dt><dd>Noch offen</dd></div>
-          <div><dt>Extras</dt><dd data-hom-summary-extras>Keine gewählt</dd></div>
-        </dl>
-        <div class="hom-summary-price">
-          <small>Voraussichtlich</small>
-          <strong>Preis nach Auswahl</strong>
-          <span>Unverbindliche Anfrage</span>
-        </div>
-        <ul>
-          <li>Unverbindlich & kostenlos</li>
-          <li>Keine Zahlung erforderlich</li>
-          <li>Persönliche Rückmeldung</li>
-        </ul>
-        <a href="#anfrage" class="hom-summary-cta">Weiter zu Kontakt</a>
-        <div class="hom-summary-contact">
-          <h3>Lieber persönlich?</h3>
-          <p>Wir sind direkt für dich erreichbar.</p>
-          {whatsappHref ? <a href={whatsappHref} target="_blank" rel="noopener noreferrer">WhatsApp schreiben</a> : <span>WhatsApp wird aktiviert</span>}
-        </div>
-      </aside>
+    <div class="hom-product-grid">
+      {offers.map((offer, index) => (
+        <article class="demo-offer-card hom-product-card" data-motif={offer.motif}>
+          <div class="hom-product-visual" aria-hidden="true">
+            <span class="hom-product-number">0{index + 1}</span>
+            <span class="hom-product-star">★</span>
+            <strong>{offer.title}</strong>
+          </div>
+          <div class="hom-product-body">
+            <p class="hom-product-kicker">{offer.kicker}</p>
+            <h3>{offer.title}</h3>
+            <p>{offer.description}</p>
+            <ul>
+              {offer.highlights.map((highlight) => <li>{highlight}</li>)}
+            </ul>
+            <details class="demo-offer-details">
+              <summary>Mehr erfahren <span aria-hidden="true">+</span></summary>
+              <p>{offer.moreInfo}</p>
+            </details>
+            <div class="hom-product-actions">
+              <a href="#anfrage">Unverbindlich anfragen</a>
+              {productWhatsAppHref(offer.title) && (
+                <a href={productWhatsAppHref(offer.title)} target="_blank" rel="noopener noreferrer">WhatsApp</a>
+              )}
+            </div>
+          </div>
+        </article>
+      ))}
     </div>
   </div>
 </section>
 
-<section class="hom-benefit-strip" aria-label="Hall of Memory Vorteile">
-  <div class="shell hom-benefit-strip-grid">
-    {benefits.slice(0, 5).map((benefit, index) => (
-      <article>
-        <span aria-hidden="true">{['◎','▤','☁','◌','♡'][index] ?? '★'}</span>
-        <h3>{benefit.title}</h3>
-        <p>{benefit.text}</p>
-      </article>
-    ))}
+<section class="hom-benefits" aria-labelledby="hom-benefits-title">
+  <div class="shell">
+    <header class="hom-section-heading hom-section-heading-compact">
+      <p class="eyebrow">Warum Hall of Memory</p>
+      <h2 id="hom-benefits-title">Ein Erlebnis, das <em>in Erinnerung bleibt.</em></h2>
+    </header>
+    <div class="hom-benefit-grid">
+      {benefits.map((benefit, index) => (
+        <article>
+          <span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+          <h3>{benefit.title}</h3>
+          <p>{benefit.text}</p>
+        </article>
+      ))}
+    </div>
   </div>
 </section>
 
-<section class="hom-contact-band" aria-labelledby="hom-contact-title" style={`--hom-event-image:url("${sampleEventImage}")`}>
-  <div class="shell hom-contact-band-grid">
+<section class="hom-packages" id="pakete" aria-labelledby="hom-packages-title">
+  <div class="shell hom-packages-grid">
     <div>
-      <h2 id="hom-contact-title">Noch Fragen?</h2>
-      <p>Wir beraten dich persönlich und finden gemeinsam das passende Erlebnis für dein Event.</p>
+      <p class="eyebrow">Pakete</p>
+      <h2 id="hom-packages-title">So viel wie nötig. <em>So persönlich wie dein Event.</em></h2>
     </div>
-    <a href="#anfrage">Unverbindlich anfragen</a>
-    {whatsappHref ? <a href={whatsappHref} target="_blank" rel="noopener noreferrer">WhatsApp schreiben</a> : <span>WhatsApp</span>}
+    <div class="hom-packages-copy">
+      <p>Pakete und Preise werden nach der finalen Kundenfreigabe veröffentlicht. Bis dahin klären wir im Anfragebereich, welches Erlebnis und welcher Umfang zu deinem Anlass passen.</p>
+      <ul>
+        <li>Produkt und Eventart zuerst klären</li>
+        <li>Wünsche und gewünschte Ausstattung abstimmen</li>
+        <li>Danach ein passendes Angebot erhalten</li>
+      </ul>
+      <a href="#anfrage">Paket gemeinsam auswählen <span aria-hidden="true">→</span></a>
+    </div>
   </div>
 </section>
 
-<section class="hom-legacy-contract" aria-hidden="true">
-  {offers.map((offer) => (
-    <details class="demo-offer-details"><summary>Mehr erfahren: {offer.title}</summary><p>{offer.moreInfo}</p></details>
-  ))}
-  <span id="galerie">Galerie</span>
-  <span id="ablauf">So funktioniert’s</span>
-  <span id="kundenbereich">Deine Erinnerungen über einen persönlichen Link oder Code</span>
-  <span>Warum Hall of Memory</span>
-  <span>Paket gemeinsam auswählen</span>
-  <span>Beispielzugang ansehen</span>
+<section class="hom-gallery" id="galerie" aria-labelledby="hom-gallery-title">
+  <div class="shell">
+    <header class="hom-section-heading hom-section-heading-light">
+      <p class="eyebrow">Galerie</p>
+      <h2 id="hom-gallery-title">Momente bekommen <em>eine Bühne.</em></h2>
+      <p>Die finalen Kundenfotos folgen nach Freigabe. Bis dahin zeigt die Galerie bewusst nur die gestalterische Richtung – ohne fremde oder erfundene Produktbilder.</p>
+    </header>
+    <div class="hom-gallery-grid" aria-label="Gestalterische Platzhalter für künftige Kundenfotos">
+      <div><span>Fotobox</span><strong>Spontane Momente</strong></div>
+      <div><span>Fotospiegel</span><strong>Großer Auftritt</strong></div>
+      <div><span>Magazinbox</span><strong>Cover-Moment</strong></div>
+      <div><span>Hall of Memory</span><strong>Dein Event im Mittelpunkt</strong></div>
+    </div>
+  </div>
 </section>
 
-<script is:inline>
-  (() => {
-    const root = document.querySelector('.hom-booking');
-    if (!root) return;
-    const packageOutput = root.querySelector('[data-hom-summary-package]');
-    const extrasOutput = root.querySelector('[data-hom-summary-extras]');
-    root.querySelectorAll('input[name="homPackage"]').forEach((input) => {
-      input.addEventListener('change', () => {
-        root.querySelectorAll('.hom-package-row').forEach((row) => row.classList.remove('is-selected'));
-        input.closest('.hom-package-row')?.classList.add('is-selected');
-        if (packageOutput) packageOutput.textContent = input.value;
-      });
-    });
-    root.querySelectorAll('[data-hom-extras] input[type="checkbox"]').forEach((input) => {
-      input.addEventListener('change', () => {
-        input.closest('.hom-extra-card')?.classList.toggle('is-selected', input.checked);
-        const selected = [...root.querySelectorAll('[data-hom-extras] input[type="checkbox"]:checked')].map((item) => item.value);
-        if (extrasOutput) extrasOutput.textContent = selected.length ? selected.join(', ') : 'Keine gewählt';
-      });
-    });
-  })();
-</script>
+<section class="hom-process" id="ablauf" aria-labelledby="hom-process-title">
+  <div class="shell">
+    <header class="hom-section-heading hom-section-heading-compact">
+      <p class="eyebrow">So funktioniert’s</p>
+      <h2 id="hom-process-title">Vom ersten Wunsch <em>zum Erinnerungsmoment.</em></h2>
+    </header>
+    <ol class="hom-process-grid">
+      {steps.map((step) => (
+        <li>
+          <span>{step.number}</span>
+          <h3>{step.title}</h3>
+          <p>{step.text}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<section class="hom-customer" id="kundenbereich" aria-labelledby="hom-customer-title">
+  <div class="shell hom-customer-grid">
+    <div>
+      <p class="eyebrow">Nach dem Event</p>
+      <h2 id="hom-customer-title">Deine Erinnerungen. <em>Persönlich gesammelt.</em></h2>
+      <p>Nach dem Event kann deine Galerie über einen persönlichen Link oder Code erreichbar sein. Der konkrete Zugang wird erst mit dem freigegebenen Kundenbereich eingerichtet.</p>
+    </div>
+    <div class="hom-customer-card" aria-label="Vorschau des persönlichen Kundenbereichs">
+      <span class="hom-customer-star" aria-hidden="true">★</span>
+      <p>Hall of Memory</p>
+      <strong>Dein persönlicher Bereich</strong>
+      <small>Fotos ansehen · Erinnerungen wiederfinden</small>
+      <span class="hom-customer-preview">Beispielzugang ansehen</span>
+    </div>
+  </div>
+</section>

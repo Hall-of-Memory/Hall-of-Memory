@@ -53,4 +53,4 @@
 | T048 | done | Testarchitektur in Contract-, Visual- und Performance-Gates entkoppeln |
 | T049 | blocked_external | Inquiry-/Admin-Datenschutz technisch gehärtet; konkrete Retention-/Löschpolicy wartet auf T008/T011 |
 | T050 | done | Lokalen kanonischen Verify gegen stale direkte Installationsstände fail-closed härten |
-| T051 | active | Startseite Redesign V1: Hero, Produktfokus und ruhigere Creme-/Schwarz-/Champagner-Richtung |
+| T051 | active | Startseite Redesign V1: technisch verifiziert; korrigierte Preview-Abnahme vor Merge offen |

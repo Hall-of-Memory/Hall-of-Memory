@@ -40,16 +40,18 @@ Der korrigierte Stand:
 - hält Pakete und Preise ausdrücklich bis zur Kundenfreigabe offen;
 - zeigt Galerie, Ablauf und Kundenbereich als echte sichtbare Abschnitte statt als versteckte Testattrappen;
 - verwendet keine erfundenen Produktbilder;
-- grenzt das Startseiten-Redesign von `/demo/rahmen/*` ab, damit der Rahmenvergleich seinen eigenen Darstellungsvertrag behält;
+- bindet Basis-, Redesign- und Responsive-Styles einmal zentral an `DemoExperience`, sodass `/`, `/demo/` und die T038-Einzelvarianten denselben Inhalts-/Style-Kern teilen;
+- nimmt rahmenspezifische `data-frame-consumer`-Geometrie gezielt von Startseiten-Höhenregeln aus, statt den Rahmenvergleich durch eine zweite Style-Wahrheit abzukoppeln;
 - entfernt die ungenutzten Stilschichten `redesign-v3.css` und `demo-visual-contract.css`;
-- behebt den 390-px-Horizontal-Overflow ursächlich; der Browser-Test bleibt auch ohne globale Overflow-Maskierung grün.
+- behebt den 390-px-Horizontal-Overflow ursächlich; der Browser-Test bleibt auch ohne den zwischenzeitlich getesteten zusätzlichen `overflow-x: clip`-Fallback grün;
+- erweitert den Visual-Gate für `/demo/rahmen/10/`: Neben Rahmenverhältnis und Asset-Rendering werden nun auch sichtbare, gestaltete Produktsektion, Grid und Produktkarte geprüft.
 
 Finale lokale Evidence auf dem korrigierten Stand:
 
-- `npm run verify`: PASS;
-- Sales-/Content-Vertrag: PASS, `html=17611`, `css=25218`, `js=0`, `gzip=12965`;
+- `npm run verify`: PASS, terminaler Receipt `28d6e5b49d77f4a1dff0fb3511f9d8596f92339b8a1a3f0f9d7dd4435d45baf3`;
+- Sales-/Content-Vertrag: PASS, `html=17552`, `css=25263`, `js=0`, `gzip=12307`;
 - Visual Regression: PASS für Desktop, Tablet und 390-px-Mobile, sechs Screenshots, kontrollierter Negativtest erkannt;
-- Rahmenvariante 10: PASS;
+- Rahmenvariante 10: PASS einschließlich gestaltetem Landing-Inhalt unterhalb des Rahmen-Heros;
 - Fundus-Corner-Vertrag: PASS;
 - Preview-Base-/GitHub-Pages-Artefakt: PASS;
 - `astro check`: 0 Fehler, 0 Warnungen, 0 Hinweise;

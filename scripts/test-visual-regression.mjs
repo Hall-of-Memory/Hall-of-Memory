@@ -194,11 +194,17 @@ const measureFrame = (cdp, sessionId, variant) => evaluate(cdp, sessionId, `(()=
   const r=frame.getBoundingClientRect();
   const ir=image.getBoundingClientRect();
   const before=getComputedStyle(frame,'::before');
+  const products=document.querySelector('.hom-products');
+  const productGrid=document.querySelector('.hom-product-grid');
+  const firstProduct=document.querySelector('.hom-product-card');
   return {
     variant:frame.dataset.frameVariant,consumer:frame.dataset.frameConsumer,kind:frame.dataset.frameKind,frameSize:frame.dataset.frameSize??null,
     insetInner:frame.dataset.frameInsetInner??null,insetOuter:frame.dataset.frameInsetOuter??null,
     frame:{width:r.width,height:r.height},image:{width:ir.width,height:ir.height,naturalWidth:image.naturalWidth,naturalHeight:image.naturalHeight},
     objectFit:getComputedStyle(image).objectFit,backgroundImage:before.backgroundImage,sliderValue:slider?.value??null,
+    products:products?{display:getComputedStyle(products).display,backgroundImage:getComputedStyle(products).backgroundImage,rect:{width:products.getBoundingClientRect().width,height:products.getBoundingClientRect().height}}:null,
+    productGrid:productGrid?{display:getComputedStyle(productGrid).display,columns:getComputedStyle(productGrid).gridTemplateColumns,rect:{width:productGrid.getBoundingClientRect().width,height:productGrid.getBoundingClientRect().height}}:null,
+    firstProduct:firstProduct?{rect:{width:firstProduct.getBoundingClientRect().width,height:firstProduct.getBoundingClientRect().height}}:null,
     url:location.pathname+location.search+location.hash,
   };
 })()`);
@@ -301,6 +307,13 @@ const main = async () => {
         assert.ok(frameRatio > 0.77 && frameRatio < 0.83, `${viewport.name}: portrait frame ratio drifted (${frameRatio})`);
         assert.ok(frame.image.width > 0 && frame.image.height > 0 && frame.image.naturalWidth > 0, `${viewport.name}: frame event photo has no loaded geometry`);
         assert.match(frame.backgroundImage, /url\(/, `${viewport.name}: frame mask is not rendered`);
+        assert.ok(frame.products, `${viewport.name}: frame detail product section is missing`);
+        assert.ok(frame.productGrid, `${viewport.name}: frame detail product grid is missing`);
+        assert.ok(frame.firstProduct, `${viewport.name}: frame detail product card is missing`);
+        assert.equal(frame.productGrid.display, 'grid', `${viewport.name}: frame detail product grid lost landing-page styling`);
+        assert.notEqual(frame.products.backgroundImage, 'none', `${viewport.name}: frame detail product section lost redesign background`);
+        assert.ok(frame.products.rect.width >= 250 && frame.products.rect.height >= 500, `${viewport.name}: frame detail product section has no visible styled geometry`);
+        assert.ok(frame.firstProduct.rect.width >= 250 && frame.firstProduct.rect.height >= 300, `${viewport.name}: frame detail product card has no visible styled geometry`);
         const normalized = normalizeUrl(origin, frame.url);
         assert.equal(normalized.searchParams.has('bild'), false, `${viewport.name}: legacy bild query was not removed`);
         assert.equal(normalized.searchParams.has('kasten'), false, `${viewport.name}: legacy kasten query was not removed`);

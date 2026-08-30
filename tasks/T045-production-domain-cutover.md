@@ -75,6 +75,24 @@ Die zuvor nur dokumentierte Vollzonen-/DNSSEC-Anforderung besitzt deshalb jetzt 
 
 Damit ist die technische Vorbedingung für den späteren Zonenvergleich gehärtet. Der reale Cutover bleibt dennoch bis zum authentifizierten Cloudflare-Readback und zur autorisierten STRATO-Mutation offen.
 
+## Frischer Provider-/Domain-Readback — 29.08.2026
+
+Der Cutover wurde erneut ausschließlich read-only gegen die aktuellen externen Autoritäten geprüft. Es gab keine DNS-, Nameserver-, Cloudflare- oder STRATO-Mutation.
+
+- Die `.de`-Parent-Delegation wurde direkt bei DENIC gelesen und nennt `docks09.rzone.de` sowie `shades16.rzone.de`. Eine direkte Abfrage der STRATO-Zone liefert dieselben NS; Parent und Child sind damit aktuell konsistent. Ein zuvor über einen rekursiven Resolver beobachtetes altes Paar `docks18.rzone.de`/`shades10.rzone.de` war Cache-/Resolverzustand und ist **keine** aktuelle Delegationswahrheit.
+- STRATO-SOA: `shades16.rzone.de`, Serial `2026081916`.
+- Direkt autoritativ bestätigte öffentliche RRsets: Apex `A=217.160.0.152`, Apex `AAAA=2001:8d8:100f:f000::200`, `MX 5 smtpin.rzone.de`, `www` als CNAME zum Apex und `_dmarc` als `v=DMARC1;p=reject;`. Apex-TXT und Apex-CAA liefern derzeit keine Records.
+- DENIC liefert für `hallofmemory.de` keinen DS-Record. Es existiert damit aktuell kein Parent-DS, der einen Nameserverwechsel unmittelbar durch eine alte DNSSEC-Delegation blockiert. Der spätere Cloudflare-DNSSEC-Zustand muss trotzdem im vorgesehenen Cutover-Gate belegt werden.
+- Ein autoritativer AXFR gegen STRATO wird verweigert. Der externe DNS-Readback bleibt deshalb absichtlich **unvollständig** und ersetzt nicht den vorgeschriebenen Provider-Zonenexport; insbesondere unbekannte Subdomains, TXT-Verifikationen, SRV-Records oder weitere RRsets dürfen nicht aus ihrem Nichtfund abgeleitet werden.
+- `http://hallofmemory.de/` liefert derzeit HTTP 200 von Apache und eine STRATO-Parkseite mit „Domain reserviert“/„keine Inhalte hinterlegt“. Die Wunschdomain liefert also noch nicht Hall of Memory.
+- `https://hallofmemory.de/` scheitert aktuell bereits im TLS-Handshake (`tlsv1 alert internal error`). Die Domain ist damit derzeit auch technisch nicht als sichere Arbeitsdomain nutzbar.
+- `wrangler whoami` bestätigt weiterhin, dass die lokale Wrangler-Installation nicht am kundeneigenen Cloudflare-Kontext authentifiziert ist.
+- Die früher im Provider-Setup beobachteten Cloudflare-Nameserver `ignat.ns.cloudflare.com` und `rose.ns.cloudflare.com` antworten für `hallofmemory.de` aktuell jeweils `REFUSED` mit `Not Authoritative`. Diese historischen Werte sind daher **veraltet und dürfen nicht für einen Nameserverwechsel wiederverwendet werden**. Die tatsächlich aktuelle Cloudflare-Zone und ihre neu ausgegebenen Nameserver müssen nach authentifiziertem Provider-Readback frisch bestimmt werden.
+- Ein isolierter, lokal kopierter Chrome-Profilsnapshot erreichte `dash.cloudflare.com`, blieb im headless Readback aber an Cloudflares Sicherheitsüberprüfung stehen. Diese Schutzprüfung wurde nicht umgangen; nach dem Test wurde der isolierte Profilsnapshot wieder entfernt. Aus diesem Versuch folgt ausdrücklich keine Cloudflare-Authentifizierungswahrheit.
+- Der vorhandene `scripts/dns-zone-cutover.mjs` bleibt das maßgebliche technische Vollzonen-/DNSSEC-Gate. Mit den extern sichtbaren Teilrecords allein darf er nicht künstlich auf `complete:true` gefüttert werden.
+
+**Folge:** Die Repo-seitige Cutover-Härtung ist vorhanden; der nächste echte Hebel liegt beim Providerzugriff. Vor jeder Nameservermutation sind weiterhin ein authentifizierter Cloudflare-Zonenreadback, ein vollständiger STRATO-Zonenexport bzw. gleichwertig vollständiger Provider-Snapshot, die vollständige Cloudflare-Abbildung samt Comparator-PASS und anschließend die autorisierte STRATO-Delegationsänderung erforderlich.
+
 ## Zielarchitektur
 
 ```text

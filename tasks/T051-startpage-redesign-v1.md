@@ -1,6 +1,6 @@
 # T051 – Startseite Redesign V1
 
-Status: active — sauberer Successor von PR #37; technische Verifikation ausstehend
+Status: active — sauberer Successor von PR #37 technisch verifiziert; visuelle Preview-Abnahme offen
 
 ## Ziel
 
@@ -47,14 +47,16 @@ Der Neuaufbau hält die vorhandene Komponentenarchitektur von `main` stabil:
 
 ## Verifikation
 
-Vor Merge erforderlich:
+Der erste saubere Implementierungs-Head `304b38905d705a9e7cb8d396462705f74687441a` wurde auf GitHub Actions vollständig verifiziert:
 
-- GitHub `verify` auf exakt dem finalen Successor-Head grün;
-- Visual Regression Desktop, Tablet und 390-px-Mobile grün;
-- Preview-Base und Pages-Artefakt grün;
-- Rahmenvariante 10 grün;
-- keine zusätzlichen Redesign-Stylesheet-Imports;
-- menschliche visuelle Preview-Abnahme.
+- Workflow `Verify`, Run `193`: PASS;
+- kanonische Verifikation: PASS;
+- Visual-Regression-Artefakte: erfolgreich erzeugt und hochgeladen;
+- Vercel-Status auf demselben Head: PASS.
+
+Der Successor-Diff gegen die Ausgangsbasis `6cf1f81c80ee9ee5a58ad7aacc591e99c0a2c8c1` besteht aus einem Implementierungscommit und sieben Dateien; `DemoExperience.astro` sowie zusätzliche Redesign-Stylesheets sind nicht Teil des Diffs.
+
+Jeder nachfolgende Evidence-/Dokumentationscommit muss auf seinem exakten Head erneut den geschützten `verify`-Check bestehen. Vor Merge bleibt zusätzlich die menschliche visuelle Preview-Abnahme erforderlich.
 
 ## Herkunft
 

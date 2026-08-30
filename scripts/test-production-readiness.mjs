@@ -7,6 +7,7 @@ import {
   PRODUCTION_INQUIRY_ENTRY,
   PRODUCTION_SITE_ORIGIN,
 } from './check-production-readiness.mjs';
+import { allVerificationItems, verificationPlan } from './verification-plan.mjs';
 
 const approval = (evidenceRef) => ({ approved: true, evidenceRef });
 const approvedDataPolicy = () => ({
@@ -69,9 +70,10 @@ assert.match(
   /^astro build --base \/Hall-of-Memory/,
   'GitHub Pages preview must use its own non-production build surface',
 );
-const verifyCommands = verifyScript.split('&&').map((part) => part.trim());
-assert.ok(verifyCommands.includes('npm run build:verification'), 'canonical source verification must use the non-production verification build');
-assert.equal(verifyCommands.includes('npm run build'), false, 'canonical PR verification must not require production runtime inputs');
+assert.equal(verifyScript, 'node scripts/run-verification.mjs', 'canonical source verification must route through the T052 verification runner');
+const verificationScripts = allVerificationItems(verificationPlan).map(({ script }) => script);
+assert.ok(verificationScripts.includes('build:verification'), 'canonical source verification must use the non-production verification build');
+assert.equal(verificationScripts.includes('build'), false, 'canonical PR verification must not require production runtime inputs');
 assert.match(
   deployScript,
   /^npm run check:production-readiness && npm run build && wrangler deploy$/,

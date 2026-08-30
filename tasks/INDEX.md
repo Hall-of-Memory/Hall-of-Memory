@@ -53,3 +53,4 @@
 | T048 | done | Testarchitektur in Contract-, Visual- und Performance-Gates entkoppeln |
 | T049 | blocked_external | Inquiry-/Admin-Datenschutz technisch gehärtet; konkrete Retention-/Löschpolicy wartet auf T008/T011 |
 | T050 | done | Lokalen kanonischen Verify gegen stale direkte Installationsstände fail-closed härten |
+| T052 | done | Kanonischen Verify um vollständige unabhängige Fehlerdiagnose und Redesign-Triage erweitert |

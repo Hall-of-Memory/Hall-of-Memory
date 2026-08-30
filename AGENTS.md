@@ -40,7 +40,9 @@ npm run verify
 
 Wenn eine Änderung nur Dokumentation betrifft, darf `npm ci` entfallen, wenn die installierte Dependency-Lage bereits reproduzierbar vorhanden ist; vor Merge bleibt `npm run verify` der kanonische Volltest, sofern der Task nichts Strengeres verlangt.
 
-`npm run verify` umfasst die bestehenden Inquiry-, Domain-, Gallery-Security-, Formular-, Quality-, Demo-, Preview-Base-, Astro- und Wrangler-Dry-Run-Prüfungen. Keine zweite divergierende CI-Logik einführen.
+`npm run verify` umfasst die bestehenden Inquiry-, Domain-, Gallery-Security-, Formular-, Quality-, Demo-, Preview-Base-, Astro- und Wrangler-Dry-Run-Prüfungen. Der kanonische Runner hält Installations-/Dependency-Vorbedingungen fail-closed und sammelt danach unabhängige Fehler bis zur gemeinsamen Summary. Keine zweite divergierende CI-Logik einführen. Details und Fehlerklassen stehen in `docs/verification-policy.md`.
+
+Bei einem im aktuellen Task ausdrücklich als Kundenredesign dokumentierten `DESIGN-SENSITIVE`-Fehler zuerst die aktuelle Kunden-/Taskautorität prüfen. Die Implementation nicht reflexartig auf eine ältere visuelle Baseline zurückbiegen; zugleich bleiben technische `INVARIANT`-Anteile bindend.
 
 ## 5. GitHub- und Review-Vertrag
 

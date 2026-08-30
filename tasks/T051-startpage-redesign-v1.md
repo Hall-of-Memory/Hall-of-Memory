@@ -61,3 +61,9 @@ Jeder nachfolgende Evidence-/Dokumentationscommit muss auf seinem exakten Head e
 ## Herkunft
 
 Die sichtbaren Copy-, Hero-, Farb- und Informationsarchitekturentscheidungen stammen aus dem kundenerstellten PR #37 und werden als beabsichtigt behandelt. Technische Reparaturen aus #37 werden nur übernommen, wenn sie einen objektiven Defekt oder eine belastbare Regression absichern.
+
+## Reconciliation mit T052-main — 30.08.2026
+
+Der Successor wurde nach Integration von T052 erneut auf den aktuellen `main`-Stand `ff15ccc8a1c8c645fe1dbeb1e152d0e03093f722` gebracht. Der einzige Mergekonflikt betraf `tasks/INDEX.md`: T051 aus dem Redesign-Branch und das auf `main` abgeschlossene T052 wurden gemeinsam erhalten. Es gab keinen Mergekonflikt in Showcase, Produktcopy oder `demo.css`; die Kunden-UI wurde bei dieser Reconciliation nicht neu gestaltet.
+
+Nach der Konfliktauflösung lief der neue kanonische T052-Verify vollständig durch: **23 PASS / 0 FAIL / 0 BLOCKED**, terminaler Receipt `b7ddd026f78aa46856804ba4d5da45d6deba20432708c1b6f473c9ff016deb0a`. Der lokale Merge-Commit ist `2a111c7`. Vor einem Merge von T051 bleibt die menschliche visuelle Preview-Abnahme bindend.

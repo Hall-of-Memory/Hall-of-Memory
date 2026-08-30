@@ -1,6 +1,6 @@
 # T052 – Vollständige Verify-Diagnose statt First-Failure-Ping-Pong
 
-Status: active — lokal vollständig verifiziert; PR-CI/Integration ausstehend
+Status: done — Implementation und PR-CI grün; Merge/Runtime-Readback folgt über den normalen Releasepfad
 
 ## Ausgangslage
 
@@ -44,6 +44,8 @@ Nicht im Scope: Website-/CSS-/Copy-Änderungen, PR #37, visuelle Baseline-Migrat
 - Der Release-Safety-Metatest prüft nun den kanonischen Verification-Plan; `build:verification` bleibt verpflichtend und der produktive `build` bleibt aus PR-Verify ausgeschlossen.
 - `site-dry-run` ist explizit an den erfolgreichen `verification-build` gebunden, damit ein Buildfehler nicht versehentlich gegen ein altes `dist/` geprüft wird.
 - Finaler Volltest auf dem damaligen aktuellen Patchstand: 23 PASS / 0 FAIL / 0 BLOCKED; terminaler Receipt `43f70ae870edb522b8d3c19b9211ffd572cfadf3b328fe9a3c9c91ec30185399`.
+- Exact-State-Volltest nach dem Evidence-Nachtrag: 23 PASS / 0 FAIL / 0 BLOCKED; terminaler Receipt `e0ed35c6c3ab1a07e47e4f0bbed981ea09f5aab6b059a800b0bc624a11b8473e`.
+- PR #43 auf Implementierungshead `e999f6c3051bbec5e2ab7823c868dae4a87877cd`: GitHub `verify` PASS, Vercel PASS, `pages-runtime` auf Pull Requests erwartungsgemäß SKIPPED.
 - `git diff --check`: PASS vor dem Evidence-Nachtrag; nach dem Nachtrag erneut als Teil des finalen Commit-Gates zu prüfen.
 
 ## Folgearbeit

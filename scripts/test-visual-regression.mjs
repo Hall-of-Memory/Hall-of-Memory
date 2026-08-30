@@ -174,6 +174,9 @@ const measureDemo = (cdp, sessionId) => evaluate(cdp, sessionId, `(()=>{
   const nav=document.querySelector('.demo-header .demo-nav');
   const hero=document.querySelector('.demo-hero-image-wrap');
   const eventPhoto=document.querySelector('.demo-hero-event-photo');
+  const process=document.querySelector('.hom-process-grid');
+  const processItems=process?[...process.querySelectorAll(':scope > li')].map(item=>rect(item)):[];
+  const customerPreview=document.querySelector('.hom-customer-preview');
   const links=nav?[...nav.querySelectorAll('a')].map(link=>({display:getComputedStyle(link).display,visibility:getComputedStyle(link).visibility,rect:rect(link)})):[];
   return {
     viewport:{width:innerWidth,height:innerHeight},
@@ -182,6 +185,8 @@ const measureDemo = (cdp, sessionId) => evaluate(cdp, sessionId, `(()=>{
     logo:logo?{rect:rect(logo),naturalWidth:logo.naturalWidth,naturalHeight:logo.naturalHeight,visibility:getComputedStyle(logo).visibility}:null,
     header:rect(header),nav:rect(nav),hero:rect(hero),
     eventPhoto:eventPhoto?{rect:rect(eventPhoto),naturalWidth:eventPhoto.naturalWidth,naturalHeight:eventPhoto.naturalHeight}:null,
+    process:process?{display:getComputedStyle(process).display,columns:getComputedStyle(process).gridTemplateColumns,items:processItems}:null,
+    customerPreview:customerPreview?{tag:customerPreview.tagName,text:customerPreview.textContent.trim(),borderTop:getComputedStyle(customerPreview).borderTopWidth,borderRight:getComputedStyle(customerPreview).borderRightWidth,borderBottom:getComputedStyle(customerPreview).borderBottomWidth,borderLeft:getComputedStyle(customerPreview).borderLeftWidth}:null,
     links,title:document.title,
   };
 })()`);
@@ -219,6 +224,18 @@ const assertDemo = (measurement, viewport) => {
   assert.ok(measurement.nav, `${viewport.name}: navigation is missing`);
   assert.ok(measurement.hero, `${viewport.name}: hero frame is missing`);
   assert.ok(measurement.eventPhoto, `${viewport.name}: hero event photo is missing`);
+  assert.ok(measurement.process, `${viewport.name}: process section is missing`);
+  assert.equal(measurement.process.display, 'grid', `${viewport.name}: process section lost grid layout`);
+  assert.equal(measurement.process.items.length, 4, `${viewport.name}: process must render all four customer steps`);
+  const expectedProcessColumns = viewport.name === 'desktop' ? 4 : viewport.name === 'tablet' ? 2 : 1;
+  const processColumnCount = measurement.process.columns.trim().split(/\s+/).filter(Boolean).length;
+  assert.equal(processColumnCount, expectedProcessColumns, `${viewport.name}: process grid must use ${expectedProcessColumns} balanced column(s), got ${measurement.process.columns}`);
+  assert.ok(measurement.customerPreview, `${viewport.name}: customer-area preview label is missing`);
+  assert.equal(measurement.customerPreview.tag, 'SPAN', `${viewport.name}: customer-area preview must remain informational, not interactive`);
+  assert.equal(measurement.customerPreview.text, 'Vorschau Kundenbereich', `${viewport.name}: customer-area preview must not promise a dead action`);
+  assert.equal(measurement.customerPreview.borderRight, '0px', `${viewport.name}: customer-area preview still looks like a button on the right edge`);
+  assert.equal(measurement.customerPreview.borderBottom, '0px', `${viewport.name}: customer-area preview still looks like a button on the bottom edge`);
+  assert.equal(measurement.customerPreview.borderLeft, '0px', `${viewport.name}: customer-area preview still looks like a button on the left edge`);
   assert.equal(measurement.viewport.width, viewport.width, `${viewport.name}: viewport width drifted`);
   assert.ok(measurement.documentWidth <= measurement.clientWidth + 1, `${viewport.name}: page has horizontal overflow (${measurement.documentWidth} > ${measurement.clientWidth})`);
   assert.notEqual(measurement.logo.visibility, 'hidden', `${viewport.name}: logo is hidden`);

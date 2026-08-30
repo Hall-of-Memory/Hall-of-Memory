@@ -43,7 +43,8 @@ assert.match(demo, /data-demo-inquiry-disabled/);
 assert.match(demo, /Anfrageformular noch nicht aktiv/);
 assert.doesNotMatch(demo, /demo-inquiry\.js/);
 assert.match(demo, /Paket gemeinsam auswählen/);
-assert.match(demo, /Beispielzugang ansehen/);
+assert.match(demo, /Vorschau Kundenbereich/);
+assert.doesNotMatch(demo, /Beispielzugang ansehen/);
 assert.doesNotMatch(demo, /Customer Journey|Datenstruktur|Private Formular-Preview|Business-Nummer noch offen/i);
 
 const overview = await readFile(path.join(root, 'demo/rahmen/index.html'), 'utf8');

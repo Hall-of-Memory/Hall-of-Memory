@@ -9,7 +9,7 @@ Die bestehende Hall-of-Memory-Landingpage auf der vorhandenen Astro-/Content-Arc
 ## Kundenrichtung
 
 - Marke: Hall of Memory, Claim „Every Star Has a Memory“.
-- Hero kurz und direkt; primärer CTA „Unverbindlich anfragen“, sekundär WhatsApp.
+- Hero kurz und direkt; im kundenerstellten PR führt der primäre CTA zum Anfragebereich, der sekundäre zu den Angeboten. WhatsApp bleibt ein separater Kontaktweg, sobald die Business-Nummer konfiguriert ist.
 - Fotobox, Fotospiegel und Magazinbox sehr früh sichtbar.
 - Weniger Schwarz/Gold-Dominanz; größere warme Creme-/Beigeflächen, Champagner-Gold nur als Akzent.
 - Keine 1:1-Kopie von Referenzseiten, keine erfundenen Preise/Rabatte/Bewertungen.
@@ -59,3 +59,14 @@ Finale lokale Evidence auf dem korrigierten Stand:
 - Scope-Audit: keine verbliebenen erfundenen Paket-/Extra-Begriffe oder toten Redesign-Imports.
 
 Offen bleibt bewusst die visuelle Preview-Abnahme von PR #37 vor dem Merge.
+
+## Kundenentscheidungen respektierender Audit — 30.08.2026
+
+PR #37 wurde nach dem Merge von aktuellem `main` erneut auf dem exakten PR-Head `cb59b0432942e609b54d55c9b3a53cd0ada8612a` auditiert. Da der PR vom Kunden selbst erstellt wurde, gelten seine sichtbaren Copy-, Hero- und Gestaltungsentscheidungen als beabsichtigt, solange kein technischer oder funktionaler Defekt belegt ist.
+
+Daher wurden insbesondere Hero-CTA, Angebotscopy, Farbwelt und Informationsarchitektur nicht auf frühere interne Präferenzen zurückgesetzt. Behoben werden nur zwei objektive UI-Probleme:
+
+- Die vier vorhandenen Ablaufschritte wurden zuvor auf Desktop und Tablet in ein 3-Spalten-Raster gezwängt. Ein neuer Browser-Regressionscheck reproduzierte den Fehler auf dem unveränderten Kunden-Head (`3 !== 4`). Der responsive Vertrag ist nun 4 Spalten auf Desktop, 2×2 auf Tablet und 1 Spalte mobil.
+- `Beispielzugang ansehen` war als umrandete Aktion gestaltet, obwohl weder Link noch Button noch Disclosure dahinterstand. Die Kundenbereich-Idee bleibt erhalten, wird aber als rein informative `Vorschau Kundenbereich` ohne Button-Anmutung dargestellt; es wird keine nicht beauftragte Funktion erfunden.
+
+Der Visual-Regressionscheck prüft diese beiden Verträge künftig auf Desktop, Tablet und 390-px-Mobile zusätzlich zu den bestehenden Navigation-, Overflow-, Hero- und Rahmenprüfungen.

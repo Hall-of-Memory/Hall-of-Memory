@@ -12,6 +12,7 @@
   --hom-gold:#b88b47;
   --hom-gold-soft:#ddc18c;
   --hom-dark:#080807;
+  --hom-focus-light:#765222;
   overflow-x:hidden;
   background:var(--hom-dark);
   color:#f1e9d9;
@@ -93,7 +94,15 @@
 .hom-product-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}
 .hom-product-actions a,.hom-packages-copy>a{min-height:43px;display:inline-flex;align-items:center;justify-content:center;padding:0 16px;border:1px solid #24201b;border-radius:5px;background:#171512;color:#fff;font-size:.7rem;font-weight:800;letter-spacing:.05em;text-decoration:none;text-transform:uppercase}
 .hom-product-actions a+a{background:transparent;color:#30291f;border-color:#cfc1ad}
-.demo-offer-card:focus-within{outline:2px solid var(--demo-gold-light);outline-offset:3px}
+.demo-offer-card:focus-within{outline:2px solid var(--hom-focus-light);outline-offset:3px}
+.hom-products a:focus-visible,
+.hom-products summary:focus-visible,
+.hom-packages a:focus-visible,
+.demo-contact-card a:focus-visible,
+.demo-page .demo-inquiry-card input:focus-visible,
+.demo-page .demo-inquiry-card select:focus-visible,
+.demo-page .demo-inquiry-card textarea:focus-visible,
+.demo-page .demo-inquiry-card button:focus-visible{outline-color:var(--hom-focus-light)}
 
 .hom-benefits{padding:clamp(66px,8vw,104px) 0;background:#fffdf9;color:var(--hom-ink)}
 .hom-benefit-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid #dfd5c7;border-bottom:1px solid #dfd5c7}

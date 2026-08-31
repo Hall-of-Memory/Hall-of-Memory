@@ -17,7 +17,7 @@
 }
 .demo-inquiry-card .turnstile-field legend {
   margin-bottom: 8px;
-  color: #d9d1c5;
+  color: #62594f;
   font-size: .78rem;
   text-transform: uppercase;
   letter-spacing: .12em;
@@ -30,7 +30,7 @@
 .demo-inquiry-card .turnstile-status {
   min-height: 1.2em;
   margin: 5px 0 0;
-  color: var(--muted);
+  color: #6d655c;
   font-size: .72rem;
 }
 .demo-inquiry-card .form-error,
@@ -42,6 +42,6 @@
   text-transform: none;
   letter-spacing: 0;
 }
-.demo-inquiry-card .form-error { color: #ffd4cf; background: rgba(143,39,28,.22); border-color: #e57c70; }
-.demo-inquiry-card .form-success { color: #e9f7d2; background: rgba(73,111,34,.22); border-color: #a7ce72; }
-.demo-inquiry-card .config-note { padding-left: 12px; border-left: 2px solid var(--gold); }
+.demo-inquiry-card .form-error { color: #7f1d1d; background: #fff1f0; border-color: #b42318; }
+.demo-inquiry-card .form-success { color: #365314; background: #f4f8e8; border-color: #5f7f2b; }
+.demo-inquiry-card .config-note { padding-left: 12px; border-left: 2px solid #765222; }

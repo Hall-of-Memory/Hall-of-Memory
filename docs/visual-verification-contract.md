@@ -79,9 +79,11 @@ Neue kritische Visual-Assertions sollen denselben Namensraum verwenden. Ein frei
 1. Logo selbst wird mit `display:none` aus dem Rendering entfernt → `VIS-INVARIANT-LOGO-HIDDEN`.
 2. Der Logo-Vorfahre `.demo-brand` wird mit `display:none` entfernt → ebenfalls `VIS-INVARIANT-LOGO-HIDDEN`.
 3. Das Prozessraster wird mit `display:none` entfernt → `VIS-INVARIANT-PROCESS-HIDDEN`.
-4. Logo wird auf offensichtlich unbrauchbare, aber weiterhin gerenderte Geometrie verkleinert → `VIS-DESIGN-LOGO-SIZE`.
+4. Das Prozessraster wird mit `visibility:hidden` unsichtbar → `VIS-INVARIANT-PROCESS-HIDDEN`.
+5. Ein Logo-Vorfahre wird vollständig transparent (`opacity:0`) → `VIS-INVARIANT-LOGO-HIDDEN`.
+6. Logo wird auf offensichtlich unbrauchbare, aber weiterhin gerenderte Geometrie verkleinert → `VIS-DESIGN-LOGO-SIZE`.
 
-Damit beweist der Test nicht nur, dass die Seite aktuell grün ist, sondern auch, dass er die beiden unterschiedlichen Fehlerarten tatsächlich erkennt. Eigene oder durch einen Vorfahren verursachte Nichtdarstellung wird über reale Rendergeometrie vor jeder Designklassifikation als technische Regression behandelt. `display:none` und `visibility:hidden` bleiben zusätzlich explizit abgesichert.
+Damit beweist der Test nicht nur, dass die Seite aktuell grün ist, sondern auch, dass er die beiden unterschiedlichen Fehlerarten tatsächlich erkennt. Nichtdarstellung wird über einen gemeinsamen Paint-State vor jeder Designklassifikation als technische Regression behandelt. Dieser berücksichtigt Rendergeometrie, berechnete `visibility`, effektive Opazität über die Vorfahren und `content-visibility`.
 
 ## Abgrenzung
 

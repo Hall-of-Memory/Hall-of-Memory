@@ -169,23 +169,34 @@ const openPage = async (cdp, url, viewport) => {
 
 const measureDemo = (cdp, sessionId) => evaluate(cdp, sessionId, `(()=>{
   const rect=(element)=>{if(!element)return null;const r=element.getBoundingClientRect();return {width:r.width,height:r.height,top:r.top,right:r.right,bottom:r.bottom,left:r.left};};
+  const paint=(element)=>{
+    if(!element)return null;
+    const box=rect(element);const own=getComputedStyle(element);let effectiveOpacity=1;let contentHidden=false;
+    for(let node=element;node;node=node.parentElement){
+      const style=getComputedStyle(node);const opacity=Number.parseFloat(style.opacity);
+      if(Number.isFinite(opacity))effectiveOpacity*=opacity;
+      if(style.contentVisibility==='hidden')contentHidden=true;
+    }
+    const rendered=element.getClientRects().length>0&&box.width>0&&box.height>0&&own.display!=='none'&&own.visibility!=='hidden'&&own.visibility!=='collapse'&&effectiveOpacity>0&&!contentHidden;
+    return {rect:box,display:own.display,visibility:own.visibility,effectiveOpacity,contentHidden,rendered};
+  };
   const logo=document.querySelector('.demo-header .demo-brand > img');
   const header=document.querySelector('.demo-header');
   const nav=document.querySelector('.demo-header .demo-nav');
   const hero=document.querySelector('.demo-hero-image-wrap');
   const eventPhoto=document.querySelector('.demo-hero-event-photo');
   const process=document.querySelector('.hom-process-grid');
-  const processItems=process?[...process.querySelectorAll(':scope > li')].map(item=>rect(item)):[];
+  const processItems=process?[...process.querySelectorAll(':scope > li')].map(item=>paint(item)):[];
   const customerPreview=document.querySelector('.hom-customer-preview');
-  const links=nav?[...nav.querySelectorAll('a')].map(link=>({display:getComputedStyle(link).display,visibility:getComputedStyle(link).visibility,rect:rect(link)})):[];
+  const links=nav?[...nav.querySelectorAll('a')].map(link=>paint(link)):[];
   return {
     viewport:{width:innerWidth,height:innerHeight},
     documentWidth:document.documentElement.scrollWidth,
     clientWidth:document.documentElement.clientWidth,
-    logo:logo?{rect:rect(logo),naturalWidth:logo.naturalWidth,naturalHeight:logo.naturalHeight,display:getComputedStyle(logo).display,visibility:getComputedStyle(logo).visibility,rendered:logo.getClientRects().length>0}:null,
+    logo:logo?{...paint(logo),naturalWidth:logo.naturalWidth,naturalHeight:logo.naturalHeight}:null,
     header:rect(header),nav:rect(nav),hero:rect(hero),
     eventPhoto:eventPhoto?{rect:rect(eventPhoto),naturalWidth:eventPhoto.naturalWidth,naturalHeight:eventPhoto.naturalHeight}:null,
-    process:process?{display:getComputedStyle(process).display,columns:getComputedStyle(process).gridTemplateColumns,rect:rect(process),rendered:process.getClientRects().length>0,items:processItems}:null,
+    process:process?{...paint(process),columns:getComputedStyle(process).gridTemplateColumns,items:processItems}:null,
     customerPreview:customerPreview?{tag:customerPreview.tagName,text:customerPreview.textContent.trim(),borderTop:getComputedStyle(customerPreview).borderTopWidth,borderRight:getComputedStyle(customerPreview).borderRightWidth,borderBottom:getComputedStyle(customerPreview).borderBottomWidth,borderLeft:getComputedStyle(customerPreview).borderLeftWidth}:null,
     links,title:document.title,
   };
@@ -237,7 +248,7 @@ const assertDemo = (measurement, viewport) => {
   visualCheck(measurement.hero, 'VIS-INVARIANT-HERO-MISSING', `${viewport.name}: hero frame is missing`);
   visualCheck(measurement.eventPhoto, 'VIS-INVARIANT-EVENT-PHOTO-MISSING', `${viewport.name}: hero event photo is missing`);
   visualCheck(measurement.process, 'VIS-INVARIANT-PROCESS-MISSING', `${viewport.name}: process section is missing`);
-  visualCheck(measurement.process.rendered && measurement.process.rect.width > 1 && measurement.process.rect.height > 1, 'VIS-INVARIANT-PROCESS-HIDDEN', `${viewport.name}: process section is not visibly rendered`);
+  visualCheck(measurement.process.rendered && measurement.process.items.every((item) => item.rendered), 'VIS-INVARIANT-PROCESS-HIDDEN', `${viewport.name}: process section or one of its steps is not visibly painted`);
   visualEqual(measurement.process.display, 'grid', 'VIS-DESIGN-PROCESS-LAYOUT', `${viewport.name}: process section lost grid layout`);
   visualEqual(measurement.process.items.length, 4, 'VIS-INVARIANT-PROCESS-STEPS', `${viewport.name}: process must render all four customer steps`);
   const expectedProcessColumns = viewport.name === 'desktop' ? 4 : viewport.name === 'tablet' ? 2 : 1;
@@ -251,7 +262,7 @@ const assertDemo = (measurement, viewport) => {
   }
   visualEqual(measurement.viewport.width, viewport.width, 'VIS-EVIDENCE-VIEWPORT', `${viewport.name}: viewport width drifted`);
   visualCheck(measurement.documentWidth <= measurement.clientWidth + 1, 'VIS-INVARIANT-HORIZONTAL-OVERFLOW', `${viewport.name}: page has horizontal overflow (${measurement.documentWidth} > ${measurement.clientWidth})`);
-  visualCheck(measurement.logo.rendered && measurement.logo.rect.width > 0 && measurement.logo.rect.height > 0 && measurement.logo.display !== 'none' && measurement.logo.visibility !== 'hidden', 'VIS-INVARIANT-LOGO-HIDDEN', `${viewport.name}: logo is not rendered (display=${measurement.logo.display}, visibility=${measurement.logo.visibility}, geometry=${measurement.logo.rect.width}x${measurement.logo.rect.height})`);
+  visualCheck(measurement.logo.rendered, 'VIS-INVARIANT-LOGO-HIDDEN', `${viewport.name}: logo is not visibly painted (display=${measurement.logo.display}, visibility=${measurement.logo.visibility}, opacity=${measurement.logo.effectiveOpacity}, contentHidden=${measurement.logo.contentHidden}, geometry=${measurement.logo.rect.width}x${measurement.logo.rect.height})`);
   visualCheck(measurement.logo.naturalWidth > 0 && measurement.logo.naturalHeight > 0, 'VIS-INVARIANT-BROKEN-ASSET', `${viewport.name}: logo asset did not load`);
 
   // There is no customer- or brand-authorized exact logo pixel contract. Guard only
@@ -265,7 +276,7 @@ const assertDemo = (measurement, viewport) => {
   visualCheck(measurement.eventPhoto.rect.width > 200 && measurement.eventPhoto.rect.height > 200, 'VIS-DESIGN-HERO-GEOMETRY', `${viewport.name}: event photo has no visible geometry`);
   visualCheck(measurement.links.length >= 4, 'VIS-INVARIANT-NAV-INCOMPLETE', `${viewport.name}: navigation link set is incomplete`);
   for (const [index, link] of measurement.links.entries()) {
-    visualCheck(link.display !== 'none' && link.visibility !== 'hidden', 'VIS-INVARIANT-NAV-HIDDEN', `${viewport.name}: nav link ${index + 1} is hidden`);
+    visualCheck(link.rendered, 'VIS-INVARIANT-NAV-HIDDEN', `${viewport.name}: nav link ${index + 1} is not visibly painted`);
     visualCheck(link.rect.width > 1 && link.rect.height > 1, 'VIS-INVARIANT-NAV-GEOMETRY', `${viewport.name}: nav link ${index + 1} has no visible geometry`);
   }
 };
@@ -317,6 +328,8 @@ const main = async () => {
             { id: 't053-logo-self-hidden', css: '.demo-header .demo-brand > img{display:none!important}', expected: 'VIS-INVARIANT-LOGO-HIDDEN' },
             { id: 't053-logo-ancestor-hidden', css: '.demo-header .demo-brand{display:none!important}', expected: 'VIS-INVARIANT-LOGO-HIDDEN' },
             { id: 't053-process-hidden', css: '.hom-process-grid{display:none!important}', expected: 'VIS-INVARIANT-PROCESS-HIDDEN' },
+            { id: 't053-process-visibility-hidden', css: '.hom-process-grid{visibility:hidden!important}', expected: 'VIS-INVARIANT-PROCESS-HIDDEN' },
+            { id: 't053-logo-ancestor-transparent', css: '.demo-header .demo-brand{opacity:0!important}', expected: 'VIS-INVARIANT-LOGO-HIDDEN' },
             { id: 't053-logo-tiny', css: '.demo-header .demo-brand > img{width:8px!important;height:10px!important}', expected: 'VIS-DESIGN-LOGO-SIZE' },
           ];
           for (const controlled of controlledCases) {
@@ -382,9 +395,9 @@ const main = async () => {
       viewports,
       summaries,
       controlledRegressionDetected: true,
-      controlledRegressionCodes: ['VIS-INVARIANT-LOGO-HIDDEN', 'VIS-INVARIANT-LOGO-HIDDEN', 'VIS-INVARIANT-PROCESS-HIDDEN', 'VIS-DESIGN-LOGO-SIZE'],
+      controlledRegressionCodes: ['VIS-INVARIANT-LOGO-HIDDEN', 'VIS-INVARIANT-LOGO-HIDDEN', 'VIS-INVARIANT-PROCESS-HIDDEN', 'VIS-INVARIANT-PROCESS-HIDDEN', 'VIS-INVARIANT-LOGO-HIDDEN', 'VIS-DESIGN-LOGO-SIZE'],
     }, null, 2)}\n`);
-    console.log(`visual-regression-ok viewports=${viewports.length} screenshots=${summaries.length} controlled_regression_codes=VIS-INVARIANT-LOGO-HIDDEN,VIS-INVARIANT-LOGO-HIDDEN,VIS-INVARIANT-PROCESS-HIDDEN,VIS-DESIGN-LOGO-SIZE frame_variant=10 browser=${browserVersion.product}`);
+    console.log(`visual-regression-ok viewports=${viewports.length} screenshots=${summaries.length} controlled_regression_codes=VIS-INVARIANT-LOGO-HIDDEN,VIS-INVARIANT-LOGO-HIDDEN,VIS-INVARIANT-PROCESS-HIDDEN,VIS-INVARIANT-PROCESS-HIDDEN,VIS-INVARIANT-LOGO-HIDDEN,VIS-DESIGN-LOGO-SIZE frame_variant=10 browser=${browserVersion.product}`);
   } finally {
     try {
       if (cdp?.socket?.readyState === WebSocket.OPEN) cdp.socket.close();

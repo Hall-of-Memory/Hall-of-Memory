@@ -168,9 +168,10 @@
 .demo-inquiry-card{gap:22px;padding:clamp(23px,4vw,38px);border:1px solid #ddd4c7;background:#fff;box-shadow:0 18px 44px rgba(49,39,28,.08);color-scheme:light}
 .inquiry-step{padding-top:5px}
 .inquiry-step legend{width:100%;margin-bottom:12px;color:#2d2720;font-family:Georgia,serif;font-size:1.25rem}
-.inquiry-step legend span{margin-right:9px;color:#9a7338;font-family:Inter,sans-serif;font-size:.65rem;letter-spacing:.11em}
+.inquiry-step legend span{margin-right:9px;color:#765222;font-family:Inter,sans-serif;font-size:.65rem;letter-spacing:.11em}
 .demo-inquiry-card input,.demo-inquiry-card select,.demo-inquiry-card textarea{border-color:#d8cfc2;background:#fffdf9;color:#191510}
 .demo-inquiry-card label{color:#62594f}
+.demo-inquiry-card .optional{color:#6d655c}
 .demo-inquiry-card .demo-submit{width:100%}
 .demo-form-legal{margin:-6px 0 0;color:#756c62;font-size:.68rem;text-align:center}
 

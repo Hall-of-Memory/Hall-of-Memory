@@ -111,6 +111,11 @@ const formControlBackground = cssHex(demoCssSource, /\.demo-inquiry-card input,[
 assertContrast('light form focus indicator', lightFocusColor, formControlBackground, 3);
 assertContrast('light contact focus indicator', lightFocusColor, demoCream, 3);
 
+const inquiryStepNumberColor = cssHex(demoCssSource, /\.inquiry-step legend span\{[^}]*color:(#[0-9a-f]{6})/i, 'inquiry step number');
+const inquiryOptionalColor = cssHex(demoCssSource, /\.demo-inquiry-card \.optional\{[^}]*color:(#[0-9a-f]{6})/i, 'inquiry optional label');
+assertContrast('inquiry step number', inquiryStepNumberColor, '#ffffff');
+assertContrast('inquiry optional label', inquiryOptionalColor, '#ffffff');
+
 const turnstileLegendColor = cssHex(productionCssSource, /\.demo-inquiry-card \.turnstile-field legend\s*\{[^}]*color:\s*(#[0-9a-f]{6})/i, 'Turnstile legend');
 const turnstileStatusColor = cssHex(productionCssSource, /\.demo-inquiry-card \.turnstile-status\s*\{[^}]*color:\s*(#[0-9a-f]{6})/i, 'Turnstile status');
 assertContrast('Turnstile legend', turnstileLegendColor, '#ffffff');

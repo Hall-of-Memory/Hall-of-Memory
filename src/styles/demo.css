@@ -59,7 +59,7 @@
 
 /* Customer-directed content */
 .hom-section-heading{max-width:780px;margin-bottom:clamp(34px,5vw,58px)}
-.hom-section-heading .eyebrow,.hom-packages .eyebrow,.hom-customer .eyebrow{margin:0 0 12px;color:#8d6832;font-size:.69rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase}
+.hom-section-heading .eyebrow,.hom-packages .eyebrow,.hom-customer .eyebrow{margin:0 0 12px;color:#765222;font-size:.69rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase}
 .hom-section-heading h2,.hom-packages h2,.hom-customer h2{margin:0;color:var(--hom-ink);font-family:Georgia,'Times New Roman',serif;font-size:clamp(2.35rem,4.8vw,4.7rem);font-weight:500;line-height:1.02;letter-spacing:-.035em}
 .hom-section-heading h2 em,.hom-packages h2 em,.hom-customer h2 em{color:#8f692f;font-style:italic}
 .hom-section-heading>p:last-child{max-width:650px;margin:18px 0 0;color:var(--hom-muted);line-height:1.7}

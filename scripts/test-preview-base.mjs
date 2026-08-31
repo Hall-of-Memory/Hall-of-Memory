@@ -64,6 +64,31 @@ const forcedColorsIndex = demoCssSource.lastIndexOf('@media (forced-colors: acti
 const heroBorderIndex = demoCssSource.lastIndexOf('.demo-hero-image-wrap{');
 assert.ok(forcedColorsIndex > heroBorderIndex, 'forced-colors contract must follow normal hero border rules in the cascade');
 
+const cssHex = (pattern, label) => {
+  const match = demoCssSource.match(pattern);
+  assert.ok(match, `missing CSS color for ${label}`);
+  return match[1];
+};
+const linearChannel = (channel) => {
+  const value = channel / 255;
+  return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+};
+const luminance = (hex) => {
+  const channels = [1, 3, 5].map((index) => Number.parseInt(hex.slice(index, index + 2), 16));
+  return 0.2126 * linearChannel(channels[0]) + 0.7152 * linearChannel(channels[1]) + 0.0722 * linearChannel(channels[2]);
+};
+const contrastRatio = (foreground, background) => {
+  const values = [luminance(foreground), luminance(background)].sort((a, b) => b - a);
+  return (values[0] + 0.05) / (values[1] + 0.05);
+};
+const sectionLabelColor = cssHex(/\.hom-section-heading \.eyebrow,[^{]+\{[^}]*color:(#[0-9a-f]{6})/i, 'section label');
+const packagesBackground = cssHex(/\.hom-packages\{[^}]*background:(#[0-9a-f]{6})/i, 'packages background');
+const customerBackground = cssHex(/\.hom-customer\{[^}]*background:(#[0-9a-f]{6})/i, 'customer background');
+for (const [label, background] of [['packages', packagesBackground], ['customer', customerBackground]]) {
+  const ratio = contrastRatio(sectionLabelColor, background);
+  assert.ok(ratio >= 4.5, `${label} section label contrast must be >= 4.5:1, got ${ratio.toFixed(2)}:1`);
+}
+
 const overview = await readFile(path.join(root, 'demo/rahmen/index.html'), 'utf8');
 for (let variant = 1; variant <= 10; variant += 1) {
   assert.match(overview, new RegExp(`${base}demo/rahmen/${variant}/`));

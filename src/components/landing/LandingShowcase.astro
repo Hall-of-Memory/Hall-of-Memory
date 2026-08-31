@@ -58,7 +58,12 @@ const { offers, benefits, steps, productWhatsAppHref } = Astro.props;
             <div class="hom-product-actions">
               <a href="#anfrage">Unverbindlich anfragen</a>
               {productWhatsAppHref(offer.title) && (
-                <a href={productWhatsAppHref(offer.title)} target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                <a
+                  href={productWhatsAppHref(offer.title)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`WhatsApp-Anfrage zur ${offer.title}`}
+                >WhatsApp</a>
               )}
             </div>
           </div>
@@ -111,12 +116,12 @@ const { offers, benefits, steps, productWhatsAppHref } = Astro.props;
       <h2 id="hom-gallery-title">Momente bekommen <em>eine Bühne.</em></h2>
       <p>Die finalen Kundenfotos folgen nach Freigabe. Bis dahin zeigt die Galerie bewusst nur die gestalterische Richtung – ohne fremde oder erfundene Produktbilder.</p>
     </header>
-    <div class="hom-gallery-grid" aria-label="Gestalterische Platzhalter für künftige Kundenfotos">
-      <div><span>Fotobox</span><strong>Spontane Momente</strong></div>
-      <div><span>Fotospiegel</span><strong>Großer Auftritt</strong></div>
-      <div><span>Magazinbox</span><strong>Cover-Moment</strong></div>
-      <div><span>Hall of Memory</span><strong>Dein Event im Mittelpunkt</strong></div>
-    </div>
+    <ul class="hom-gallery-grid" aria-label="Gestalterische Platzhalter für künftige Kundenfotos">
+      <li><span>Fotobox</span><strong>Spontane Momente</strong></li>
+      <li><span>Fotospiegel</span><strong>Großer Auftritt</strong></li>
+      <li><span>Magazinbox</span><strong>Cover-Moment</strong></li>
+      <li><span>Hall of Memory</span><strong>Dein Event im Mittelpunkt</strong></li>
+    </ul>
   </div>
 </section>
 
@@ -145,12 +150,12 @@ const { offers, benefits, steps, productWhatsAppHref } = Astro.props;
       <h2 id="hom-customer-title">Deine Erinnerungen. <em>Persönlich gesammelt.</em></h2>
       <p>Nach dem Event kann deine Galerie über einen persönlichen Link oder Code erreichbar sein. Der konkrete Zugang wird erst mit dem freigegebenen Kundenbereich eingerichtet.</p>
     </div>
-    <div class="hom-customer-card" aria-label="Vorschau des persönlichen Kundenbereichs">
+    <aside class="hom-customer-card" aria-label="Vorschau des persönlichen Kundenbereichs">
       <span class="hom-customer-star" aria-hidden="true">★</span>
       <p>Hall of Memory</p>
       <strong>Dein persönlicher Bereich</strong>
       <small>Fotos ansehen · Erinnerungen wiederfinden</small>
       <span class="hom-customer-preview">Vorschau Kundenbereich</span>
-    </div>
+    </aside>
   </div>
 </section>

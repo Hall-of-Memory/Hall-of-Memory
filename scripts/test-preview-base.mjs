@@ -46,6 +46,21 @@ assert.match(demo, /Paket gemeinsam auswählen/);
 assert.match(demo, /Vorschau Kundenbereich/);
 assert.doesNotMatch(demo, /Beispielzugang ansehen/);
 assert.doesNotMatch(demo, /Customer Journey|Datenstruktur|Private Formular-Preview|Business-Nummer noch offen/i);
+assert.match(demo, /<ul class="hom-gallery-grid" aria-label="Gestalterische Platzhalter für künftige Kundenfotos">/);
+assert.match(demo, /<aside class="hom-customer-card" aria-label="Vorschau des persönlichen Kundenbereichs">/);
+assert.doesNotMatch(demo, /<div class="hom-gallery-grid"/);
+
+const demoCssSource = await readFile(path.resolve('src/styles/demo.css'), 'utf8');
+for (const selector of ['demo-page', 'demo-header', 'demo-hero']) {
+  const baseRules = demoCssSource.match(new RegExp(`^\\.${selector}\\s*\\{`, 'gm')) ?? [];
+  assert.equal(baseRules.length, 1, `demo.css must keep one top-level .${selector} base rule, got ${baseRules.length}`);
+}
+const reducedMotionIndex = demoCssSource.lastIndexOf('@media (prefers-reduced-motion: reduce)');
+const productMotionIndex = demoCssSource.lastIndexOf('.hom-product-card:hover');
+assert.ok(reducedMotionIndex > productMotionIndex, 'reduced-motion contract must follow product motion rules in the cascade');
+const forcedColorsIndex = demoCssSource.lastIndexOf('@media (forced-colors: active)');
+const heroBorderIndex = demoCssSource.lastIndexOf('.demo-hero-image-wrap{');
+assert.ok(forcedColorsIndex > heroBorderIndex, 'forced-colors contract must follow normal hero border rules in the cascade');
 
 const overview = await readFile(path.join(root, 'demo/rahmen/index.html'), 'utf8');
 for (let variant = 1; variant <= 10; variant += 1) {

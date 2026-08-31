@@ -14,7 +14,7 @@ Technische oder semantische Eigenschaften, die auch bei einem Redesign erhalten 
 - Logo, Eventfoto und weitere relevante Assets sind geladen und tatsächlich gerendert;
 - zentrale Navigation ist vorhanden, sichtbar und geometrisch nutzbar;
 - Logo und Navigation bleiben im Header enthalten;
-- vier Prozessschritte werden vollständig gerendert;
+- vier Prozessschritte und ihr Ablaufbereich werden vollständig gerendert;
 - rein informative Elemente geben sich nicht als tote Aktion aus;
 - Rahmenmaske, Sliderzustand und URL-Synchronisierung funktionieren.
 
@@ -56,6 +56,7 @@ Numerische Mindestgrößen für Hero-, Rahmen- oder Produktflächen sind keine e
 - `VIS-INVARIANT-NAV-HIDDEN`
 - `VIS-INVARIANT-HEADER-CONTAINMENT`
 - `VIS-INVARIANT-CUSTOMER-AFFORDANCE`
+- `VIS-INVARIANT-PROCESS-HIDDEN`
 - `VIS-INVARIANT-FRAME-MASK`
 - `VIS-INVARIANT-FRAME-SLIDER`
 - `VIS-INVARIANT-FRAME-URL-STATE`
@@ -75,10 +76,12 @@ Neue kritische Visual-Assertions sollen denselben Namensraum verwenden. Ein frei
 
 `test:visual` erzeugt ausschließlich im isolierten Testbrowser zwei temporäre Negativfälle:
 
-1. Logo wird mit `display:none` aus dem Rendering entfernt → erwartet `VIS-INVARIANT-LOGO-HIDDEN`.
-2. Logo wird auf offensichtlich unbrauchbare Geometrie verkleinert → erwartet `VIS-DESIGN-LOGO-SIZE`.
+1. Logo selbst wird mit `display:none` aus dem Rendering entfernt → `VIS-INVARIANT-LOGO-HIDDEN`.
+2. Der Logo-Vorfahre `.demo-brand` wird mit `display:none` entfernt → ebenfalls `VIS-INVARIANT-LOGO-HIDDEN`.
+3. Das Prozessraster wird mit `display:none` entfernt → `VIS-INVARIANT-PROCESS-HIDDEN`.
+4. Logo wird auf offensichtlich unbrauchbare, aber weiterhin gerenderte Geometrie verkleinert → `VIS-DESIGN-LOGO-SIZE`.
 
-Damit beweist der Test nicht nur, dass die Seite aktuell grün ist, sondern auch, dass er die beiden unterschiedlichen Fehlerarten tatsächlich erkennt. `display:none` und `visibility:hidden` werden dabei beide vor der Größenklassifikation als technische Sichtbarkeitsregression behandelt.
+Damit beweist der Test nicht nur, dass die Seite aktuell grün ist, sondern auch, dass er die beiden unterschiedlichen Fehlerarten tatsächlich erkennt. Eigene oder durch einen Vorfahren verursachte Nichtdarstellung wird über reale Rendergeometrie vor jeder Designklassifikation als technische Regression behandelt. `display:none` und `visibility:hidden` bleiben zusätzlich explizit abgesichert.
 
 ## Abgrenzung
 

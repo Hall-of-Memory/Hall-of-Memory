@@ -36,11 +36,12 @@ Keine Änderung an CSS, Astro-Komponenten, Content, Kunden-Copy, Produktion oder
 
 1. Die unbegründeten exakten 72-/54-Pixel-Logoassertions sind aus `test:visual` entfernt, ohne CSS-Werte zu verändern.
 2. Kritische Checks für Overflow, Assets, Navigation, Prozesslayout, Logo und Evidence liefern stabile Failure-Codes.
-3. Eine kontrollierte technische Regression (`display:none` am Logo) wird als `VIS-INVARIANT-LOGO-HIDDEN` erkannt, bevor eine Größenklassifikation greifen kann.
-4. Eine kontrollierte design-sensitive Abweichung wird als `VIS-DESIGN-LOGO-SIZE` erkannt.
-5. Der reale Visual-Test bleibt für Desktop, Tablet und Mobil einschließlich sechs Full-Page-Screenshots und Rahmenvariante 10 grün.
-6. `npm run verify` bleibt kanonisch und vollständig grün.
-7. Der PR ist auf #42 gestapelt; #42 selbst bleibt unverändert und wartet weiterhin auf menschliche visuelle Abnahme.
+3. Nicht gerenderte Logos werden unabhängig davon, ob das Bild selbst oder ein Vorfahr verborgen ist, als `VIS-INVARIANT-LOGO-HIDDEN` erkannt, bevor eine Größenklassifikation greifen kann.
+4. Ein vollständig ausgeblendeter Ablaufbereich wird als `VIS-INVARIANT-PROCESS-HIDDEN` erkannt, bevor Raster/Spalten als design-sensitive bewertet werden.
+5. Eine kontrollierte design-sensitive Logo-Abweichung wird als `VIS-DESIGN-LOGO-SIZE` erkannt.
+6. Der reale Visual-Test bleibt für Desktop, Tablet und Mobil einschließlich sechs Full-Page-Screenshots und Rahmenvariante 10 grün.
+7. `npm run verify` bleibt kanonisch und vollständig grün.
+8. Der PR ist auf #42 gestapelt; #42 selbst bleibt unverändert und wartet weiterhin auf menschliche visuelle Abnahme.
 
 ## Abschlussbelege – 31.08.2026
 

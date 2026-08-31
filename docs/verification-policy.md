@@ -36,6 +36,12 @@ Eine Prüfung belegt Artefakt-, Preview- oder Readback-Wahrheit. Bei einem Fehle
 
 Ein Check kann mehrere Klassen tragen. `test:visual` ist bewusst gemischt: dort können sowohl echte Invarianten als auch design-sensitive Erwartungen und Evidence betroffen sein. Die Klassen ersetzen deshalb niemals das Lesen der konkreten Fehlermeldung.
 
+## Visualer Detailvertrag
+
+Die konkrete Visual-Triage, Pixelregel und die stabilen `VIS-INVARIANT-*`-, `VIS-DESIGN-*`- und `VIS-EVIDENCE-*`-Fehlercodes sind in [`docs/visual-verification-contract.md`](visual-verification-contract.md) definiert.
+
+Neue kritische Browserassertions sollen dort einordenbar sein. Exakte Pixelwerte werden nur dann als bindender Testvertrag verwendet, wenn eine aktuelle Kunden-, Marken- oder Produktentscheidung genau diesen Wert ausdrücklich festlegt.
+
 ## Redesign-Regel
 
 Bei einem ausdrücklich dokumentierten Kundenredesign gilt die aktuelle Kunden-/Taskentscheidung als Designautorität. Ein `DESIGN-SENSITIVE`-Fehler darf nicht reflexartig dadurch behoben werden, dass die neue Gestaltung auf eine ältere visuelle Baseline zurückgesetzt wird. Gleichzeitig bleiben `INVARIANT`-Anteile bindend.

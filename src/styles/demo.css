@@ -13,6 +13,7 @@
   --hom-gold-soft:#ddc18c;
   --hom-dark:#080807;
   --hom-focus-light:#765222;
+  --hom-control-border:#8f806e;
   overflow-x:hidden;
   background:var(--hom-dark);
   color:#f1e9d9;
@@ -93,7 +94,7 @@
 .demo-offer-details summary::-webkit-details-marker,.demo-faq-list summary::-webkit-details-marker{display:none}
 .hom-product-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}
 .hom-product-actions a,.hom-packages-copy>a{min-height:43px;display:inline-flex;align-items:center;justify-content:center;padding:0 16px;border:1px solid #24201b;border-radius:5px;background:#171512;color:#fff;font-size:.7rem;font-weight:800;letter-spacing:.05em;text-decoration:none;text-transform:uppercase}
-.hom-product-actions a+a{background:transparent;color:#30291f;border-color:#cfc1ad}
+.hom-product-actions a+a{background:transparent;color:#30291f;border-color:var(--hom-control-border)}
 .demo-offer-card:focus-within{outline:2px solid var(--hom-focus-light);outline-offset:3px}
 .hom-products a:focus-visible,
 .hom-products summary:focus-visible,
@@ -169,10 +170,10 @@
 .inquiry-step{padding-top:5px}
 .inquiry-step legend{width:100%;margin-bottom:12px;color:#2d2720;font-family:Georgia,serif;font-size:1.25rem}
 .inquiry-step legend span{margin-right:9px;color:#765222;font-family:Inter,sans-serif;font-size:.65rem;letter-spacing:.11em}
-.demo-inquiry-card input,.demo-inquiry-card select,.demo-inquiry-card textarea{border-color:#d8cfc2;background:#fffdf9;color:#191510}
+.demo-inquiry-card input,.demo-inquiry-card select,.demo-inquiry-card textarea{border-color:var(--hom-control-border);background:#fffdf9;color:#191510}
 .demo-inquiry-card label{color:#62594f}
 .demo-inquiry-card .optional{color:#6d655c}
-.demo-inquiry-card .demo-submit{width:100%}
+.demo-inquiry-card .demo-submit{width:100%;border-color:var(--hom-control-border)}
 .demo-form-legal{margin:-6px 0 0;color:#756c62;font-size:.68rem;text-align:center}
 
 .demo-faq-contact{padding-block:clamp(82px,9vw,124px);border-top:1px solid rgba(255,255,255,.06);background:#11100f}
@@ -192,7 +193,7 @@
 .demo-contact-card>p:not(.eyebrow){color:#62584d}
 .demo-contact-card .button{width:100%;margin-top:9px}
 .demo-contact-card .button-primary{background:#17130f;color:var(--demo-cream)}
-.demo-contact-card .button-ghost{border-color:rgba(23,19,15,.22);color:#17130f}
+.demo-contact-card .button-ghost{border-color:var(--hom-control-border);color:#17130f}
 .demo-whatsapp-pending{display:block;margin-top:14px;color:#706257;font-size:.67rem;text-align:center}
 
 .demo-whatsapp-fab{position:fixed;z-index:30;right:20px;bottom:20px;min-height:50px;padding:0 16px 0 12px;display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(234,211,155,.38);border-radius:999px;color:#0d0b08;background:linear-gradient(135deg,#ead39b,#bf934e);box-shadow:0 14px 38px rgba(0,0,0,.34);font-size:.72rem;font-weight:700}

@@ -66,6 +66,10 @@ const heroBorderIndex = demoCssSource.lastIndexOf('.demo-hero-image-wrap{');
 assert.ok(forcedColorsIndex > heroBorderIndex, 'forced-colors contract must follow normal hero border rules in the cascade');
 assert.match(demoCssSource, /\.demo-inquiry-card\{[^}]*color-scheme:light[^}]*\}/, 'light inquiry controls must opt out of the global dark color scheme');
 assert.match(demoCssSource, /outline-color:var\(--hom-focus-light\)/, 'light redesign surfaces must override the global gold focus color');
+assert.match(demoCssSource, /\.hom-product-actions a\+a\{[^}]*border-color:var\(--hom-control-border\)/, 'secondary product CTA must use the light-surface control border');
+assert.match(demoCssSource, /\.demo-inquiry-card input,[^{]+\{[^}]*border-color:var\(--hom-control-border\)/, 'light form controls must use the light-surface control border');
+assert.match(demoCssSource, /\.demo-contact-card \.button-ghost\{[^}]*border-color:var\(--hom-control-border\)/, 'light contact ghost button must use the light-surface control border');
+assert.match(demoCssSource, /\.demo-inquiry-card \.demo-submit\{[^}]*border-color:var\(--hom-control-border\)/, 'light submit button must expose a persistent control boundary');
 
 const cssHex = (source, pattern, label) => {
   const match = source.match(pattern);
@@ -107,9 +111,14 @@ const demoCream = cssHex(demoCssSource, /--demo-cream:(#[0-9a-f]{6})/i, 'demo cr
 assertContrast('pending WhatsApp label', whatsappPendingColor, demoCream);
 
 const lightFocusColor = cssHex(demoCssSource, /--hom-focus-light:(#[0-9a-f]{6})/i, 'light-surface focus');
+const controlBorderColor = cssHex(demoCssSource, /--hom-control-border:(#[0-9a-f]{6})/i, 'light-surface control border');
 const formControlBackground = cssHex(demoCssSource, /\.demo-inquiry-card input,[^{]+\{[^}]*background:(#[0-9a-f]{6})/i, 'form control background');
 assertContrast('light form focus indicator', lightFocusColor, formControlBackground, 3);
 assertContrast('light contact focus indicator', lightFocusColor, demoCream, 3);
+assertContrast('form control boundary', controlBorderColor, formControlBackground, 3);
+assertContrast('secondary product CTA boundary', controlBorderColor, '#fffdf9', 3);
+assertContrast('contact ghost button boundary', controlBorderColor, demoCream, 3);
+assertContrast('submit button boundary', controlBorderColor, '#ffffff', 3);
 
 const inquiryStepNumberColor = cssHex(demoCssSource, /\.inquiry-step legend span\{[^}]*color:(#[0-9a-f]{6})/i, 'inquiry step number');
 const inquiryOptionalColor = cssHex(demoCssSource, /\.demo-inquiry-card \.optional\{[^}]*color:(#[0-9a-f]{6})/i, 'inquiry optional label');

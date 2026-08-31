@@ -272,6 +272,7 @@
 
 /* Accessibility modes must win the cascade. */
 @media (prefers-reduced-motion: reduce){
+  .hom-product-card,.demo-offer-details summary span{transition:none}
   .demo-offer-card:hover,.demo-offer-card:focus-within,.demo-whatsapp-fab:hover{transform:none}
 }
 @media (forced-colors: active){

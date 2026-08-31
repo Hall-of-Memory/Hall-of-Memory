@@ -36,7 +36,7 @@ Keine Änderung an CSS, Astro-Komponenten, Content, Kunden-Copy, Produktion oder
 
 1. Die unbegründeten exakten 72-/54-Pixel-Logoassertions sind aus `test:visual` entfernt, ohne CSS-Werte zu verändern.
 2. Kritische Checks für Overflow, Assets, Navigation, Prozesslayout, Logo und Evidence liefern stabile Failure-Codes.
-3. Eine kontrollierte technische Regression wird als `VIS-INVARIANT-LOGO-HIDDEN` erkannt.
+3. Eine kontrollierte technische Regression (`display:none` am Logo) wird als `VIS-INVARIANT-LOGO-HIDDEN` erkannt, bevor eine Größenklassifikation greifen kann.
 4. Eine kontrollierte design-sensitive Abweichung wird als `VIS-DESIGN-LOGO-SIZE` erkannt.
 5. Der reale Visual-Test bleibt für Desktop, Tablet und Mobil einschließlich sechs Full-Page-Screenshots und Rahmenvariante 10 grün.
 6. `npm run verify` bleibt kanonisch und vollständig grün.

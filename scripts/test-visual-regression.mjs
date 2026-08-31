@@ -182,7 +182,7 @@ const measureDemo = (cdp, sessionId) => evaluate(cdp, sessionId, `(()=>{
     viewport:{width:innerWidth,height:innerHeight},
     documentWidth:document.documentElement.scrollWidth,
     clientWidth:document.documentElement.clientWidth,
-    logo:logo?{rect:rect(logo),naturalWidth:logo.naturalWidth,naturalHeight:logo.naturalHeight,visibility:getComputedStyle(logo).visibility}:null,
+    logo:logo?{rect:rect(logo),naturalWidth:logo.naturalWidth,naturalHeight:logo.naturalHeight,display:getComputedStyle(logo).display,visibility:getComputedStyle(logo).visibility}:null,
     header:rect(header),nav:rect(nav),hero:rect(hero),
     eventPhoto:eventPhoto?{rect:rect(eventPhoto),naturalWidth:eventPhoto.naturalWidth,naturalHeight:eventPhoto.naturalHeight}:null,
     process:process?{display:getComputedStyle(process).display,columns:getComputedStyle(process).gridTemplateColumns,items:processItems}:null,
@@ -250,7 +250,7 @@ const assertDemo = (measurement, viewport) => {
   }
   visualEqual(measurement.viewport.width, viewport.width, 'VIS-EVIDENCE-VIEWPORT', `${viewport.name}: viewport width drifted`);
   visualCheck(measurement.documentWidth <= measurement.clientWidth + 1, 'VIS-INVARIANT-HORIZONTAL-OVERFLOW', `${viewport.name}: page has horizontal overflow (${measurement.documentWidth} > ${measurement.clientWidth})`);
-  visualCheck(measurement.logo.visibility !== 'hidden', 'VIS-INVARIANT-LOGO-HIDDEN', `${viewport.name}: logo is hidden`);
+  visualCheck(measurement.logo.display !== 'none' && measurement.logo.visibility !== 'hidden', 'VIS-INVARIANT-LOGO-HIDDEN', `${viewport.name}: logo is not rendered (display=${measurement.logo.display}, visibility=${measurement.logo.visibility})`);
   visualCheck(measurement.logo.naturalWidth > 0 && measurement.logo.naturalHeight > 0, 'VIS-INVARIANT-BROKEN-ASSET', `${viewport.name}: logo asset did not load`);
 
   // There is no customer- or brand-authorized exact logo pixel contract. Guard only
@@ -312,7 +312,7 @@ const main = async () => {
         summaries.push({ view: viewport.name, route: '/demo/', screenshotBytes, settled: demo.settled });
         if (viewport.name === 'desktop') {
           const controlledRegressionCodes = [];
-          await evaluate(cdp, demo.sessionId, `(()=>{const style=document.createElement('style');style.id='t053-controlled-invariant';style.textContent='.demo-header .demo-brand > img{visibility:hidden!important}';document.head.append(style);})()`);
+          await evaluate(cdp, demo.sessionId, `(()=>{const style=document.createElement('style');style.id='t053-controlled-invariant';style.textContent='.demo-header .demo-brand > img{display:none!important}';document.head.append(style);})()`);
           try {
             assertDemo(await measureDemo(cdp, demo.sessionId), viewport);
           } catch (error) {

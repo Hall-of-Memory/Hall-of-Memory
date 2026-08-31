@@ -11,7 +11,7 @@ Die Browser-Regressionstests sichern die Funktion und Belastbarkeit der sichtbar
 Technische oder semantische Eigenschaften, die auch bei einem Redesign erhalten bleiben müssen. Beispiele:
 
 - kein horizontaler Overflow;
-- Logo, Eventfoto und weitere relevante Assets sind geladen;
+- Logo, Eventfoto und weitere relevante Assets sind geladen und tatsächlich gerendert;
 - zentrale Navigation ist vorhanden, sichtbar und geometrisch nutzbar;
 - Logo und Navigation bleiben im Header enthalten;
 - vier Prozessschritte werden vollständig gerendert;
@@ -75,10 +75,10 @@ Neue kritische Visual-Assertions sollen denselben Namensraum verwenden. Ein frei
 
 `test:visual` erzeugt ausschließlich im isolierten Testbrowser zwei temporäre Negativfälle:
 
-1. Logo wird versteckt → erwartet `VIS-INVARIANT-LOGO-HIDDEN`.
+1. Logo wird mit `display:none` aus dem Rendering entfernt → erwartet `VIS-INVARIANT-LOGO-HIDDEN`.
 2. Logo wird auf offensichtlich unbrauchbare Geometrie verkleinert → erwartet `VIS-DESIGN-LOGO-SIZE`.
 
-Damit beweist der Test nicht nur, dass die Seite aktuell grün ist, sondern auch, dass er die beiden unterschiedlichen Fehlerarten tatsächlich erkennt.
+Damit beweist der Test nicht nur, dass die Seite aktuell grün ist, sondern auch, dass er die beiden unterschiedlichen Fehlerarten tatsächlich erkennt. `display:none` und `visibility:hidden` werden dabei beide vor der Größenklassifikation als technische Sichtbarkeitsregression behandelt.
 
 ## Abgrenzung
 

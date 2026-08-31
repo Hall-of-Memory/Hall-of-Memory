@@ -1,6 +1,6 @@
 # T053 – Visual Contract Hardening
 
-Status: active
+Status: done
 
 ## Ziel
 
@@ -41,3 +41,17 @@ Keine Änderung an CSS, Astro-Komponenten, Content, Kunden-Copy, Produktion oder
 5. Der reale Visual-Test bleibt für Desktop, Tablet und Mobil einschließlich sechs Full-Page-Screenshots und Rahmenvariante 10 grün.
 6. `npm run verify` bleibt kanonisch und vollständig grün.
 7. Der PR ist auf #42 gestapelt; #42 selbst bleibt unverändert und wartet weiterhin auf menschliche visuelle Abnahme.
+
+## Abschlussbelege – 31.08.2026
+
+- gestapelter PR: #44 `T053: Semantic visual contracts and failure codes`, Base `redesign/startseite-v1-clean` / #42;
+- Ausgangsbasis von T053: exakter #42-Head `90f2e937ded8f0b63964f488c210866a9ee95bff`;
+- Implementierungscommit: `03aa26eebee1da9ceba04cbaaa60067c48e0492c`;
+- unveränderter Ausgangs-Visual-Test: PASS, Receipt `835359608d7b41932df67b0335df7862a4cf95396024f317dbe94e311c02619b`;
+- finaler gezielter Visual-Test: PASS mit 3 Viewports, 6 Full-Page-Screenshots, Rahmenvariante 10 sowie `VIS-INVARIANT-LOGO-HIDDEN` und `VIS-DESIGN-LOGO-SIZE`, Receipt `14f9d03795d5a461e15e35200cfe9bc748a7371370b64517069f8afdbec431fc`;
+- finaler lokaler kanonischer Verify auf dem vollständigen Implementierungsstand: PASS, Receipt `e22ab1e9ea8fea15af40345685503342e428e2fd6498ed68267f71c87ef9a204`;
+- GitHub Actions Run `33376987060` auf exakt `03aa26eebee1da9ceba04cbaaa60067c48e0492c`: `verify` PASS, Visual-Artefakt-Upload PASS, `pages-runtime` auf Pull Requests erwartungsgemäß SKIPPED;
+- Vercel und Vercel Preview Comments auf demselben PR-Head: PASS;
+- Scope: ausschließlich Testvertrag, Dokumentation und Task-Wahrheit; keine CSS-, Astro-, Content-, Kunden-Copy- oder Produktionsänderung.
+
+T053 ist damit fachlich abgeschlossen. PR #44 bleibt absichtlich gestapelt und darf nicht unabhängig vor #42 integriert werden. Nach Arams visueller Freigabe und Integration von #42 wird #44 gegen den dann aktuellen `main` reconciled beziehungsweise retargeted und erneut exact-head verifiziert.

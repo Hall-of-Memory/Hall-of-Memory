@@ -63,6 +63,7 @@ assert.match(demoCssSource.slice(reducedMotionIndex), /\.demo-offer-details summ
 const forcedColorsIndex = demoCssSource.lastIndexOf('@media (forced-colors: active)');
 const heroBorderIndex = demoCssSource.lastIndexOf('.demo-hero-image-wrap{');
 assert.ok(forcedColorsIndex > heroBorderIndex, 'forced-colors contract must follow normal hero border rules in the cascade');
+assert.match(demoCssSource, /\.demo-inquiry-card\{[^}]*color-scheme:light[^}]*\}/, 'light inquiry controls must opt out of the global dark color scheme');
 
 const cssHex = (pattern, label) => {
   const match = demoCssSource.match(pattern);
@@ -81,13 +82,27 @@ const contrastRatio = (foreground, background) => {
   const values = [luminance(foreground), luminance(background)].sort((a, b) => b - a);
   return (values[0] + 0.05) / (values[1] + 0.05);
 };
+const assertContrast = (label, foreground, background, minimum = 4.5) => {
+  const ratio = contrastRatio(foreground, background);
+  assert.ok(ratio >= minimum, `${label} contrast must be >= ${minimum}:1, got ${ratio.toFixed(2)}:1`);
+};
+
 const sectionLabelColor = cssHex(/\.hom-section-heading \.eyebrow,[^{]+\{[^}]*color:(#[0-9a-f]{6})/i, 'section label');
 const packagesBackground = cssHex(/\.hom-packages\{[^}]*background:(#[0-9a-f]{6})/i, 'packages background');
 const customerBackground = cssHex(/\.hom-customer\{[^}]*background:(#[0-9a-f]{6})/i, 'customer background');
-for (const [label, background] of [['packages', packagesBackground], ['customer', customerBackground]]) {
-  const ratio = contrastRatio(sectionLabelColor, background);
-  assert.ok(ratio >= 4.5, `${label} section label contrast must be >= 4.5:1, got ${ratio.toFixed(2)}:1`);
-}
+assertContrast('packages section label', sectionLabelColor, packagesBackground);
+assertContrast('customer section label', sectionLabelColor, customerBackground);
+
+const processNumberColor = cssHex(/\.hom-process-grid span\{[^}]*color:(#[0-9a-f]{6})/i, 'process number');
+const processBackground = cssHex(/\.hom-process\{[^}]*background:(#[0-9a-f]{6})/i, 'process background');
+assertContrast('process number', processNumberColor, processBackground);
+
+const customerCardLabelColor = cssHex(/\.hom-customer-card p\{[^}]*color:(#[0-9a-f]{6})/i, 'customer card label');
+assertContrast('customer card label', customerCardLabelColor, customerBackground);
+
+const whatsappPendingColor = cssHex(/\.demo-whatsapp-pending\{[^}]*color:(#[0-9a-f]{6})/i, 'pending WhatsApp label');
+const demoCream = cssHex(/--demo-cream:(#[0-9a-f]{6})/i, 'demo cream');
+assertContrast('pending WhatsApp label', whatsappPendingColor, demoCream);
 
 const overview = await readFile(path.join(root, 'demo/rahmen/index.html'), 'utf8');
 for (let variant = 1; variant <= 10; variant += 1) {

@@ -130,7 +130,7 @@
 .hom-process-grid li{position:relative;padding:30px 34px 12px 0;border-right:1px solid #d9cebf}
 .hom-process-grid li+li{padding-left:34px}
 .hom-process-grid li:last-child{border-right:0}
-.hom-process-grid span{color:#a67e40;font-size:.68rem;letter-spacing:.14em}
+.hom-process-grid span{color:#765222;font-size:.68rem;letter-spacing:.14em}
 .hom-process-grid h3{margin:18px 0 8px;color:#211b15;font-family:Georgia,serif;font-size:1.45rem;font-weight:500}
 .hom-process-grid p{margin:0;color:#72685e;font-size:.84rem;line-height:1.65}
 
@@ -140,7 +140,7 @@
 .hom-customer-grid>div:first-child>p:last-child{max-width:620px;margin:20px 0 0;color:#5e554b;line-height:1.75}
 .hom-customer-card{min-height:360px;padding:42px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;border:1px solid rgba(93,67,35,.2);background:rgba(255,253,248,.78);box-shadow:0 24px 55px rgba(75,56,34,.1)}
 .hom-customer-star{margin-bottom:22px;color:#b58a47;font-size:2.2rem}
-.hom-customer-card p{margin:0 0 7px;color:#9a753c;font-size:.63rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.hom-customer-card p{margin:0 0 7px;color:#765222;font-size:.63rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
 .hom-customer-card strong{color:#201a15;font-family:Georgia,serif;font-size:1.8rem;font-weight:500}
 .hom-customer-card small{margin-top:10px;color:#756b60}
 .hom-customer-preview{margin-top:26px;padding-top:12px;border-top:1px solid #cbbca8;color:#61564b;font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
@@ -156,7 +156,7 @@
 .demo-inquiry-intro>p:not(.eyebrow){line-height:1.75}
 .demo-inquiry-shortcuts{margin-top:26px;display:flex;flex-wrap:wrap;gap:7px}
 .demo-inquiry-shortcuts span{padding:6px 9px;border:1px solid rgba(83,66,45,.16);color:#756b60;font-size:.62rem;text-transform:uppercase;letter-spacing:.09em}
-.demo-inquiry-card{gap:22px;padding:clamp(23px,4vw,38px);border:1px solid #ddd4c7;background:#fff;box-shadow:0 18px 44px rgba(49,39,28,.08)}
+.demo-inquiry-card{gap:22px;padding:clamp(23px,4vw,38px);border:1px solid #ddd4c7;background:#fff;box-shadow:0 18px 44px rgba(49,39,28,.08);color-scheme:light}
 .inquiry-step{padding-top:5px}
 .inquiry-step legend{width:100%;margin-bottom:12px;color:#2d2720;font-family:Georgia,serif;font-size:1.25rem}
 .inquiry-step legend span{margin-right:9px;color:#9a7338;font-family:Inter,sans-serif;font-size:.65rem;letter-spacing:.11em}
@@ -183,7 +183,7 @@
 .demo-contact-card .button{width:100%;margin-top:9px}
 .demo-contact-card .button-primary{background:#17130f;color:var(--demo-cream)}
 .demo-contact-card .button-ghost{border-color:rgba(23,19,15,.22);color:#17130f}
-.demo-whatsapp-pending{display:block;margin-top:14px;color:#776a5d;font-size:.67rem;text-align:center}
+.demo-whatsapp-pending{display:block;margin-top:14px;color:#706257;font-size:.67rem;text-align:center}
 
 .demo-whatsapp-fab{position:fixed;z-index:30;right:20px;bottom:20px;min-height:50px;padding:0 16px 0 12px;display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(234,211,155,.38);border-radius:999px;color:#0d0b08;background:linear-gradient(135deg,#ead39b,#bf934e);box-shadow:0 14px 38px rgba(0,0,0,.34);font-size:.72rem;font-weight:700}
 .demo-whatsapp-fab svg{width:24px;height:24px;fill:currentColor}

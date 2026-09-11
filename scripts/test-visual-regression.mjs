@@ -315,6 +315,7 @@ const main = async () => {
     cdp = await connectCdp(browser.websocketUrl);
     const browserVersion = await cdp.send('Browser.getVersion');
     const summaries = [];
+    const controlledRegressionCodes = [];
     for (const viewport of viewports) {
       const demo = await openPage(cdp, `${origin}/demo/`, viewport);
       try {
@@ -323,7 +324,6 @@ const main = async () => {
         const screenshotBytes = await captureFullPage(cdp, demo.sessionId, join(artifacts, `${viewport.name}-demo.png`));
         summaries.push({ view: viewport.name, route: '/demo/', screenshotBytes, settled: demo.settled });
         if (viewport.name === 'desktop') {
-          const controlledRegressionCodes = [];
           const controlledCases = [
             { id: 't053-logo-self-hidden', css: '.demo-header .demo-brand > img{display:none!important}', expected: 'VIS-INVARIANT-LOGO-HIDDEN' },
             { id: 't053-logo-ancestor-hidden', css: '.demo-header .demo-brand{display:none!important}', expected: 'VIS-INVARIANT-LOGO-HIDDEN' },
@@ -394,10 +394,10 @@ const main = async () => {
       browserExecutable,
       viewports,
       summaries,
-      controlledRegressionDetected: true,
-      controlledRegressionCodes: ['VIS-INVARIANT-LOGO-HIDDEN', 'VIS-INVARIANT-LOGO-HIDDEN', 'VIS-INVARIANT-PROCESS-HIDDEN', 'VIS-INVARIANT-PROCESS-HIDDEN', 'VIS-INVARIANT-LOGO-HIDDEN', 'VIS-DESIGN-LOGO-SIZE'],
+      controlledRegressionDetected: controlledRegressionCodes.length > 0,
+      controlledRegressionCodes,
     }, null, 2)}\n`);
-    console.log(`visual-regression-ok viewports=${viewports.length} screenshots=${summaries.length} controlled_regression_codes=VIS-INVARIANT-LOGO-HIDDEN,VIS-INVARIANT-LOGO-HIDDEN,VIS-INVARIANT-PROCESS-HIDDEN,VIS-INVARIANT-PROCESS-HIDDEN,VIS-INVARIANT-LOGO-HIDDEN,VIS-DESIGN-LOGO-SIZE frame_variant=10 browser=${browserVersion.product}`);
+    console.log(`visual-regression-ok viewports=${viewports.length} screenshots=${summaries.length} controlled_regression_codes=${controlledRegressionCodes.join(',')} frame_variant=10 browser=${browserVersion.product}`);
   } finally {
     try {
       if (cdp?.socket?.readyState === WebSocket.OPEN) cdp.socket.close();

@@ -74,7 +74,7 @@ Neue kritische Visual-Assertions sollen denselben Namensraum verwenden. Ein frei
 
 ## Kontrollierte Regressionen
 
-`test:visual` erzeugt ausschließlich im isolierten Testbrowser zwei temporäre Negativfälle:
+`test:visual` erzeugt ausschließlich im isolierten Testbrowser sechs temporäre Negativfälle:
 
 1. Logo selbst wird mit `display:none` aus dem Rendering entfernt → `VIS-INVARIANT-LOGO-HIDDEN`.
 2. Der Logo-Vorfahre `.demo-brand` wird mit `display:none` entfernt → ebenfalls `VIS-INVARIANT-LOGO-HIDDEN`.

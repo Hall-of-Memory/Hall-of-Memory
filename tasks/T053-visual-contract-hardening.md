@@ -41,7 +41,7 @@ Keine Änderung an CSS, Astro-Komponenten, Content, Kunden-Copy, Produktion oder
 5. Eine kontrollierte design-sensitive Logo-Abweichung wird als `VIS-DESIGN-LOGO-SIZE` erkannt.
 6. Der reale Visual-Test bleibt für Desktop, Tablet und Mobil einschließlich sechs Full-Page-Screenshots und Rahmenvariante 10 grün.
 7. `npm run verify` bleibt kanonisch und vollständig grün.
-8. Der PR ist auf #42 gestapelt; #42 selbst bleibt unverändert und wartet weiterhin auf menschliche visuelle Abnahme.
+8. Nach Integration von #42 wird #44 auf `main` retargetet, gegen den exakten neuen Base-Stand konvergiert und auf dem daraus entstehenden Head erneut vollständig verifiziert.
 
 ## Abschlussbelege – 31.08.2026
 
@@ -55,4 +55,12 @@ Keine Änderung an CSS, Astro-Komponenten, Content, Kunden-Copy, Produktion oder
 - Vercel und Vercel Preview Comments auf demselben PR-Head: PASS;
 - Scope: ausschließlich Testvertrag, Dokumentation und Task-Wahrheit; keine CSS-, Astro-, Content-, Kunden-Copy- oder Produktionsänderung.
 
-T053 ist damit fachlich abgeschlossen. PR #44 bleibt absichtlich gestapelt und darf nicht unabhängig vor #42 integriert werden. Nach Arams visueller Freigabe und Integration von #42 wird #44 gegen den dann aktuellen `main` reconciled beziehungsweise retargeted und erneut exact-head verifiziert.
+## Reconciliation nach T051 — 11.09.2026
+
+- T051/#42 wurde nach revisionsgebundener visueller Freigabe als Merge-Commit `dd227358e2b2f0adcdb7182cbbff0c491d150bba` in `main` integriert.
+- PR #44 wurde anschließend von `redesign/startseite-v1-clean` auf `main` retargetet.
+- Der zuvor geprüfte T053-Head `13514b75e4cbcc8286e59d0bef83d4200e5cc412` wurde per exact-base/head-CAS gegen `main@dd227358e2b2f0adcdb7182cbbff0c491d150bba` konvergiert.
+- Der daraus entstandene Head `31eb05ae830b579f4a58ccabd6e29f4559ee1a5f` enthält sowohl den exakten neuen Base-Stand als auch den vollständigen bisherigen T053-Head; derselbe PR #44 und derselbe Head-Branch wurden erhalten.
+- GitHub `verify` und Vercel waren auf diesem konvergierten Head grün. Dieser reine Task-Wahrheitsnachtrag erzeugt danach absichtlich einen weiteren Exact-Head, der vor Merge erneut verifiziert werden muss.
+
+T053 ist fachlich abgeschlossen. Nach der Integration von #42 ist #44 nun auf `main` gebunden und reconciliert; verbleibend ist ausschließlich die erneute Exact-Head-Verifikation dieses dokumentations-only Closeout-Commits vor dem Merge.

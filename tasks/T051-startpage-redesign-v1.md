@@ -1,6 +1,6 @@
 # T051 – Startseite Redesign V1
 
-Status: active — sauberer Successor von PR #37 technisch verifiziert; visuelle Preview-Abnahme offen
+Status: merge-ready — sauberer Successor von PR #37 technisch verifiziert; menschliche visuelle Preview-Abnahme am 11.09.2026 erteilt
 
 ## Ziel
 
@@ -56,7 +56,7 @@ Der erste saubere Implementierungs-Head `304b38905d705a9e7cb8d396462705f74687441
 
 Der Successor-Diff gegen die Ausgangsbasis `6cf1f81c80ee9ee5a58ad7aacc591e99c0a2c8c1` besteht aus einem Implementierungscommit und sieben Dateien; `DemoExperience.astro` sowie zusätzliche Redesign-Stylesheets sind nicht Teil des Diffs.
 
-Jeder nachfolgende Evidence-/Dokumentationscommit muss auf seinem exakten Head erneut den geschützten `verify`-Check bestehen. Vor Merge bleibt zusätzlich die menschliche visuelle Preview-Abnahme erforderlich.
+Jeder nachfolgende Evidence-/Dokumentationscommit muss auf seinem exakten Head erneut den geschützten `verify`-Check bestehen. Die menschliche visuelle Preview-Abnahme wurde am 11.09.2026 für den revisionsgebundenen UI-Stand `4ad40cee7a122b7338dbe85398f0c68c4c8bff79` erteilt.
 
 ## Herkunft
 
@@ -66,4 +66,8 @@ Die sichtbaren Copy-, Hero-, Farb- und Informationsarchitekturentscheidungen sta
 
 Der Successor wurde nach Integration von T052 erneut auf den aktuellen `main`-Stand `ff15ccc8a1c8c645fe1dbeb1e152d0e03093f722` gebracht. Der einzige Mergekonflikt betraf `tasks/INDEX.md`: T051 aus dem Redesign-Branch und das auf `main` abgeschlossene T052 wurden gemeinsam erhalten. Es gab keinen Mergekonflikt in Showcase, Produktcopy oder `demo.css`; die Kunden-UI wurde bei dieser Reconciliation nicht neu gestaltet.
 
-Nach der Konfliktauflösung lief der neue kanonische T052-Verify vollständig durch: **23 PASS / 0 FAIL / 0 BLOCKED**, terminaler Receipt `b7ddd026f78aa46856804ba4d5da45d6deba20432708c1b6f473c9ff016deb0a`. Der lokale Merge-Commit ist `2a111c7`. Vor einem Merge von T051 bleibt die menschliche visuelle Preview-Abnahme bindend.
+Nach der Konfliktauflösung lief der neue kanonische T052-Verify vollständig durch: **23 PASS / 0 FAIL / 0 BLOCKED**, terminaler Receipt `b7ddd026f78aa46856804ba4d5da45d6deba20432708c1b6f473c9ff016deb0a`. Der lokale Merge-Commit ist `2a111c7`.
+
+## Visuelle Freigabe — 11.09.2026
+
+Vor der Freigabe wurde PR #42 auf den aktuellen `main`-Stand reconciliert und als exakter Head `4ad40cee7a122b7338dbe85398f0c68c4c8bff79` erneut verifiziert. GitHub `verify`, Vercel und das lokale kanonische `npm run verify` waren grün; offene Review-Threads: 0. Der revisionsgebundene Build wurde zusätzlich über einen privaten Tailscale-HTTPS-Preview auf dem physischen iPad 10 bereitgestellt. Alexander hat die sichtbare Preview am 11.09.2026 ausdrücklich mit „freigegeben“ abgenommen. Dieser Dokumentationsnachtrag verändert keine Website-, CSS-, Content- oder Asset-Bytes und erfordert vor Merge nur die vorgeschriebene erneute Exact-Head-Verifikation.

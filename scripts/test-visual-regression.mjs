@@ -174,6 +174,9 @@ const measureDemo = (cdp, sessionId) => evaluate(cdp, sessionId, `(()=>{
   const nav=document.querySelector('.demo-header .demo-nav');
   const hero=document.querySelector('.demo-hero-image-wrap');
   const eventPhoto=document.querySelector('.demo-hero-event-photo');
+  const process=document.querySelector('.hom-process-grid');
+  const processItems=process?[...process.querySelectorAll(':scope > li')].map(item=>rect(item)):[];
+  const customerPreview=document.querySelector('.hom-customer-preview');
   const links=nav?[...nav.querySelectorAll('a')].map(link=>({display:getComputedStyle(link).display,visibility:getComputedStyle(link).visibility,rect:rect(link)})):[];
   return {
     viewport:{width:innerWidth,height:innerHeight},
@@ -182,6 +185,8 @@ const measureDemo = (cdp, sessionId) => evaluate(cdp, sessionId, `(()=>{
     logo:logo?{rect:rect(logo),naturalWidth:logo.naturalWidth,naturalHeight:logo.naturalHeight,visibility:getComputedStyle(logo).visibility}:null,
     header:rect(header),nav:rect(nav),hero:rect(hero),
     eventPhoto:eventPhoto?{rect:rect(eventPhoto),naturalWidth:eventPhoto.naturalWidth,naturalHeight:eventPhoto.naturalHeight}:null,
+    process:process?{display:getComputedStyle(process).display,columns:getComputedStyle(process).gridTemplateColumns,items:processItems}:null,
+    customerPreview:customerPreview?{tag:customerPreview.tagName,text:customerPreview.textContent.trim(),borderTop:getComputedStyle(customerPreview).borderTopWidth,borderRight:getComputedStyle(customerPreview).borderRightWidth,borderBottom:getComputedStyle(customerPreview).borderBottomWidth,borderLeft:getComputedStyle(customerPreview).borderLeftWidth}:null,
     links,title:document.title,
   };
 })()`);
@@ -194,11 +199,17 @@ const measureFrame = (cdp, sessionId, variant) => evaluate(cdp, sessionId, `(()=
   const r=frame.getBoundingClientRect();
   const ir=image.getBoundingClientRect();
   const before=getComputedStyle(frame,'::before');
+  const products=document.querySelector('.hom-products');
+  const productGrid=document.querySelector('.hom-product-grid');
+  const firstProduct=document.querySelector('.hom-product-card');
   return {
     variant:frame.dataset.frameVariant,consumer:frame.dataset.frameConsumer,kind:frame.dataset.frameKind,frameSize:frame.dataset.frameSize??null,
     insetInner:frame.dataset.frameInsetInner??null,insetOuter:frame.dataset.frameInsetOuter??null,
     frame:{width:r.width,height:r.height},image:{width:ir.width,height:ir.height,naturalWidth:image.naturalWidth,naturalHeight:image.naturalHeight},
     objectFit:getComputedStyle(image).objectFit,backgroundImage:before.backgroundImage,sliderValue:slider?.value??null,
+    products:products?{display:getComputedStyle(products).display,backgroundImage:getComputedStyle(products).backgroundImage,rect:{width:products.getBoundingClientRect().width,height:products.getBoundingClientRect().height}}:null,
+    productGrid:productGrid?{display:getComputedStyle(productGrid).display,columns:getComputedStyle(productGrid).gridTemplateColumns,rect:{width:productGrid.getBoundingClientRect().width,height:productGrid.getBoundingClientRect().height}}:null,
+    firstProduct:firstProduct?{rect:{width:firstProduct.getBoundingClientRect().width,height:firstProduct.getBoundingClientRect().height}}:null,
     url:location.pathname+location.search+location.hash,
   };
 })()`);
@@ -213,6 +224,18 @@ const assertDemo = (measurement, viewport) => {
   assert.ok(measurement.nav, `${viewport.name}: navigation is missing`);
   assert.ok(measurement.hero, `${viewport.name}: hero frame is missing`);
   assert.ok(measurement.eventPhoto, `${viewport.name}: hero event photo is missing`);
+  assert.ok(measurement.process, `${viewport.name}: process section is missing`);
+  assert.equal(measurement.process.display, 'grid', `${viewport.name}: process section lost grid layout`);
+  assert.equal(measurement.process.items.length, 4, `${viewport.name}: process must render all four customer steps`);
+  const expectedProcessColumns = viewport.name === 'desktop' ? 4 : viewport.name === 'tablet' ? 2 : 1;
+  const processColumnCount = measurement.process.columns.trim().split(/\s+/).filter(Boolean).length;
+  assert.equal(processColumnCount, expectedProcessColumns, `${viewport.name}: process grid must use ${expectedProcessColumns} balanced column(s), got ${measurement.process.columns}`);
+  assert.ok(measurement.customerPreview, `${viewport.name}: customer-area preview label is missing`);
+  assert.equal(measurement.customerPreview.tag, 'SPAN', `${viewport.name}: customer-area preview must remain informational, not interactive`);
+  assert.equal(measurement.customerPreview.text, 'Vorschau Kundenbereich', `${viewport.name}: customer-area preview must not promise a dead action`);
+  assert.equal(measurement.customerPreview.borderRight, '0px', `${viewport.name}: customer-area preview still looks like a button on the right edge`);
+  assert.equal(measurement.customerPreview.borderBottom, '0px', `${viewport.name}: customer-area preview still looks like a button on the bottom edge`);
+  assert.equal(measurement.customerPreview.borderLeft, '0px', `${viewport.name}: customer-area preview still looks like a button on the left edge`);
   assert.equal(measurement.viewport.width, viewport.width, `${viewport.name}: viewport width drifted`);
   assert.ok(measurement.documentWidth <= measurement.clientWidth + 1, `${viewport.name}: page has horizontal overflow (${measurement.documentWidth} > ${measurement.clientWidth})`);
   assert.notEqual(measurement.logo.visibility, 'hidden', `${viewport.name}: logo is hidden`);
@@ -301,6 +324,13 @@ const main = async () => {
         assert.ok(frameRatio > 0.77 && frameRatio < 0.83, `${viewport.name}: portrait frame ratio drifted (${frameRatio})`);
         assert.ok(frame.image.width > 0 && frame.image.height > 0 && frame.image.naturalWidth > 0, `${viewport.name}: frame event photo has no loaded geometry`);
         assert.match(frame.backgroundImage, /url\(/, `${viewport.name}: frame mask is not rendered`);
+        assert.ok(frame.products, `${viewport.name}: frame detail product section is missing`);
+        assert.ok(frame.productGrid, `${viewport.name}: frame detail product grid is missing`);
+        assert.ok(frame.firstProduct, `${viewport.name}: frame detail product card is missing`);
+        assert.equal(frame.productGrid.display, 'grid', `${viewport.name}: frame detail product grid lost landing-page styling`);
+        assert.notEqual(frame.products.backgroundImage, 'none', `${viewport.name}: frame detail product section lost redesign background`);
+        assert.ok(frame.products.rect.width >= 250 && frame.products.rect.height >= 500, `${viewport.name}: frame detail product section has no visible styled geometry`);
+        assert.ok(frame.firstProduct.rect.width >= 250 && frame.firstProduct.rect.height >= 300, `${viewport.name}: frame detail product card has no visible styled geometry`);
         const normalized = normalizeUrl(origin, frame.url);
         assert.equal(normalized.searchParams.has('bild'), false, `${viewport.name}: legacy bild query was not removed`);
         assert.equal(normalized.searchParams.has('kasten'), false, `${viewport.name}: legacy kasten query was not removed`);

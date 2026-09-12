@@ -56,3 +56,4 @@
 | T051 | done | Startseite Redesign V1: Successor von PR #37 technisch verifiziert, visuell freigegeben und über PR #42 in `main` integriert |
 | T052 | done | Kanonischen Verify um vollständige unabhängige Fehlerdiagnose und Redesign-Triage erweitert |
 | T053 | done | Visuellen Testvertrag von unbegründeten Pixelwerten auf semantische Invarianten, Failure-Codes und kontrollierte Fehlerklassen gehärtet |
+| T054 | done | Security-Dependency-Konvergenz: minimaler sicherer Lockfile-/Wrangler-Slice nach Gesamt-Audit |

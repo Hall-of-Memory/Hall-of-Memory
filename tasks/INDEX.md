@@ -53,5 +53,6 @@
 | T048 | done | Testarchitektur in Contract-, Visual- und Performance-Gates entkoppeln |
 | T049 | blocked_external | Inquiry-/Admin-Datenschutz technisch gehärtet; konkrete Retention-/Löschpolicy wartet auf T008/T011 |
 | T050 | done | Lokalen kanonischen Verify gegen stale direkte Installationsstände fail-closed härten |
-| T051 | active | Startseite Redesign V1: sauberer Successor von PR #37 technisch verifiziert; visuelle Preview-Abnahme offen |
+| T051 | done | Startseite Redesign V1: Successor von PR #37 technisch verifiziert, visuell freigegeben und über PR #42 in `main` integriert |
 | T052 | done | Kanonischen Verify um vollständige unabhängige Fehlerdiagnose und Redesign-Triage erweitert |
+| T053 | done | Visuellen Testvertrag von unbegründeten Pixelwerten auf semantische Invarianten, Failure-Codes und kontrollierte Fehlerklassen gehärtet |

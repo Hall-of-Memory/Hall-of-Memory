@@ -14,6 +14,15 @@ import {
 } from '../src/lib/inquiry-form.ts';
 
 const repo = resolve(import.meta.dirname, '..');
+const inquiryClientSource = readFileSync(join(repo, 'src/scripts/inquiry-form.ts'), 'utf8');
+const bootstrapGuard = inquiryClientSource.indexOf('if (button) button.disabled = true;');
+const configGuard = inquiryClientSource.indexOf('!siteKey');
+const submitBinding = inquiryClientSource.indexOf("form.addEventListener('submit', handleSubmit);");
+const submitEnable = inquiryClientSource.indexOf('button.disabled = false;');
+assert.ok(bootstrapGuard >= 0, 'client bootstrap must clamp submit disabled before validation');
+assert.ok(configGuard > bootstrapGuard, 'required config validation must happen after the fail-closed clamp');
+assert.ok(submitBinding > configGuard, 'submit handler must bind only after required config validation');
+assert.ok(submitEnable > submitBinding, 'submit may enable only after the submit handler is bound');
 
 const developmentConfig = resolveInquiryPublicConfig({ development: true });
 assert.equal(developmentConfig.apiUrl, LOCAL_INQUIRY_API_URL);
@@ -272,7 +281,13 @@ try {
     (node) => node.nodeName === 'button' && attr(node, 'type') === 'submit',
   )[0];
   assert.ok(submit);
-  assert.equal(hasAttr(submit, 'disabled'), false, 'configured build must enable submit');
+  assert.equal(
+    hasAttr(submit, 'disabled'),
+    true,
+    'configured server-rendered HTML must stay fail-closed until the JS controller binds',
+  );
+  assert.equal(attr(form, 'method'), undefined, 'active form must not advertise a native fallback method');
+  assert.equal(attr(form, 'action'), undefined, 'active form must not advertise a native fallback action');
   assert.ok(elements(form, 'fieldset').length > 0, 'Turnstile must have a named fieldset');
   assert.ok(elements(form, 'legend').length > 0, 'Turnstile fieldset must have a legend');
 

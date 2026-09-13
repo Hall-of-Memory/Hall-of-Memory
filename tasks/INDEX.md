@@ -57,3 +57,4 @@
 | T052 | done | Kanonischen Verify um vollständige unabhängige Fehlerdiagnose und Redesign-Triage erweitert |
 | T053 | done | Visuellen Testvertrag von unbegründeten Pixelwerten auf semantische Invarianten, Failure-Codes und kontrollierte Fehlerklassen gehärtet |
 | T054 | done | Security-Dependency-Konvergenz: minimaler sicherer Lockfile-/Wrangler-Slice nach Gesamt-Audit |
+| T055 | done | Inquiry-Bootstrap fail-closed: SSR-submit bleibt bis zur gebundenen JS-Initialisierung deaktiviert |

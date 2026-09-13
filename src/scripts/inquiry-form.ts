@@ -66,6 +66,10 @@ function initializeInquiryForm(form: HTMLFormElement) {
   const endpoint = form.dataset.apiUrl ?? '';
   const siteKey = form.dataset.turnstileSiteKey ?? '';
 
+  // Fail closed even if the server-rendered contract regresses: the form may
+  // become submit-capable only after this initializer has bound its handler.
+  if (button) button.disabled = true;
+
   if (
     !button ||
     !buttonIdle ||
@@ -123,7 +127,7 @@ function initializeInquiryForm(form: HTMLFormElement) {
     },
   });
 
-  form.addEventListener('submit', (event) => {
+  const handleSubmit = (event: SubmitEvent) => {
     event.preventDefault();
     clearFeedback();
     if (verificationUnavailable) {
@@ -138,7 +142,13 @@ function initializeInquiryForm(form: HTMLFormElement) {
     }
     const submission = buildInquirySubmission(new FormData(form), token);
     void controller.submit(submission);
-  });
+  };
+  form.addEventListener('submit', handleSubmit);
+
+  // This is the only bootstrap transition from SSR-disabled to interactive.
+  // Missing config/elements or an exception before the handler binding leaves
+  // the form inert and prevents a native GET fallback with personal data.
+  button.disabled = false;
 
   let verificationStarted = false;
   const startVerification = () => {

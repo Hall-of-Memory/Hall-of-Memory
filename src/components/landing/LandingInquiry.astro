@@ -125,7 +125,7 @@ const { isPreview, offers, packages, inquiryConfig } = Astro.props;
         <p class="form-error" data-form-error role="alert" tabindex="-1" hidden></p>
         <p class="form-success" data-form-success role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden></p>
       </div>
-      <button type="submit" class="button button-primary demo-submit" disabled={!inquiryConfig.configured}>
+      <button type="submit" class="button button-primary demo-submit" disabled>
         <span data-submit-idle>Anfrage senden</span>
         <span data-submit-busy hidden>Anfrage wird gesendet …</span>
       </button>

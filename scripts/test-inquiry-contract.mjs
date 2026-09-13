@@ -180,8 +180,12 @@ assert.match(showcaseSource, /resolveGalleryAssetSrc\(item\.src, assetBase\)/);
 assert.match(showcaseSource, /data-content-gallery="true"/);
 assert.match(
   showcaseSource,
-  /grid-template-columns:repeat\(auto-fit,minmax\(min\(100%,240px\),1fr\)\);grid-template-rows:none/,
+  /grid-template-columns:repeat\(auto-fit,minmax\(min\(100%,320px\),1fr\)\);grid-template-rows:none/,
   'populated gallery must replace fixed demo columns/rows so sparse content has no empty tracks',
+);
+assert.ok(
+  (2 * 320) + 10 > 640 - 28,
+  'two populated gallery tracks plus their gap must not fit inside the <=640px shell contract',
 );
 assert.match(showcaseSource, /grid-row:auto;grid-column:auto;min-height:185px;padding:0/);
 assert.match(eventFieldsSource, /data-offer-id=\{item\.offerId\}/);
@@ -206,4 +210,4 @@ assert.doesNotMatch(
   /from\s+['"][^'"]*(?:src\/data\/demo|content\/(?:offers|packages)\.json)/,
 );
 
-console.log('inquiry-contract-ok production_catalog=3 projection=synthetic-nonempty local_gallery_only=true encoded_traversal_rejected=true sparse_gallery_adaptive=true valid_leap_day=2028-02-29 past_dates=allowed');
+console.log('inquiry-contract-ok production_catalog=3 projection=synthetic-nonempty local_gallery_only=true encoded_traversal_rejected=true sparse_gallery_adaptive=true mobile_gallery_single_column=true valid_leap_day=2028-02-29 past_dates=allowed');

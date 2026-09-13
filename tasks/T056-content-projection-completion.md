@@ -16,17 +16,21 @@ Die bestehende Contentarchitektur vollständig und ohne zweite Inhaltsquelle bis
 
 - vollständige Package-Projektion inklusive `offerId`, Summary, optionalem Preislabel und Features
 - Gallery-Projektion inklusive lokaler `BASE_URL`-Auflösung
+- Gallery-Assets fail-closed auf lokale, unter `BASE_URL` verbleibende Pfade begrenzen; auch codierte Traversalpfade ablehnen
+- nichtleere Gallery count-adaptiv darstellen, ohne den geschützten `demo.css`-Headroom zu verbrauchen und ohne den einspaltigen Mobile-Vertrag bis 640 px zu brechen
 - sichtbare Angebot↔Package-Zuordnung im Showcase
 - offergebundene Package-Auswahl im Anfrageformular mit Reset bei Offer-Wechsel
 - reale DOM-Ziele `#angebot-<slug>` für strukturierte Angebots-URLs
 - T055-Fail-Closed-Bootstrap einschließlich Package-Initialisierung vor Submit-Freischaltung
-- synthetische Fixtures in puren Tests sowie ein zusätzlicher temporärer Build; kanonische Contentdateien wurden danach hash-identisch wiederhergestellt und bleiben außerhalb des T056-Diffs
+- synthetische Fixtures in puren Tests sowie zusätzliche temporäre Builds; kanonische Contentdateien wurden danach hash-identisch wiederhergestellt und bleiben außerhalb des T056-Diffs
 
 ## Akzeptanz
 
 - [x] leere Package-/Gallery-Dateien bleiben unverändert und erzeugen die bisherigen ehrlichen Platzhalter
 - [x] nichtleere Package-Projektion erhält Angebotbindung und alle Darstellungsfelder
 - [x] nichtleere Gallery-Projektion erhält `src`, `alt` und optionale Caption
+- [x] Gallery-Quellen bleiben lokal/CSP-kompatibel; rohe, codierte und doppelt codierte Traversalpfade werden fail-closed abgelehnt
+- [x] sparse Gallery erzeugt keine festen Leertracks und bleibt bis 640 px einspaltig
 - [x] Angebotwechsel invalidiert eine unpassende Package-Auswahl
 - [x] Angebot ohne Package hält die Package-Auswahl deaktiviert
 - [x] ohne gewähltes Angebot ist keine Package-Auswahl möglich
@@ -41,13 +45,20 @@ Keine Provider-, DNS-, Cloudflare-, STRATO-, Legal-, Retention-, Kundenfoto-, CM
 ## Lokale Evidenz
 
 - `npm ci`: PASS, 0 Vulnerabilities
-- `node --no-warnings --experimental-strip-types scripts/test-inquiry-contract.mjs`: PASS (`projection=synthetic-nonempty`)
-- temporärer Nonempty-Build: PASS (`t056-synthetic-visible-projection-ok package=fotobox gallery=1 offerFragments=3`); anschließend `packages.json` und `gallery.json` jeweils auf SHA-256 `37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570` zurückgerollt
-- `npm run check`: PASS, 69 Dateien, 0 Fehler / 0 Warnungen / 0 Hinweise
-- `npm run test:form`: PASS (`inquiry-form-ui-ok`)
-- `npm run test:demo`: PASS; Default-Empty-State unverändert, 4 bestehende Bilder, CSS wieder auf 25.542 Bytes
-- `npm run verify`: PASS — 23 PASS / 0 FAIL / 0 BLOCKED; dauerhafter Finalization-Receipt `fa90c7625fe3db0f1e7b5108f0dddb0c4a3e413b64c67b9cfb55cd53c03da57b`
+- `node --no-warnings --experimental-strip-types scripts/test-inquiry-contract.mjs`: deckt synthetische Nichtleer-Projektion, Offer↔Package-Filterung, lokale Gallery-Auflösung, codierte Traversalpfade und den Mobile-Einspaltenvertrag ab
+- temporärer Nonempty-Build: Package-/Gallery-Projektion sichtbar; anschließend `packages.json` und `gallery.json` jeweils auf SHA-256 `37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570` zurückgerollt
+- `npm run check`: 69 Astro-Dateien ohne Fehler, Warnungen oder Hinweise; die Loader-Meldungen für die bewusst leeren Package-/Gallery-Dateien bleiben erwartete Content-Wahrheit
+- `npm run test:form`: T055-Fail-Closed-Vertrag und Formularprojektion
+- `npm run test:demo`: Default-Empty-State, bestehende vier Bilder und CSS-Budget unverändert
+- `npm run verify`: wird auf dem finalen Arbeitsbaum **einschließlich dieser Journalfassung** unmittelbar vor dem finalen Commit erneut vollständig ausgeführt
 
 ## Publication Gate
 
-Der Repo-Task ist nach vollständiger Implementierung und lokaler Vollprüfung `done`. Exact-Head-PR-Review, Required CI, Captain-Merge und Main-Runtime bleiben bindende operative Veröffentlichungsgates und werden als externe Receipts belegt. Dafür wird nach erfolgreichem Merge kein künstlicher Doc-only-Closeout-PR erzeugt.
+Der Repo-Task darf nach vollständiger Implementierung und lokaler Vollprüfung `done` bleiben. Die unveränderliche Commitbindung kann nicht selbstreferenziell in denselben Commit zurückgeschrieben werden: Ein nach Commit/Push erzeugter Receipt- oder CI-Identifier würde beim Eintragen sofort einen neuen, ungeprüften Head erzeugen. Deshalb wird hier bewusst keine ältere Receipt-ID als „final“ fortgeschrieben.
+
+Die finale Beweiskette ist stattdessen zweistufig und fail-closed:
+
+1. `npm run verify` läuft auf dem finalen Arbeitsbaum nach der letzten Journaländerung und vor dem Commit.
+2. Nach dem Push muss der Required Check `verify` auf **genau dem daraus entstandenen PR-Head** erfolgreich sein; Review-Threads müssen auf demselben Head geklärt sein.
+
+Captain-Merge und Main-Runtime bleiben danach bindende operative Veröffentlichungsgates und werden außerhalb dieses selbstreferenziellen Journals als revisionsgebundene Receipts belegt. Nach erfolgreichem Merge wird kein künstlicher Doc-only-Closeout-PR erzeugt.

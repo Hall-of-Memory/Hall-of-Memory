@@ -3,6 +3,7 @@ import {
   createInquiryController,
   type InquiryOutcome,
 } from '../lib/inquiry-form';
+import { reconcilePackageSelection } from '../lib/package-projection';
 
 interface TurnstileApi {
   render(
@@ -63,6 +64,8 @@ function initializeInquiryForm(form: HTMLFormElement) {
   const successStatus = form.querySelector<HTMLElement>('[data-form-success]');
   const turnstileContainer = form.querySelector<HTMLElement>('[data-turnstile-container]');
   const turnstileStatus = form.querySelector<HTMLElement>('[data-turnstile-status]');
+  const offerSelect = form.querySelector<HTMLSelectElement>('[data-offer-select]');
+  const packageSelect = form.querySelector<HTMLSelectElement>('[data-package-select]');
   const endpoint = form.dataset.apiUrl ?? '';
   const siteKey = form.dataset.turnstileSiteKey ?? '';
 
@@ -78,11 +81,40 @@ function initializeInquiryForm(form: HTMLFormElement) {
     !successStatus ||
     !turnstileContainer ||
     !turnstileStatus ||
+    !offerSelect ||
+    !packageSelect ||
     !endpoint ||
     !siteKey
   ) {
     return;
   }
+
+  const packageOptions = Array.from(
+    packageSelect.querySelectorAll<HTMLOptionElement>('option[data-offer-id]'),
+  );
+  const packageBindings = packageOptions.map((option) => ({
+    id: option.value,
+    offerId: option.dataset.offerId ?? '',
+  }));
+  const syncPackageSelect = () => {
+    const projection = reconcilePackageSelection(
+      packageBindings,
+      offerSelect.value,
+      packageSelect.value,
+    );
+    const availableIds = new Set(projection.availableIds);
+    for (const option of packageOptions) {
+      const available = availableIds.has(option.value);
+      option.hidden = !available;
+      option.disabled = !available;
+    }
+    if (packageSelect.value !== projection.selectedPackageId) {
+      packageSelect.value = projection.selectedPackageId;
+    }
+    packageSelect.disabled = availableIds.size === 0;
+  };
+  offerSelect.addEventListener('change', syncPackageSelect);
+  syncPackageSelect();
 
   let token = '';
   let verificationUnavailable = false;
@@ -124,6 +156,7 @@ function initializeInquiryForm(form: HTMLFormElement) {
     },
     resetAfterSuccess() {
       form.reset();
+      syncPackageSelect();
     },
   });
 
@@ -146,8 +179,8 @@ function initializeInquiryForm(form: HTMLFormElement) {
   form.addEventListener('submit', handleSubmit);
 
   // This is the only bootstrap transition from SSR-disabled to interactive.
-  // Missing config/elements or an exception before the handler binding leaves
-  // the form inert and prevents a native GET fallback with personal data.
+  // Missing config/elements or an exception before package synchronization or
+  // handler binding leaves the form inert and prevents a native GET fallback.
   button.disabled = false;
 
   let verificationStarted = false;

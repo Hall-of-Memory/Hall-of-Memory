@@ -5,6 +5,7 @@ import LandingInquiry from './landing/LandingInquiry.astro';
 import LandingShowcase from './landing/LandingShowcase.astro';
 import {
   demoBenefits,
+  demoGallery,
   demoFaqs,
   demoOffers,
   demoPackages,
@@ -263,8 +264,11 @@ const isPortraitAssetFrame = frameVariant === 10;
 
     <LandingShowcase
       offers={demoOffers}
+      packages={demoPackages}
+      gallery={demoGallery}
       benefits={demoBenefits}
       steps={demoSteps}
+      {assetBase}
       {productWhatsAppHref}
     />
     <LandingInquiry

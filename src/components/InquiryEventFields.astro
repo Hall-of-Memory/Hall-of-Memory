@@ -8,6 +8,7 @@ interface OfferOption {
 
 interface PackageOption {
   id: string;
+  offerId: string;
   name: string;
 }
 
@@ -35,16 +36,18 @@ const {
   <div class="form-grid-two">
     <label>
       Event-Angebot
-      <select name="offerId" required>
+      <select name="offerId" data-offer-select required>
         <option value="">Bitte auswählen</option>
         {offers.map((offer) => <option value={offer.id}>{offer.title}</option>)}
       </select>
     </label>
     <label>
       Paket <span class="optional">optional</span>
-      <select name="packageId" disabled={disabled || packages.length === 0}>
+      <select name="packageId" data-package-select disabled>
         <option value="">{packages.length === 0 ? emptyPackageLabel : 'Kein bestimmtes Paket'}</option>
-        {packages.map((item) => <option value={item.id}>{item.name}</option>)}
+        {packages.map((item) => (
+          <option value={item.id} data-offer-id={item.offerId}>{item.name}</option>
+        ))}
       </select>
     </label>
   </div>

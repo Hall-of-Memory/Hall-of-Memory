@@ -1,9 +1,11 @@
 import benefits from '../content/benefits.json';
 import faqs from '../content/faqs.json';
+import gallery from '../content/gallery.json';
 import offers from '../content/offers.json';
 import packages from '../content/packages.json';
 import site from '../content/site.json';
 import steps from '../content/steps.json';
+import { projectGallery, projectPackages } from '../lib/package-projection';
 import type { LaunchStatus } from '../lib/seo';
 
 const bySortOrder = <T extends { sortOrder: number }>(a: T, b: T) => a.sortOrder - b.sortOrder;
@@ -19,7 +21,22 @@ type CanonicalOffer = {
   highlights: string[];
   sortOrder: number;
 };
-type CanonicalPackage = { id: string; name: string; sortOrder: number };
+type CanonicalPackage = {
+  id: string;
+  offerId: string;
+  name: string;
+  summary: string;
+  priceLabel: string | null;
+  features: string[];
+  sortOrder: number;
+};
+type CanonicalGallery = {
+  id: string;
+  src: string;
+  alt: string;
+  caption?: string;
+  sortOrder: number;
+};
 type CanonicalSite = {
   id: string;
   name: string;
@@ -30,9 +47,9 @@ type CanonicalSite = {
 };
 
 /**
- * Compatibility projection for the landing component while T046 converges the
- * preview and production routes. All actual text/business truth remains in the
- * Zod-validated src/content files; this module only adapts their shape.
+ * Compatibility projection for the shared landing component. All actual
+ * text/business truth remains in the Zod-validated src/content files; this
+ * module only adapts and orders their public shape.
  */
 const siteEntry = site[0] as CanonicalSite | undefined;
 if (!siteEntry) throw new Error('Hall of Memory site settings are missing.');
@@ -46,13 +63,11 @@ export const demoOffers = [...(offers as CanonicalOffer[])].sort(bySortOrder).ma
   description: offer.description,
   moreInfo: offer.moreInfo,
   motif: offer.motif,
-  highlights: offer.highlights,
+  highlights: [...offer.highlights],
 }));
 
-export const demoPackages = [...(packages as CanonicalPackage[])].sort(bySortOrder).map((item) => ({
-  id: item.id,
-  name: item.name,
-}));
+export const demoPackages = projectPackages(packages as CanonicalPackage[]);
+export const demoGallery = projectGallery(gallery as CanonicalGallery[]);
 
 export const demoBenefits = [...benefits].sort(bySortOrder).map((benefit) => ({
   title: benefit.title,

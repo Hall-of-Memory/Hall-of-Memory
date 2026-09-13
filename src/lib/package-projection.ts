@@ -71,10 +71,43 @@ export function resolveGalleryAssetSrc(src: string, assetBase: string): string {
   if (/^[a-z][a-z0-9+.-]*:/i.test(src) || src.startsWith('//')) {
     throw new Error('Gallery assets must use local paths allowed by the site CSP.');
   }
+
   const normalized = src.replace(/^\/+/, '');
-  if (!normalized || normalized.split('/').some((segment) => segment === '.' || segment === '..')) {
+  if (!normalized) {
     throw new Error('Gallery assets must use non-empty local paths without traversal segments.');
   }
+
+  let decoded = normalized;
+  for (let pass = 0; pass <= normalized.length; pass += 1) {
+    let next: string;
+    try {
+      next = decodeURIComponent(decoded);
+    } catch {
+      throw new Error('Gallery assets must use valid local paths without encoded traversal.');
+    }
+    if (next === decoded) break;
+    decoded = next;
+    if (pass === normalized.length) {
+      throw new Error('Gallery assets must use bounded local path encoding.');
+    }
+  }
+
+  if (decoded.split(/[\\/]/).some((segment) => segment === '.' || segment === '..')) {
+    throw new Error('Gallery assets must use non-empty local paths without traversal segments.');
+  }
+
   const base = assetBase.endsWith('/') ? assetBase : `${assetBase}/`;
+  const origin = 'https://gallery.local';
+  const baseUrl = new URL(base, origin);
+  if (baseUrl.origin !== origin) {
+    throw new Error('Gallery asset base must remain same-origin.');
+  }
+  for (const candidate of [normalized, decoded]) {
+    const candidateUrl = new URL(candidate, baseUrl);
+    if (candidateUrl.origin !== baseUrl.origin || !candidateUrl.pathname.startsWith(baseUrl.pathname)) {
+      throw new Error('Gallery assets must remain beneath the configured local asset base.');
+    }
+  }
+
   return `${base}${normalized}`;
 }

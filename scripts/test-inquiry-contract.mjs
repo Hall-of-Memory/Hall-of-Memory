@@ -152,11 +152,15 @@ for (const invalidGallerySrc of [
   'https://cdn.example.invalid/photo.webp',
   '//cdn.example.invalid/photo.webp',
   '../outside.webp',
+  '%2e%2e/outside.webp',
+  '%252e%252e/outside.webp',
+  '%2e%2e%2foutside.webp',
+  '%2e%2e%5coutside.webp',
 ]) {
   assert.throws(
     () => resolveGalleryAssetSrc(invalidGallerySrc, '/Hall-of-Memory/'),
-    /Gallery assets must use/,
-    `gallery source ${invalidGallerySrc} must fail closed instead of contradicting img-src CSP`,
+    /Gallery assets must/,
+    `gallery source ${invalidGallerySrc} must fail closed instead of escaping BASE_URL or contradicting img-src CSP`,
   );
 }
 
@@ -174,7 +178,11 @@ assert.match(showcaseSource, /packagesForOffer\(packages, offer\.id\)/);
 assert.match(showcaseSource, /gallery\.map\(\(item\)/);
 assert.match(showcaseSource, /resolveGalleryAssetSrc\(item\.src, assetBase\)/);
 assert.match(showcaseSource, /data-content-gallery="true"/);
-assert.match(showcaseSource, /style="grid-template-rows:none"/);
+assert.match(
+  showcaseSource,
+  /grid-template-columns:repeat\(auto-fit,minmax\(min\(100%,240px\),1fr\)\);grid-template-rows:none/,
+  'populated gallery must replace fixed demo columns/rows so sparse content has no empty tracks',
+);
 assert.match(showcaseSource, /grid-row:auto;grid-column:auto;min-height:185px;padding:0/);
 assert.match(eventFieldsSource, /data-offer-id=\{item\.offerId\}/);
 const bootstrapGuard = inquiryClientSource.indexOf('if (button) button.disabled = true;');
@@ -198,4 +206,4 @@ assert.doesNotMatch(
   /from\s+['"][^'"]*(?:src\/data\/demo|content\/(?:offers|packages)\.json)/,
 );
 
-console.log('inquiry-contract-ok production_catalog=3 projection=synthetic-nonempty local_gallery_only=true valid_leap_day=2028-02-29 past_dates=allowed');
+console.log('inquiry-contract-ok production_catalog=3 projection=synthetic-nonempty local_gallery_only=true encoded_traversal_rejected=true sparse_gallery_adaptive=true valid_leap_day=2028-02-29 past_dates=allowed');

@@ -177,9 +177,9 @@ const packageGroups = offers
         <li><span>Hall of Memory</span><strong>Dein Event im Mittelpunkt</strong></li>
       </ul>
     ) : (
-      <ul class="hom-gallery-grid" aria-label="Hall of Memory Galerie">
+      <ul class="hom-gallery-grid" data-content-gallery="true" aria-label="Hall of Memory Galerie" style="grid-template-rows:none">
         {gallery.map((item) => (
-          <li data-gallery-item={item.id}>
+          <li data-gallery-item={item.id} style="grid-row:auto;grid-column:auto;min-height:185px;padding:0">
             <img
               src={resolveGalleryAssetSrc(item.src, assetBase)}
               alt={item.alt}

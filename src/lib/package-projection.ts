@@ -68,7 +68,13 @@ export function reconcilePackageSelection(
 }
 
 export function resolveGalleryAssetSrc(src: string, assetBase: string): string {
-  if (/^https?:\/\//i.test(src) || src.startsWith('//')) return src;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(src) || src.startsWith('//')) {
+    throw new Error('Gallery assets must use local paths allowed by the site CSP.');
+  }
+  const normalized = src.replace(/^\/+/, '');
+  if (!normalized || normalized.split('/').some((segment) => segment === '.' || segment === '..')) {
+    throw new Error('Gallery assets must use non-empty local paths without traversal segments.');
+  }
   const base = assetBase.endsWith('/') ? assetBase : `${assetBase}/`;
-  return `${base}${src.replace(/^\/+/, '')}`;
+  return `${base}${normalized}`;
 }

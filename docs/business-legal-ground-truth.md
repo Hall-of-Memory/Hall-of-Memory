@@ -1,17 +1,19 @@
 # Hall of Memory — Business + Legal Ground Truth
 
 Stand: 2026-09-14
-Status: Working Ground Truth für T057
+Status: Working Ground Truth für T057 (`blocked_external`)
 
-Dieses Dokument ist die kanonische fachliche Eingabe für die noch offenen V1-Legal-/Privacy-/Production-Gates. Es ersetzt keine finale Rechtsprüfung und erfindet keine unbekannten Betreiber-, Vertrags- oder Retentiondaten.
+Dieses Dokument ist die kanonische fachliche Eingabe für die noch offenen **V1-Legal-/Privacy-/Inquiry-Gates**. Es ersetzt keine finale Rechtsprüfung und erfindet keine unbekannten Betreiber-, Vertrags- oder Retentiondaten.
+
+Es ist **kein vollständiges V1-Launchregister**: T010 und `src/release/production-approvals.json` bleiben autoritativ für öffentliche Medien, Pakete/Preise und Produktinhalte; T009/T045 führen Domain-/Deploymentgrenzen. Aktuell sind `publicMedia` und `productContent` in `production-approvals.json` weiterhin nicht freigegeben.
 
 ## Statusklassen
 
-- `confirmed`: durch Repo, Kundenanforderung oder technische Evidenz belegt; darf als V1-Prämisse verwendet werden.
+- `confirmed`: durch Repo, Kundenanforderung oder technische Evidenz belegt; darf als Prämisse dieser Lane verwendet werden.
 - `decision-required`: externe Betreiber-/Geschäftsentscheidung fehlt; abhängige Production-Gates bleiben fail-closed.
-- `deferred`: bewusst keine V1-Entscheidung; eigener späterer Task bleibt zuständig.
+- `deferred`: bewusst keine Entscheidung dieser Lane; eigener anderer Task bleibt zuständig.
 
-## 1. Bestätigte V1-Wahrheiten
+## 1. Bestätigte V1-Wahrheiten dieser Lane
 
 | Thema | Status | Ground Truth | Evidenz / Folge |
 |---|---|---|---|
@@ -25,11 +27,11 @@ Dieses Dokument ist die kanonische fachliche Eingabe für die noch offenen V1-Le
 | Contentpflege | confirmed | Git + Codex ist der bevorzugte Default für klassische öffentliche Inhalte, solange reale Nutzung keine Bedienlücke belegt. | T011 |
 | Automationsplattform | confirmed | Für V1 wird keine zusätzliche Automationsplattform vorausgesetzt. Bestehender Worker/D1/Outbox-Pfad bleibt ausreichend, bis wiederkehrender Bedarf belegt ist. | T057; spätere Prüfung T058 |
 | Private Eventgalerie | deferred | Der geschützte veranstaltungsbezogene Fotobereich ist ein getrenntes Produktziel und kein stiller Bestandteil des Inquiry-V1-Livegangs. | T025 |
-| Verbindliche Buchung | deferred | Sofortbuchung, Holds, Zahlung, Storno und Umbuchung bleiben außerhalb von V1. | T013/T011 |
+| Verbindliche Buchung | deferred | Sofortbuchung, Holds, Zahlung, Storno und Umbuchung bleiben außerhalb dieser V1-Anfrage-Lane. | T013/T011 |
 
-## 2. V1-Entscheidungsbogen
+## 2. Entscheidungsbogen für Legal/Privacy/Inquiry
 
-Nur die folgenden Punkte blockieren den V1-Livegang fachlich. Nicht zutreffende Felder werden ausdrücklich als `nicht einschlägig` dokumentiert statt geraten.
+Nur die folgenden Punkte sind die noch offenen **fachlichen Blocker innerhalb dieser Lane**. Weitere V1-Launchblocker – insbesondere freigegebene öffentliche Medien und Produktinhalte – bleiben in T010 und den bestehenden Release-Approvals. Nicht zutreffende Felder werden ausdrücklich als `nicht einschlägig` dokumentiert statt geraten.
 
 ### D1 — Betreiberidentität
 
@@ -73,7 +75,7 @@ Benötigt:
 - Regel für unbeantwortete, abgelehnte und erledigte Anfragen;
 - Entscheidung, ob und wann Daten einer späteren tatsächlichen Vertragsbeziehung in einen getrennten Geschäfts-/Nachweispfad überführt werden.
 
-Wichtig: T057 setzt **keine Zahl** ein. Die Frist muss aus realem Betriebsbedarf und der rechtlich freigegebenen Policy stammen.
+Wichtig: T057 setzt **keine Zahl** ein. Die Frist muss aus realem Betriebsbedarf und einer belegten/freigegebenen Policy stammen.
 
 Wofür nötig: `src/release/inquiry-data-policy.json`, T049 Production-Readiness.
 
@@ -113,16 +115,38 @@ Preview-/Entwicklungssysteme wie GitHub Pages oder Vercel gelten **nicht automat
 
 Status: `decision-required`
 
-Erst nach D1–D5:
+Erst nach D1–D5 und der D7-Entscheidung:
 
 - finales Impressum aus bestätigten Betreiberangaben;
 - finale Datenschutzinformation aus realem Datenfluss und realem Dienstleisterinventar;
 - Consent-/Cookie-Entscheidung ausschließlich nach tatsächlich aktiven Diensten;
-- keine generischen Drittanbieter, Cookies oder Rechtsgrundlagen vorsorglich behaupten.
+- keine generischen Drittanbieter, Cookies oder Rechtsgrundlagen vorsorglich behaupten;
+- revisionsgebundene Freigabeevidenz dokumentieren.
 
 Wofür nötig: T008 Closeout und Entfernen des Legal-Draft-Status.
 
-## 3. Bewusst vertagte Entscheidungen
+### D7 — Externe juristische Prüfung / Rechtstext-Service
+
+Status: `decision-required`
+
+T057 trifft **keine juristische oder geschäftliche Vorentscheidung**, ob für V1 eine externe anwaltliche Prüfung, ein laufender Rechtstext-Service oder eine andere fachliche Freigabe erforderlich bzw. zweckmäßig ist.
+
+Benötigt:
+
+- Betreiberentscheidung zum Prüf-/Freigabepfad;
+- geeignete Primärevidenz bzw. fachliche Begründung für diese Entscheidung;
+- falls extern geprüft: konkreter Umfang, Anbieter und revisionsgebundene Freigabeevidenz;
+- falls nicht extern geprüft: eindeutig dokumentierte interne Freigabeverantwortung, ohne daraus eine Aussage über rechtliche Zulässigkeit oder Haftung abzuleiten.
+
+Folgende Themen sind **Prüfhinweise, keine automatisch festgelegte Eskalationsschwelle**:
+
+- Rechte/Einwilligungen bei Eventfotos, Gästen oder Minderjährigen;
+- öffentliche Werbenutzung von Eventbildern;
+- individuelle Storno-/Haftungs-/Vermietungsklauseln;
+- Widerrufsfragen bei konkreten terminbezogenen Verbraucherleistungen;
+- Kombinationen aus Vermietung, Dienstleistung und Fotografie.
+
+## 3. Bewusst vertagte bzw. separat geführte Entscheidungen
 
 ### Private Eventgalerie
 
@@ -158,6 +182,12 @@ Vor einer verbindlichen Onlinebuchung bzw. standardisierten AGB separat entschei
 
 V1 darf diese Regeln nicht implizit durch UI oder Backend behaupten.
 
+### Public Media und Product Content
+
+Status: separat `blocked_external` → T010 / `src/release/production-approvals.json`
+
+T057 darf weder die fehlenden freigegebenen Produkt-/Eventbilder noch Paket-/Preis-/Finaltext-Freigaben ersetzen. Diese bleiben eigene Launch-Gates und müssen vor einem entsprechenden Produktionsstatus separat belegt werden.
+
 ### Automatisierung
 
 Status: `deferred` → T058
@@ -170,27 +200,16 @@ Keine zusätzliche Plattform auf Vorrat. Nach realer Nutzung wird nur wiederholt
 4. langlebige Workflow-Engine erst bei nachgewiesener Orchestrierungskomplexität;
 5. n8n erst, wenn visuelle Selbstpflege oder hohe SaaS-Integrationsbreite einen belegten Vorteil erzeugt.
 
-## 4. Externe Rechtsprüfung — Eskalationskriterien
+## 4. Übergabe an bestehende Tasks
 
-Eine externe anwaltliche Prüfung ist **kein pauschaler V1-Default**, sondern wird gezielt ausgelöst, wenn nach Ground-Truth-Arbeit eine individuelle Hochrisikofrage verbleibt, insbesondere:
-
-- Rechte/Einwilligungen bei Eventfotos, Gästen oder Minderjährigen;
-- öffentliche Werbenutzung von Eventbildern;
-- individuelle Storno-/Haftungs-/Vermietungsklauseln;
-- Widerrufsfragen bei konkreten terminbezogenen Verbraucherleistungen;
-- Kombinationen aus Vermietung, Dienstleistung und Fotografie, deren Vertragsgrenze nicht aus den belegten Geschäftsregeln eindeutig ableitbar ist.
-
-Die Übergabe an einen Anwalt soll dann nicht „prüfe alles“ lauten, sondern den belegten Prozess plus wenige konkrete Restfragen enthalten.
-
-## 5. Übergabe an bestehende Tasks
-
-- **T008:** verwendet D1, D2, D5 und D6 für finales Impressum/Datenschutz/Consent und Produktionsreadback.
+- **T008:** verwendet D1, D2, D5, D6 und D7 für finales Impressum/Datenschutz/Consent und Produktionsreadback.
 - **T049:** verwendet D3 und D4 für konkrete Retention-/Löschpolicy und Enforcement-Evidenz.
-- **T011:** verwendet die bestätigte V1-Grenze und belässt Buchung/CMS-/Medienfragen nur dort offen, wo reale Geschäftsentscheidungen fehlen.
+- **T011:** verwendet die bestätigte Anfrage-Grenze und belässt Buchung/CMS-/Medienfragen nur dort offen, wo reale Geschäftsentscheidungen fehlen.
+- **T010:** bleibt autoritativ für fehlende/freizugebende öffentliche Medien, Preise, Pakete und finale Produkttexte.
 - **T025:** bleibt alleiniger Owner der privaten Eventgalerie.
 - **T013:** bleibt alleiniger Owner einer verbindlichen Buchungsengine.
 - **T058:** bewertet erst nach realer Nutzung, ob zusätzliche Automatisierung überhaupt nötig ist.
 
-## 6. Closeout-Kriterium T057
+## 5. Closeout-Kriterium T057
 
-T057 kann geschlossen werden, sobald D1–D6 mit Primärevidenz befüllt sind und T008/T049/T011 die Werte revisionsgebunden übernehmen können. `deferred`-Punkte verhindern den T057-Closeout nicht, solange sie im V1-Livegang technisch und kommunikativ tatsächlich deaktiviert bleiben.
+T057 bleibt `blocked_external` und kann geschlossen werden, sobald D1–D7 mit Primärevidenz bzw. dokumentierter Betreiberentscheidung befüllt sind und T008/T049/T011 die Werte revisionsgebunden übernehmen können. `deferred` bzw. separat geführte Punkte verhindern den T057-Closeout nicht, solange sie in dieser Lane nicht fälschlich als erledigt oder freigegeben dargestellt werden.

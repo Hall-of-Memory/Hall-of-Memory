@@ -54,7 +54,7 @@ Die folgenden Punkte sind echte externe Inputs. Solange sie fehlen, bleiben die 
    - revisionsgebundene Enforcement-Evidenz für T049
 
 4. **Produktions-Dienstleisterinventar**
-   - tatsächlich aktivierte Cloudflare-Dienste/Bingungen im personenbezogenen Pfad
+   - tatsächlich aktivierte Cloudflare-Dienste/Bindings im personenbezogenen Pfad
    - realer E-Mail-/Benachrichtigungsdienst und dessen Rolle
    - Bestätigung, dass Preview-/Entwicklungssysteme keine produktiven Anfragedaten erhalten
    - weitere Drittanbieter nur, wenn sie real eingesetzt werden

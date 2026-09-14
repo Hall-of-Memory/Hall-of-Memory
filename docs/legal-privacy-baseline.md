@@ -1,6 +1,6 @@
 # Legal-/Privacy-Baseline
 
-Stand: 2026-08-12
+Stand: 2026-09-14
 
 Dieses Dokument beschreibt nur den technisch belegbaren Projektstand. Es ist keine Rechtsberatung und ersetzt keine freigegebenen Rechtstexte.
 
@@ -22,4 +22,13 @@ Dieses Dokument beschreibt nur den technisch belegbaren Projektstand. Es ist kei
 - daraus abgeleitete Cookie-/Consent-Entscheidung
 - Produktionsreadback gegen die echte Kundendomain
 
-T027 setzt ausschließlich die strukturelle und technisch überprüfbare Grundlage um. T008 bleibt bis zu den externen Angaben `blocked_external`.
+## Kanonischer externer Entscheidungsinput
+
+T027 hat die technische Legal-/Privacy-Struktur abgeschlossen. Die früher über T008, T011 und T049 verteilten fehlenden Betreiber-/Geschäftsentscheidungen werden ab T057 in `docs/business-legal-ground-truth.md` kanonisch dedupliziert.
+
+- T057 erfindet keine Rechtsform, Retentionfrist, Dienstleisterrolle oder Vertragsregel.
+- T008 verwendet die freigegebenen Betreiber-/Dienstleisterangaben anschließend für finale öffentliche Rechtstexte und Consent-Entscheidung.
+- T049 verwendet die freigegebene Retention-/Löschentscheidung für die bereits vorhandenen fail-closed Production-Gates und deren Enforcement-Evidenz.
+- Private Eventgalerie und verbindliche Buchung bleiben getrennte spätere Produktpfade in T025 bzw. T013.
+
+Bis die T057-Entscheidungen mit Primärevidenz befüllt sind, bleiben T008 und T049 korrekt `blocked_external` und die Legal-Routen im Entwurfszustand.

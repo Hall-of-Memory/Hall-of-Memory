@@ -73,6 +73,29 @@ Diese Punkte sind wichtig, werden aber nicht in den Inquiry-V1-Livegang hineiner
 - n8n, Cloudflare Workflows oder andere Orchestrierungsplattformen → nur bei später belegtem Automationsbedarf;
 - vollumfängliche AGB → erst nach bestätigten realen Vertrags- und Betriebsregeln.
 
+## Arbeitsjournal — 2026-09-14
+
+Vor der Mutation wurde der Livezustand frisch gelesen:
+
+- `main` stand auf dem Merge von PR #51/T056;
+- es gab keine offene PR-Lane, die für diesen Scope autoritativ weiterzuverwenden war;
+- `tasks/INDEX.md`, T008, T011, T027, T049, `docs/legal-privacy-baseline.md` und der fail-closed Inquiry-Datenpolicy-Stand wurden gegengeprüft;
+- die wiederkehrenden externen Blocker wurden als echte Doppelung bestätigt: Betreiberidentität, produktive Kontakt-/Adminziele, Retention/Löschung, reales Dienstleisterinventar und Legal-Freigabe.
+
+Umsetzung:
+
+- Branch `docs/t057-business-legal-ground-truth` wurde vom frisch gelesenen `main` erstellt;
+- `docs/business-legal-ground-truth.md` als kanonische Entscheidungsmatrix ergänzt;
+- T058 als spätere, evidenzgetriebene Automationsbewertung registriert;
+- `tasks/INDEX.md` und `docs/legal-privacy-baseline.md` auf die neue Ground-Truth-Lane ausgerichtet;
+- PR #55 enthält ausschließlich Dokumentations-/Taskänderungen und keine Runtime- oder Production-Mutation.
+
+Verifikationsgrenze:
+
+- ein unabhängiger lokaler Clone/Verify war in der ausführenden Containerumgebung wegen fehlender DNS-/GitHub-Netzauflösung nicht möglich;
+- deshalb bleibt gemäß `AGENTS.md` der Required-GitHub-`verify` auf dem **exakten finalen PR-Head** das kanonische Merge-Gate;
+- nach diesem Journaleintrag wird der Diff für den Review-/CI-Closeout eingefroren; ein Merge darf nur nach grünem Exact-Head-Verify erfolgen.
+
 ## Akzeptanz
 
 - [x] bestehende technische und fachliche V1-Wahrheiten sind aus T008/T011/T027/T049 dedupliziert;
@@ -80,6 +103,7 @@ Diese Punkte sind wichtig, werden aber nicht in den Inquiry-V1-Livegang hineiner
 - [x] keine Retentionfrist, Rechtsform, Dienstleisterrolle oder Vertragsregel wird erfunden;
 - [x] T008/T049/T011 bleiben ausführende Tasks und werden nicht dupliziert;
 - [x] spätere Automationsbewertung ist als eigene Folgetask registriert;
+- [x] Branch/PR und Verifikationsgrenze sind im Task-Journal dokumentiert;
 - [ ] Betreiber-/Geschäftsentscheidungen in der Ground-Truth-Datei sind mit Primärevidenz befüllt;
 - [ ] T008 kann die finalen öffentlichen Rechtstexte daraus ableiten;
 - [ ] T049 kann daraus eine konkrete Retention-/Löschpolicy samt Enforcement-Evidenz ableiten;

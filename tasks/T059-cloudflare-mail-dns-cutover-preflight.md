@@ -1,6 +1,6 @@
 ---
 id: T059
-status: active
+status: done
 priority: P0
 dependencies: []
 ---
@@ -103,6 +103,44 @@ Cloudflare Workers Custom Domains benötigen eine aktive Cloudflare-Zone. Deshal
 - `scripts/dns-zone-cutover.mjs` liefert für die revisionsgebundenen Snapshots PASS;
 - offene Unterschiede oder Vollständigkeitszweifel bleiben fail-closed dokumentiert;
 - STRATO-Nameserver wurden durch T059 nicht verändert.
+
+
+## Abschluss — 19.09.2026
+
+T059 ist technisch terminal abgeschlossen. Die STRATO-Delegation wurde dabei nicht verändert.
+
+Belegte Provider-/Deployment-Wahrheit:
+
+- der authentifizierte Cloudflare-Kontext ist Arams kundeneigener Account; Tarifstatus ist `free`;
+- Wrangler ist ausschließlich auf diesen Account gebunden und verwendet den minimierten OAuth-Scope-Satz `account:read`, `user:read`, `workers:write`, `workers_scripts:write`, `zone:read` plus `offline_access`;
+- der aktuelle `main`-Build wurde auf den bestehenden Worker `hall-of-memory` deployt; Cloudflare-Version `e0f1f829-5ca9-44b3-a502-4ec447ed250f`;
+- `https://hall-of-memory.aram21.workers.dev/` liefert `302` nach `/demo/`, `/demo/` liefert `200`; das ausgelieferte Demo-HTML ist byte-identisch zum geprüften Build (`sha256 27fe8a420e4829880607caa2d665f2a703ff6041997ec401622a1064f58e0ddd`);
+- SPF `v=spf1 redirect=_spf.strato.com` sowie `strato-dkim-0002._domainkey` und `strato-dkim-0003._domainkey` sind in Cloudflare vorhanden; beide DKIM-CNAMEs und `autoconfig` sind DNS-only;
+- beide Cloudflare-Autoritäten `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com` liefern die SPF-/DKIM-/Mailrecords konsistent;
+- STRATO bleibt öffentlich autoritativ auf `docks09.rzone.de` und `shades16.rzone.de`; keine Delegationsmutation fand statt.
+
+Vollständigkeitsbegründung des gleichwertigen STRATO-Provider-Snapshots:
+
+- im STRATO-Kundenkonto wurden NS, A, AAAA, MX, TXT/CNAME, SRV, Dynamic DNS, DNSSEC/Domain-Guard-Zustand und die Subdomainverwaltung vollständig durchgesehen;
+- es existieren keine angelegten Subdomains und keine zusätzlichen benutzerdefinierten TXT-/CNAME- oder SRV-Einträge; Standard-NS/A/AAAA/MX sind belegt;
+- beide autoritativen STRATO-Nameserver liefern denselben Bestand; ein frischer zufälliger, nicht angelegter Host bestätigt ausschließlich den erwarteten Wildcard-MX und keine Wildcard-A/AAAA/TXT/CNAME/NS/SRV/CAA;
+- AXFR wird von beiden STRATO-Nameservern verweigert und im verwendeten Paket ist kein klassischer Zonefile-Export vorhanden; STRATO dokumentiert Domain-Daten stattdessen als im Kundenlogin einsehbar/speicherbar;
+- die providerseitig erzeugten Standardrecords `autoconfig`, `_autodiscover._tcp`, `_domainkey`, DMARC und Wildcard-MX wurden zusätzlich autoritativ read-backen;
+- Parent-DS, autoritativer DNSKEY und Apex-CAA sind nicht vorhanden.
+
+Finales T045-Gate:
+
+- Snapshot-Zeit: `2026-09-19T10:34:00Z` für beide Seiten;
+- STRATO-Snapshot-SHA-256: `fd9264379380fcf575da5211db4c44ccbd48a33d778834f9a5a1d629f0af5519`;
+- Cloudflare-Snapshot-SHA-256: `ec896cbf6ef039ff4c7b29cba852531c3369bb35da74db3bdce7557444d1aa9c`;
+- 9 STRATO-Inhalts-RRsets gegen 12 Cloudflare-Inhalts-RRsets;
+- `passed: true`, keine Errors, nur erwartete TTL-Warnungen;
+- DNSSEC-Gate `passed: true` bei `sourceDsCount: 0`;
+- akzeptierte Target-Additions sind exakt Apex-SPF sowie DKIM-Selector `0002` und `0003`;
+- keine `allowedWebValueChanges` erforderlich, weil die vorbereiteten Web-RRset-Werte noch den STRATO-Ausgangswerten entsprechen.
+
+**Übergabe an T045:** Die nächste Änderung ist ausschließlich die autorisierte STRATO-Delegation auf `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com`. Nach Cloudflare-`Active` werden Worker-Custom-Domain, `www`-Strategie sowie TLS/Web/Mail extern read-backen.
+
 
 ## Nicht-Ziel
 

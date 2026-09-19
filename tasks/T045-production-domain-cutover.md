@@ -115,6 +115,23 @@ Der Providerzustand wurde erstmals direkt im STRATO-Kundenkonto und zusätzlich 
 
 **Folge:** Der Nameserverwechsel bleibt blockiert. T059 führt ab jetzt den konkreten Provider-Preflight für die fehlenden STRATO-Mailrecords, den authentifizierten Cloudflare-Zonen-/Deployment-Readback und den finalen T045-Vollzonen-/DNSSEC-PASS. T059 selbst verändert die STRATO-Delegation nicht.
 
+
+## Provider-Preflight PASS — 19.09.2026
+
+T059 ist abgeschlossen. Der kundeneigene Cloudflare-Account, die vorbereitete Zone, der aktuelle Worker-Build und das Vollzonen-/DNSSEC-Gate sind revisions- und providergebunden belegt.
+
+- aktueller Cloudflare-Worker: `hall-of-memory`, Version `e0f1f829-5ca9-44b3-a502-4ec447ed250f`; Standardhost liefert den aktuellen `main`-Build byte-identisch;
+- Cloudflare-Mail-DNS ist für den späteren externen Nameserverbetrieb vorbereitet: MX, SPF, DKIM 0002/0003, DMARC, `_domainkey`, Autoconfig/Autodiscover und Wildcard-MX sind vorhanden; Mail-/Service-Aliases bleiben DNS-only;
+- aktuelle Cloudflare-Autorität: `quentin.ns.cloudflare.com`, `tia.ns.cloudflare.com`;
+- aktueller öffentlicher STRATO-Ausgang: `docks09.rzone.de`, `shades16.rzone.de`;
+- Parent-DS, DNSKEY und CAA sind nicht vorhanden;
+- der gleichwertige STRATO-Provider-Snapshot bindet vollständigen Kundenlogin-Readback aller angebotenen DNS-Klassen/Subdomains mit beiden autoritativen STRATO-Readbacks, Wildcard-Probe und dokumentierter AXFR-Verweigerung;
+- `scripts/dns-zone-cutover.mjs` liefert auf den gebundenen Snapshots `passed:true`, 0 Errors und DNSSEC-PASS; Snapshot-Digests: STRATO `fd9264379380fcf575da5211db4c44ccbd48a33d778834f9a5a1d629f0af5519`, Cloudflare `ec896cbf6ef039ff4c7b29cba852531c3369bb35da74db3bdce7557444d1aa9c`;
+- die drei Cloudflare-only Mailauth-RRsets werden eng über `allowedTargetAdditions` akzeptiert; keine Webzieländerung ist vor dem Delegationswechsel nötig.
+
+**Nächster autorisierter Effekt:** Aram stellt bei STRATO die Nameserver auf `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com` um. Erst nach Cloudflare-`Active` wird `hallofmemory.de` an den geprüften Worker gebunden und der externe TLS/Web/Mail-Readback durchgeführt.
+
+
 ## Zielarchitektur
 
 ```text
@@ -176,9 +193,6 @@ Erst nach finalen Inhalten, Rechtstexten und T008/T010/T011 wird `launchStatus: 
 
 ## Externe Grenze
 
-Für den eigentlichen Domain-Cutover fehlen derzeit zwei Autoritäten:
+Der kundeneigene Cloudflare-Kontext ist authentifiziert und der technische Preflight ist PASS. Offen bleibt ausschließlich die **autorisierte STRATO-Nameservermutation durch Aram/Kunde**.
 
-1. authentifizierter Zugriff auf den **kundeneigenen Cloudflare-Kontext**;
-2. autorisierte STRATO-Nameservermutation.
-
-Ohne diese Provider-Autorität werden weder Zone noch Nameserver geraten oder blind verändert. Neue kostenpflichtige Pläne/Dienste bleiben genehmigungspflichtig.
+Bis diese Delegation erfolgt, bleibt STRATO öffentlich autoritativ und Cloudflare `pending`. Neue kostenpflichtige Pläne/Dienste bleiben genehmigungspflichtig.

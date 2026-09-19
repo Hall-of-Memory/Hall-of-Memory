@@ -5,6 +5,7 @@ import { pathToFileURL } from 'node:url';
 const IGNORED_PROVIDER_TYPES = new Set(['NS', 'SOA']);
 const WEB_TYPES = new Set(['A', 'AAAA', 'CNAME']);
 const DNS_ONLY_TYPES = new Set(['MX', 'TXT', 'SRV', 'CAA']);
+const TARGET_ADDITION_TYPES = new Set(['CNAME', 'TXT']);
 const MAX_SNAPSHOT_AGE_MS = 6 * 60 * 60 * 1000;
 const MAX_SNAPSHOT_FUTURE_SKEW_MS = 5 * 60 * 1000;
 const MAX_PAIR_SKEW_MS = 60 * 60 * 1000;
@@ -127,6 +128,23 @@ function canonicalAllowedChanges(snapshot, zone) {
   }).sort((left, right) => left.key.localeCompare(right.key));
 }
 
+function canonicalAllowedTargetAdditions(snapshot, zone) {
+  const raw = snapshot.allowedTargetAdditions ?? [];
+  if (!Array.isArray(raw)) throw new Error('allowedTargetAdditions must be an array when present');
+  const seen = new Set();
+  return raw.map((entry) => {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) throw new Error('allowedTargetAdditions entries must be objects');
+    const type = String(entry.type ?? '').trim().toUpperCase();
+    const name = canonicalOwner(entry.name, zone);
+    const key = `${name}|${type}`;
+    if (!TARGET_ADDITION_TYPES.has(type)) throw new Error(`${key} cannot be an allowed target addition`);
+    if (typeof entry.reason !== 'string' || !entry.reason.trim()) throw new Error(`${key} allowed target addition requires a reason`);
+    if (seen.has(key)) throw new Error(`${key} allowed target addition is duplicated`);
+    seen.add(key);
+    return { key, reason: entry.reason.trim() };
+  }).sort((left, right) => left.key.localeCompare(right.key));
+}
+
 function canonicalSnapshot(snapshot, expectedProvider, nowMs) {
   if (!snapshot || typeof snapshot !== 'object' || Array.isArray(snapshot)) throw new Error('snapshot must be an object');
   if (snapshot.schemaVersion !== 1) throw new Error('schemaVersion must equal 1');
@@ -166,6 +184,7 @@ function canonicalSnapshot(snapshot, expectedProvider, nowMs) {
     dnssec: canonicalDnssec(snapshot, expectedProvider),
     proxiedWebOwners: expectedProvider === 'cloudflare' ? canonicalProxiedWebOwners(snapshot, zone) : [],
     allowedWebValueChanges: expectedProvider === 'cloudflare' ? canonicalAllowedChanges(snapshot, zone) : [],
+    allowedTargetAdditions: expectedProvider === 'cloudflare' ? canonicalAllowedTargetAdditions(snapshot, zone) : [],
   };
 }
 
@@ -178,6 +197,7 @@ function snapshotSha256(snapshot) {
     dnssec: snapshot.dnssec,
     proxiedWebOwners: snapshot.proxiedWebOwners,
     allowedWebValueChanges: snapshot.allowedWebValueChanges,
+    allowedTargetAdditions: snapshot.allowedTargetAdditions,
   };
   return createHash('sha256').update(JSON.stringify(digestInput)).digest('hex');
 }
@@ -217,12 +237,14 @@ export function compareDnsZoneSnapshots(sourceInput, targetInput, options = {}) 
       errors: [{ code: 'snapshot_invalid', detail: error instanceof Error ? error.message : 'invalid snapshot' }],
       warnings: [],
       acceptedChanges: [],
+      acceptedAdditions: [],
     };
   }
 
   const errors = [];
   const warnings = [];
   const acceptedChanges = [];
+  const acceptedAdditions = [];
   const sourceSnapshotSha256 = snapshotSha256(source);
   const targetSnapshotSha256 = snapshotSha256(target);
   if (source.zone !== target.zone) {
@@ -236,6 +258,7 @@ export function compareDnsZoneSnapshots(sourceInput, targetInput, options = {}) 
   const sourceRecords = new Map(source.records.map((record) => [record.key, record]));
   const targetRecords = new Map(target.records.map((record) => [record.key, record]));
   const allowedChanges = new Map(target.allowedWebValueChanges.map((entry) => [entry.key, entry.reason]));
+  const allowedTargetAdditions = new Map(target.allowedTargetAdditions.map((entry) => [entry.key, entry.reason]));
   const proxiedWebOwners = new Set(target.proxiedWebOwners);
   const usedProxiedWebOwners = new Set();
   const serviceTargetNames = serviceTargets(source.records);
@@ -269,7 +292,16 @@ export function compareDnsZoneSnapshots(sourceInput, targetInput, options = {}) 
   for (const [key, targetRecord] of targetRecords) {
     if (isIgnoredProviderAuthorityRecord(targetRecord, target.zone)) continue;
     if (!sourceRecords.has(key)) {
-      errors.push({ code: 'unexpected_rrset', key, detail: 'Cloudflare contains a non-provider RRset absent from the STRATO snapshot' });
+      const allowedAdditionReason = allowedTargetAdditions.get(key);
+      if (!allowedAdditionReason) {
+        errors.push({ code: 'unexpected_rrset', key, detail: 'Cloudflare contains a non-provider RRset absent from the STRATO snapshot' });
+      } else if (serviceTargetNames.has(targetRecord.name)) {
+        errors.push({ code: 'unsafe_target_addition', key, detail: 'MX/SRV target owners cannot be accepted as target-only additions' });
+      } else if (targetRecord.type === 'CNAME' && targetRecord.proxied !== false) {
+        errors.push({ code: 'unsafe_target_addition_proxied', key, detail: 'target-only CNAME additions must stay DNS-only' });
+      } else {
+        acceptedAdditions.push({ key });
+      }
     }
     if (DNS_ONLY_TYPES.has(targetRecord.type) && targetRecord.proxied === true) {
       errors.push({ code: 'dns_only_record_proxied', key, detail: 'mail/verification/TLS-control RRsets must stay DNS-only' });
@@ -299,6 +331,14 @@ export function compareDnsZoneSnapshots(sourceInput, targetInput, options = {}) 
     }
   }
 
+  for (const key of allowedTargetAdditions.keys()) {
+    if (sourceRecords.has(key)) {
+      errors.push({ code: 'unused_allowed_target_addition', key, detail: 'allowedTargetAdditions must describe a target-only RRset' });
+    } else if (!targetRecords.has(key)) {
+      errors.push({ code: 'orphaned_allowed_target_addition', key, detail: 'allowedTargetAdditions must bind an RRset present in Cloudflare' });
+    }
+  }
+
   const sourceDsCount = source.dnssec.dsRecords.length;
   const dnssecPassed = sourceDsCount === 0 || target.dnssec.migrationReady === true;
   if (!dnssecPassed) {
@@ -324,6 +364,7 @@ export function compareDnsZoneSnapshots(sourceInput, targetInput, options = {}) 
     errors,
     warnings,
     acceptedChanges,
+    acceptedAdditions,
   };
 }
 

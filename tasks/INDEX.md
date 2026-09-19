@@ -58,3 +58,7 @@
 | T053 | done | Visuellen Testvertrag von unbegründeten Pixelwerten auf semantische Invarianten, Failure-Codes und kontrollierte Fehlerklassen gehärtet |
 | T054 | done | Security-Dependency-Konvergenz: minimaler sicherer Lockfile-/Wrangler-Slice nach Gesamt-Audit |
 | T055 | done | Inquiry-Bootstrap fail-closed: SSR-submit bleibt bis zur gebundenen JS-Initialisierung deaktiviert |
+| T056 | done | Content Projection Completion: Packages/Gallery bis UI und offergebundene Paketauswahl vervollständigen |
+| T057 | blocked_external | Business + Legal Ground Truth für V1: gemeinsame Legal-/Privacy-/Inquiry-Eingabe für T008/T049/T011 ohne erfundene Regeln |
+| T058 | planned | Post-Launch Automation Needs Audit: erst reale manuelle Arbeit messen, dann kleinsten Automationspfad wählen |
+| T059 | done | Cloudflare-Mail-DNS-Cutover-Preflight: STRATO-Mailrecords, Provider-Readback und Vollzonen-/DNSSEC-Gate vor Delegationswechsel |

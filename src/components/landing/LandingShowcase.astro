@@ -1,11 +1,31 @@
 ---
+import { packagesForOffer, resolveGalleryAssetSrc } from '../../lib/package-projection';
+
 interface Offer {
+  id: string;
+  slug: string;
   title: string;
   kicker: string;
   description: string;
   moreInfo: string;
   motif: 'flash' | 'mirror' | 'editorial';
   highlights: string[];
+}
+
+interface Package {
+  id: string;
+  offerId: string;
+  name: string;
+  summary: string;
+  priceLabel: string | null;
+  features: string[];
+}
+
+interface GalleryItem {
+  id: string;
+  src: string;
+  alt: string;
+  caption?: string;
 }
 
 interface Benefit {
@@ -21,12 +41,18 @@ interface Step {
 
 interface Props {
   offers: Offer[];
+  packages: Package[];
+  gallery: GalleryItem[];
   benefits: Benefit[];
   steps: Step[];
+  assetBase: string;
   productWhatsAppHref: (product: string) => string | undefined;
 }
 
-const { offers, benefits, steps, productWhatsAppHref } = Astro.props;
+const { offers, packages, gallery, benefits, steps, assetBase, productWhatsAppHref } = Astro.props;
+const packageGroups = offers
+  .map((offer) => ({ offer, packages: packagesForOffer(packages, offer.id) }))
+  .filter(({ packages: offerPackages }) => offerPackages.length > 0);
 ---
 <section class="hom-products" id="angebote" aria-labelledby="hom-products-title">
   <div class="shell">
@@ -38,7 +64,7 @@ const { offers, benefits, steps, productWhatsAppHref } = Astro.props;
 
     <div class="hom-product-grid">
       {offers.map((offer, index) => (
-        <article class="demo-offer-card hom-product-card" data-motif={offer.motif}>
+        <article id={`angebot-${offer.slug}`} class="demo-offer-card hom-product-card" data-motif={offer.motif}>
           <div class="hom-product-visual" aria-hidden="true">
             <span class="hom-product-number">0{index + 1}</span>
             <span class="hom-product-star">★</span>
@@ -97,15 +123,40 @@ const { offers, benefits, steps, productWhatsAppHref } = Astro.props;
       <p class="eyebrow">Pakete</p>
       <h2 id="hom-packages-title">So viel wie nötig. <em>So persönlich wie dein Event.</em></h2>
     </div>
-    <div class="hom-packages-copy">
-      <p>Pakete und Preise werden nach der finalen Kundenfreigabe veröffentlicht. Bis dahin klären wir im Anfragebereich, welches Erlebnis und welcher Umfang zu deinem Anlass passen.</p>
-      <ul>
-        <li>Produkt und Eventart zuerst klären</li>
-        <li>Wünsche und gewünschte Ausstattung abstimmen</li>
-        <li>Danach ein passendes Angebot erhalten</li>
-      </ul>
-      <a href="#anfrage">Paket gemeinsam auswählen <span aria-hidden="true">→</span></a>
-    </div>
+    {packages.length === 0 ? (
+      <div class="hom-packages-copy">
+        <p>Pakete und Preise werden nach der finalen Kundenfreigabe veröffentlicht. Bis dahin klären wir im Anfragebereich, welches Erlebnis und welcher Umfang zu deinem Anlass passen.</p>
+        <ul>
+          <li>Produkt und Eventart zuerst klären</li>
+          <li>Wünsche und gewünschte Ausstattung abstimmen</li>
+          <li>Danach ein passendes Angebot erhalten</li>
+        </ul>
+        <a href="#anfrage">Paket gemeinsam auswählen <span aria-hidden="true">→</span></a>
+      </div>
+    ) : (
+      <div class="hom-packages-copy hom-package-groups">
+        {packageGroups.map(({ offer, packages: offerPackages }) => (
+          <section class="hom-package-group" aria-labelledby={`pakete-${offer.slug}`}>
+            <h3 id={`pakete-${offer.slug}`}>{offer.title}</h3>
+            <div class="hom-package-list">
+              {offerPackages.map((item) => (
+                <article class="hom-package-card" data-offer-id={item.offerId}>
+                  <h4>{item.name}</h4>
+                  <p>{item.summary}</p>
+                  {item.priceLabel !== null && <strong class="hom-package-price">{item.priceLabel}</strong>}
+                  {item.features.length > 0 && (
+                    <ul>
+                      {item.features.map((feature) => <li>{feature}</li>)}
+                    </ul>
+                  )}
+                </article>
+              ))}
+            </div>
+          </section>
+        ))}
+        <a href="#anfrage">Passendes Paket anfragen <span aria-hidden="true">→</span></a>
+      </div>
+    )}
   </div>
 </section>
 
@@ -114,14 +165,38 @@ const { offers, benefits, steps, productWhatsAppHref } = Astro.props;
     <header class="hom-section-heading hom-section-heading-light">
       <p class="eyebrow">Galerie</p>
       <h2 id="hom-gallery-title">Momente bekommen <em>eine Bühne.</em></h2>
-      <p>Die finalen Kundenfotos folgen nach Freigabe. Bis dahin zeigt die Galerie bewusst nur die gestalterische Richtung – ohne fremde oder erfundene Produktbilder.</p>
+      {gallery.length === 0 && (
+        <p>Die finalen Kundenfotos folgen nach Freigabe. Bis dahin zeigt die Galerie bewusst nur die gestalterische Richtung – ohne fremde oder erfundene Produktbilder.</p>
+      )}
     </header>
-    <ul class="hom-gallery-grid" aria-label="Gestalterische Platzhalter für künftige Kundenfotos">
-      <li><span>Fotobox</span><strong>Spontane Momente</strong></li>
-      <li><span>Fotospiegel</span><strong>Großer Auftritt</strong></li>
-      <li><span>Magazinbox</span><strong>Cover-Moment</strong></li>
-      <li><span>Hall of Memory</span><strong>Dein Event im Mittelpunkt</strong></li>
-    </ul>
+    {gallery.length === 0 ? (
+      <ul class="hom-gallery-grid" aria-label="Gestalterische Platzhalter für künftige Kundenfotos">
+        <li><span>Fotobox</span><strong>Spontane Momente</strong></li>
+        <li><span>Fotospiegel</span><strong>Großer Auftritt</strong></li>
+        <li><span>Magazinbox</span><strong>Cover-Moment</strong></li>
+        <li><span>Hall of Memory</span><strong>Dein Event im Mittelpunkt</strong></li>
+      </ul>
+    ) : (
+      <ul
+        class="hom-gallery-grid"
+        data-content-gallery="true"
+        aria-label="Hall of Memory Galerie"
+        style="grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));grid-template-rows:none"
+      >
+        {gallery.map((item) => (
+          <li data-gallery-item={item.id} style="grid-row:auto;grid-column:auto;min-height:185px;padding:0">
+            <img
+              src={resolveGalleryAssetSrc(item.src, assetBase)}
+              alt={item.alt}
+              loading="lazy"
+              decoding="async"
+              style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"
+            />
+            {item.caption && <span class="hom-gallery-caption">{item.caption}</span>}
+          </li>
+        ))}
+      </ul>
+    )}
   </div>
 </section>
 

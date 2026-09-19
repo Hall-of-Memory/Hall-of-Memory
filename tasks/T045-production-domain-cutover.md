@@ -69,6 +69,7 @@ Die zuvor nur dokumentierte Vollzonen-/DNSSEC-Anforderung besitzt deshalb jetzt 
 - Absolute Ownernamen außerhalb der Zone sowie nicht ISO-8601-/zeitzonengebundene Zeitstempel werden abgewiesen; Snapshots über sechs Stunden Alter sowie Quell-/Zielsnapshots mit mehr als einer Stunde Abstand blockieren; der PASS-Report bindet beide normalisierten Snapshots über SHA-256.
 - Cloudflare-Webrecords müssen ihren Proxyzustand explizit deklarieren und jeder tatsächlich proxied Owner muss zusätzlich in `proxiedWebOwners` allowlist-gebunden sein; damit bleiben auch Mail-/Verifikations-Aliases fail-closed. Von `MX`/`SRV` referenzierte Ziele müssen DNS-only bleiben.
 - Bewusste Webzieländerungen sind nur eng für `A`/`AAAA`/`CNAME` mit begründetem Snapshot-Eintrag zulässig; Mail-/Serviceziele können so nicht freigegeben werden.
+- Providerbedingt erst hinter externen Nameservern notwendige zusätzliche Ziel-RRsets werden separat und enger behandelt: nur explizit allowlist-gebundene DNS-only `TXT` oder nicht-proxied `CNAME` dürfen als `allowedTargetAdditions` akzeptiert werden; jede andere zusätzliche Cloudflare-RRset bleibt blockierend.
 - Vorhandene STRATO-DS-Records blockieren, solange Cloudflare-DNSSEC-Migrationsreife nicht explizit bestätigt ist.
 - Der Prüfbericht gibt keine RRset-Werte, TXT-Verifikationstokens oder Freigabegründe aus; malformed JSON wird mit generischer Parse-/Read-Fehlerklasse statt roher Parserdiagnose gemeldet. Ungenutzte Web- oder Proxy-Ausnahmen blockieren statt als stille Dauerfreigabe liegenzubleiben.
 - Regressionen für fehlende Authority-/RRsets, stale oder zeitlich auseinanderliegende Snapshots, unerklärte Werte, unerwartete Records, Proxyfehler, unsichere/ungenutzte Web-Ausnahmen, DNSSEC-Blockade, Digest-Bindung und Report-Redaktion sind Bestandteil des kanonischen `npm run verify`.
@@ -92,6 +93,58 @@ Der Cutover wurde erneut ausschließlich read-only gegen die aktuellen externen 
 - Der vorhandene `scripts/dns-zone-cutover.mjs` bleibt das maßgebliche technische Vollzonen-/DNSSEC-Gate. Mit den extern sichtbaren Teilrecords allein darf er nicht künstlich auf `complete:true` gefüttert werden.
 
 **Folge:** Die Repo-seitige Cutover-Härtung ist vorhanden; der nächste echte Hebel liegt beim Providerzugriff. Vor jeder Nameservermutation sind weiterhin ein authentifizierter Cloudflare-Zonenreadback, ein vollständiger STRATO-Zonenexport bzw. gleichwertig vollständiger Provider-Snapshot, die vollständige Cloudflare-Abbildung samt Comparator-PASS und anschließend die autorisierte STRATO-Delegationsänderung erforderlich.
+
+
+## Read-only STRATO-/Cloudflare-Audit — 19.09.2026
+
+Der Providerzustand wurde erstmals direkt im STRATO-Kundenkonto und zusätzlich gegen beide autoritativen DNS-Seiten rekonstruiert. Es gab keine DNS-, Nameserver- oder STRATO-Mutation.
+
+- STRATO Standard Nameserver sind aktiv; eigene Nameserver sind nicht aktiviert.
+- A und AAAA stehen auf STRATO-Standard.
+- Primärer MX ist STRATO; Backup-MX ist deaktiviert.
+- STRATO Standard DMARC ist aktiv; eine STRATO-SPF-Regel ist nicht aktiviert.
+- In der STRATO-Oberfläche sind keine zusätzlichen benutzerdefinierten TXT-/CNAME-Records eingetragen.
+- Benutzerdefinierte SRV-Records und Dynamic DNS sind deaktiviert.
+- In der Domainverwaltung sind keine angelegten Subdomains sichtbar.
+- Ein vollständiger Zonenexport ist im verwendeten STRATO-Domainpaket nicht sichtbar; autoritativer AXFR wird weiterhin verweigert. Provider-UI plus autoritative Readbacks bilden deshalb die verfügbare Ersatzinventur, ersetzen aber nicht stillschweigend einen nicht vorhandenen Zonefile-Export.
+- Die vorbereitete Cloudflare-Zone ist aktuell auf `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com` autoritativ erreichbar.
+- Neun bekannte Inhalts-RRsets stimmen zwischen STRATO und Cloudflare überein: Apex A, Apex AAAA, Apex MX, `www` CNAME, `_dmarc` TXT, `_domainkey` TXT, `_autodiscover._tcp` SRV, `autoconfig` CNAME und Wildcard-MX.
+- Ein zufälliger nicht angelegter Hostname bestätigt den Wildcard-MX und keine zusätzlichen Wildcard-A/AAAA/TXT/CNAME.
+- Beim Parent ist weiterhin kein DS veröffentlicht; autoritativ ist derzeit auch kein DNSKEY belegt.
+- Der aktuelle STRATO-Vertrag für weitergenutzte STRATO-Maildienste hinter externen Nameservern verlangt zusätzlich den extern gepflegten SPF-Record `v=spf1 redirect=_spf.strato.com` sowie die jeweils aktuellen DKIM-CNAME-Selectoren. In der vorbereiteten Cloudflare-Zone fehlen aktuell die Selectorpaare `strato-dkim-0002._domainkey` und `strato-dkim-0003._domainkey` sowie der Apex-SPF-Record.
+
+**Folge:** Der Nameserverwechsel bleibt blockiert. T059 führt ab jetzt den konkreten Provider-Preflight für die fehlenden STRATO-Mailrecords, den authentifizierten Cloudflare-Zonen-/Deployment-Readback und den finalen T045-Vollzonen-/DNSSEC-PASS. T059 selbst verändert die STRATO-Delegation nicht.
+
+
+## Provider-Preflight PASS — 19.09.2026
+
+T059 ist abgeschlossen. Der kundeneigene Cloudflare-Account, die vorbereitete Zone, der aktuelle Worker-Build und das Vollzonen-/DNSSEC-Gate sind revisions- und providergebunden belegt.
+
+- aktueller Cloudflare-Worker: `hall-of-memory`, Version `e0f1f829-5ca9-44b3-a502-4ec447ed250f`; Standardhost liefert den aktuellen `main`-Build byte-identisch;
+- Cloudflare-Mail-DNS ist für den späteren externen Nameserverbetrieb vorbereitet: MX, SPF, DKIM 0002/0003, DMARC, `_domainkey`, Autoconfig/Autodiscover und Wildcard-MX sind vorhanden; Mail-/Service-Aliases bleiben DNS-only;
+- aktuelle Cloudflare-Autorität: `quentin.ns.cloudflare.com`, `tia.ns.cloudflare.com`;
+- aktueller öffentlicher STRATO-Ausgang: `docks09.rzone.de`, `shades16.rzone.de`;
+- Parent-DS, DNSKEY und CAA sind nicht vorhanden;
+- der gleichwertige STRATO-Provider-Snapshot bindet vollständigen Kundenlogin-Readback aller angebotenen DNS-Klassen/Subdomains mit beiden autoritativen STRATO-Readbacks, Wildcard-Probe und dokumentierter AXFR-Verweigerung;
+- `scripts/dns-zone-cutover.mjs` liefert auf den gebundenen Snapshots `passed:true`, 0 Errors und DNSSEC-PASS; Snapshot-Digests: STRATO `fd9264379380fcf575da5211db4c44ccbd48a33d778834f9a5a1d629f0af5519`, Cloudflare `ec896cbf6ef039ff4c7b29cba852531c3369bb35da74db3bdce7557444d1aa9c`;
+- die drei Cloudflare-only Mailauth-RRsets werden eng über `allowedTargetAdditions` akzeptiert; keine Webzieländerung ist vor dem Delegationswechsel nötig.
+
+**Nächster autorisierter Effekt:** Aram stellt bei STRATO die Nameserver auf `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com` um. Erst nach Cloudflare-`Active` wird `hallofmemory.de` an den geprüften Worker gebunden und der externe TLS/Web/Mail-Readback durchgeführt.
+
+
+## Delegationsmutation und aktueller Propagationsstand — 19.09.2026
+
+Die vorbereitete STRATO-Delegation wurde nach erneutem Live-Preflight und ausdrücklicher Autorisierung in diesem Thread ausgeführt.
+
+- Unmittelbar davor war `main` sauber auf `fcbfd8b390fa6b0c404918059a3199618b07859e`; `npm run verify` lieferte 23 PASS, 0 FAIL und 0 BLOCKED. Der aktuelle `/demo/`-Build blieb byte-identisch zum laufenden Worker (`sha256 27fe8a420e4829880607caa2d665f2a703ff6041997ec401622a1064f58e0ddd`).
+- STRATO wurde im authentifizierten Kundenkonto exakt auf eigene Nameserver `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com` umgestellt; Nameserver 3 und 4 blieben leer. DNSSEC, Domain Guard und andere STRATO-DNS-Einstellungen wurden dabei nicht verändert.
+- Ein erster Submit-Versuch fiel wegen einer abgelaufenen STRATO-Sitzung auf den Login zurück und wurde nicht als Erfolg gewertet oder blind wiederholt. Der anschließende Provider-Readback zeigte weiterhin STRATO-Standardnameserver und leere eigene Nameserverfelder. Erst nach erneuter browsergespeicherter Authentifizierung wurden die Werte frisch hergestellt, exakt geprüft und erneut übermittelt.
+- Der Provider-Readback nach dem erfolgreichen Submit zeigt in der STRATO-DNS-Übersicht `NS: (quentin.ns, tia.ns).cloudflare.com`; die bisherigen STRATO-Bereiche für A/AAAA/MX/TXT/CNAME/SRV/Dynamic DNS werden unter den externen Nameservern als inaktiv angezeigt.
+- Der spätere autoritative `dig +trace hallofmemory.de NS`-Readback belegt die erfolgreiche Parentübernahme: die `.de`-Zone delegiert `hallofmemory.de` auf `tia.ns.cloudflare.com` und `quentin.ns.cloudflare.com`; beide Cloudflare-Autoritäten liefern anschließend dasselbe NS-Paar. Der alte STRATO-Parentzustand ist damit überholt. Der Parent-DS blieb leer.
+- Auch die öffentlichen Resolver `1.1.1.1` und `8.8.8.8` liefern inzwischen ausschließlich `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com`; ein Resolver-Cache- oder Registrarblocker ist damit nicht mehr reproduzierbar.
+- Stand `2026-09-19T15:03:00+02:00` bleibt die Cloudflare-Zone dennoch providerseitig `pending`. Der Dashboard-Request `PUT .../activation_check` wurde direkt beobachtet und von Cloudflare mit HTTP 403 sowie Fehlercode `9109` (`Unauthorized to access requested resource`) abgewiesen.
+- Der aktuell eingeloggte delegierte Operator besitzt accountweit `Workers Platform Admin` und zonenspezifisch `Domain DNS`; diese Rollen erlauben die benötigte DNS-/Worker-Arbeit, enthalten aber nicht das für den Activation-Check geforderte generische `Zone Write`. Die Rollen wurden nicht verbreitert und bestehende OAuth-Scope-Minimierung wurde nicht aufgehoben.
+- Cloudflares automatischer Pending-Zonen-Check bleibt deshalb der fail-closed Providerpfad. Worker-Custom-Domain, `www`-Finalisierung und der abschließende TLS/Web/Mail-Readback werden erst nach `Active` ausgeführt. T045 bleibt `active`.
 
 ## Zielarchitektur
 
@@ -154,9 +207,6 @@ Erst nach finalen Inhalten, Rechtstexten und T008/T010/T011 wird `launchStatus: 
 
 ## Externe Grenze
 
-Für den eigentlichen Domain-Cutover fehlen derzeit zwei Autoritäten:
+Die STRATO-Nameservermutation ist providerseitig abgeschlossen und die `.de`-Parentzone delegiert `hallofmemory.de` inzwischen autoritativ auf `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com`. Der Parent-DS ist weiterhin leer.
 
-1. authentifizierter Zugriff auf den **kundeneigenen Cloudflare-Kontext**;
-2. autorisierte STRATO-Nameservermutation.
-
-Ohne diese Provider-Autorität werden weder Zone noch Nameserver geraten oder blind verändert. Neue kostenpflichtige Pläne/Dienste bleiben genehmigungspflichtig.
+Offen ist nur noch die providerseitige Umschaltung der bereits korrekt delegierten Cloudflare-Zone von `pending` auf `Active`. Parentdelegation, öffentliche Resolver und DS-Zustand sind bereits korrekt. Der manuelle Activation-Check ist mit dem aktuellen delegierten Operatorzugang nicht autorisiert (`403`, Cloudflare-Code `9109`); Berechtigungen werden dafür nicht unnötig verbreitert. Bis der automatische Cloudflare-Check die Zone aktiviert oder ein Accountinhaber den Check mit passender `Zone Write`-Berechtigung ausführt, werden Worker-Custom-Domain und `www`-/TLS-Finalisierung nicht vorgezogen. Nach Cloudflare-`Active` folgen Custom Domain, `www`-Strategie sowie vollständiger TLS/Web/Mail-Readback. Neue kostenpflichtige Pläne/Dienste bleiben genehmigungspflichtig.

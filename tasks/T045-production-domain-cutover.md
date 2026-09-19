@@ -93,6 +93,27 @@ Der Cutover wurde erneut ausschließlich read-only gegen die aktuellen externen 
 
 **Folge:** Die Repo-seitige Cutover-Härtung ist vorhanden; der nächste echte Hebel liegt beim Providerzugriff. Vor jeder Nameservermutation sind weiterhin ein authentifizierter Cloudflare-Zonenreadback, ein vollständiger STRATO-Zonenexport bzw. gleichwertig vollständiger Provider-Snapshot, die vollständige Cloudflare-Abbildung samt Comparator-PASS und anschließend die autorisierte STRATO-Delegationsänderung erforderlich.
 
+
+## Read-only STRATO-/Cloudflare-Audit — 19.09.2026
+
+Der Providerzustand wurde erstmals direkt im STRATO-Kundenkonto und zusätzlich gegen beide autoritativen DNS-Seiten rekonstruiert. Es gab keine DNS-, Nameserver- oder STRATO-Mutation.
+
+- STRATO Standard Nameserver sind aktiv; eigene Nameserver sind nicht aktiviert.
+- A und AAAA stehen auf STRATO-Standard.
+- Primärer MX ist STRATO; Backup-MX ist deaktiviert.
+- STRATO Standard DMARC ist aktiv; eine STRATO-SPF-Regel ist nicht aktiviert.
+- In der STRATO-Oberfläche sind keine zusätzlichen benutzerdefinierten TXT-/CNAME-Records eingetragen.
+- Benutzerdefinierte SRV-Records und Dynamic DNS sind deaktiviert.
+- In der Domainverwaltung sind keine angelegten Subdomains sichtbar.
+- Ein vollständiger Zonenexport ist im verwendeten STRATO-Domainpaket nicht sichtbar; autoritativer AXFR wird weiterhin verweigert. Provider-UI plus autoritative Readbacks bilden deshalb die verfügbare Ersatzinventur, ersetzen aber nicht stillschweigend einen nicht vorhandenen Zonefile-Export.
+- Die vorbereitete Cloudflare-Zone ist aktuell auf `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com` autoritativ erreichbar.
+- Neun bekannte Inhalts-RRsets stimmen zwischen STRATO und Cloudflare überein: Apex A, Apex AAAA, Apex MX, `www` CNAME, `_dmarc` TXT, `_domainkey` TXT, `_autodiscover._tcp` SRV, `autoconfig` CNAME und Wildcard-MX.
+- Ein zufälliger nicht angelegter Hostname bestätigt den Wildcard-MX und keine zusätzlichen Wildcard-A/AAAA/TXT/CNAME.
+- Beim Parent ist weiterhin kein DS veröffentlicht; autoritativ ist derzeit auch kein DNSKEY belegt.
+- Der aktuelle STRATO-Vertrag für weitergenutzte STRATO-Maildienste hinter externen Nameservern verlangt zusätzlich den extern gepflegten SPF-Record `v=spf1 redirect=_spf.strato.com` sowie die jeweils aktuellen DKIM-CNAME-Selectoren. In der vorbereiteten Cloudflare-Zone fehlen aktuell die Selectorpaare `strato-dkim-0002._domainkey` und `strato-dkim-0003._domainkey` sowie der Apex-SPF-Record.
+
+**Folge:** Der Nameserverwechsel bleibt blockiert. T059 führt ab jetzt den konkreten Provider-Preflight für die fehlenden STRATO-Mailrecords, den authentifizierten Cloudflare-Zonen-/Deployment-Readback und den finalen T045-Vollzonen-/DNSSEC-PASS. T059 selbst verändert die STRATO-Delegation nicht.
+
 ## Zielarchitektur
 
 ```text

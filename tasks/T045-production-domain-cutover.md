@@ -132,6 +132,18 @@ T059 ist abgeschlossen. Der kundeneigene Cloudflare-Account, die vorbereitete Zo
 **Nächster autorisierter Effekt:** Aram stellt bei STRATO die Nameserver auf `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com` um. Erst nach Cloudflare-`Active` wird `hallofmemory.de` an den geprüften Worker gebunden und der externe TLS/Web/Mail-Readback durchgeführt.
 
 
+## Delegationsmutation und aktueller Propagationsstand — 19.09.2026
+
+Die vorbereitete STRATO-Delegation wurde nach erneutem Live-Preflight und ausdrücklicher Autorisierung in diesem Thread ausgeführt.
+
+- Unmittelbar davor war `main` sauber auf `fcbfd8b390fa6b0c404918059a3199618b07859e`; `npm run verify` lieferte 23 PASS, 0 FAIL und 0 BLOCKED. Der aktuelle `/demo/`-Build blieb byte-identisch zum laufenden Worker (`sha256 27fe8a420e4829880607caa2d665f2a703ff6041997ec401622a1064f58e0ddd`).
+- STRATO wurde im authentifizierten Kundenkonto exakt auf eigene Nameserver `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com` umgestellt; Nameserver 3 und 4 blieben leer. DNSSEC, Domain Guard und andere STRATO-DNS-Einstellungen wurden dabei nicht verändert.
+- Ein erster Submit-Versuch fiel wegen einer abgelaufenen STRATO-Sitzung auf den Login zurück und wurde nicht als Erfolg gewertet oder blind wiederholt. Der anschließende Provider-Readback zeigte weiterhin STRATO-Standardnameserver und leere eigene Nameserverfelder. Erst nach erneuter browsergespeicherter Authentifizierung wurden die Werte frisch hergestellt, exakt geprüft und erneut übermittelt.
+- Der Provider-Readback nach dem erfolgreichen Submit zeigt in der STRATO-DNS-Übersicht `NS: (quentin.ns, tia.ns).cloudflare.com`; die bisherigen STRATO-Bereiche für A/AAAA/MX/TXT/CNAME/SRV/Dynamic DNS werden unter den externen Nameservern als inaktiv angezeigt.
+- Stand `2026-09-19T13:52:31+02:00` liefern die autoritativen .de-Parentserver `a.nic.de`, `f.nic.de`, `l.de.net`, `n.de.net`, `s.de.net` und `z.nic.de` weiterhin `docks09.rzone.de` und `shades16.rzone.de`. Der Parent-DS ist weiterhin leer.
+- Cloudflare zeigt auch nach einem expliziten `Check nameservers now` weiterhin `Waiting for your registrar to propagate your new nameservers` und ist noch nicht `Active`.
+- Deshalb wurden Worker-Custom-Domain, `www`-Finalisierung und der abschließende TLS/Web/Mail-Readback noch nicht ausgeführt. T045 bleibt `active`; eine Erfolgsaussage „Domain live“ wäre zu diesem Zeitpunkt unbelegt.
+
 ## Zielarchitektur
 
 ```text
@@ -193,6 +205,6 @@ Erst nach finalen Inhalten, Rechtstexten und T008/T010/T011 wird `launchStatus: 
 
 ## Externe Grenze
 
-Der kundeneigene Cloudflare-Kontext ist authentifiziert und der technische Preflight ist PASS. Offen bleibt ausschließlich die **autorisierte STRATO-Nameservermutation durch Aram/Kunde**.
+Die STRATO-Nameservermutation ist providerseitig abgeschlossen und im Kundenkonto auf `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com` gespeichert. Offen ist jetzt die externe Übernahme dieser Delegation durch die `.de`-Parentzone und anschließend ihre Erkennung durch Cloudflare.
 
-Bis diese Delegation erfolgt, bleibt STRATO öffentlich autoritativ und Cloudflare `pending`. Neue kostenpflichtige Pläne/Dienste bleiben genehmigungspflichtig.
+Solange DENIC noch `docks09.rzone.de` / `shades16.rzone.de` liefert und Cloudflare `pending` ist, werden weder Worker-Custom-Domain noch `www`-/TLS-Finalisierung als abgeschlossen behauptet. Nach Cloudflare-`Active` folgen Custom Domain, `www`-Strategie sowie vollständiger TLS/Web/Mail-Readback. Neue kostenpflichtige Pläne/Dienste bleiben genehmigungspflichtig.

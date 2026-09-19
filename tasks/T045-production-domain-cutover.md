@@ -132,6 +132,20 @@ T059 ist abgeschlossen. Der kundeneigene Cloudflare-Account, die vorbereitete Zo
 **Nächster autorisierter Effekt:** Aram stellt bei STRATO die Nameserver auf `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com` um. Erst nach Cloudflare-`Active` wird `hallofmemory.de` an den geprüften Worker gebunden und der externe TLS/Web/Mail-Readback durchgeführt.
 
 
+## Delegationsmutation und aktueller Propagationsstand — 19.09.2026
+
+Die vorbereitete STRATO-Delegation wurde nach erneutem Live-Preflight und ausdrücklicher Autorisierung in diesem Thread ausgeführt.
+
+- Unmittelbar davor war `main` sauber auf `fcbfd8b390fa6b0c404918059a3199618b07859e`; `npm run verify` lieferte 23 PASS, 0 FAIL und 0 BLOCKED. Der aktuelle `/demo/`-Build blieb byte-identisch zum laufenden Worker (`sha256 27fe8a420e4829880607caa2d665f2a703ff6041997ec401622a1064f58e0ddd`).
+- STRATO wurde im authentifizierten Kundenkonto exakt auf eigene Nameserver `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com` umgestellt; Nameserver 3 und 4 blieben leer. DNSSEC, Domain Guard und andere STRATO-DNS-Einstellungen wurden dabei nicht verändert.
+- Ein erster Submit-Versuch fiel wegen einer abgelaufenen STRATO-Sitzung auf den Login zurück und wurde nicht als Erfolg gewertet oder blind wiederholt. Der anschließende Provider-Readback zeigte weiterhin STRATO-Standardnameserver und leere eigene Nameserverfelder. Erst nach erneuter browsergespeicherter Authentifizierung wurden die Werte frisch hergestellt, exakt geprüft und erneut übermittelt.
+- Der Provider-Readback nach dem erfolgreichen Submit zeigt in der STRATO-DNS-Übersicht `NS: (quentin.ns, tia.ns).cloudflare.com`; die bisherigen STRATO-Bereiche für A/AAAA/MX/TXT/CNAME/SRV/Dynamic DNS werden unter den externen Nameservern als inaktiv angezeigt.
+- Der spätere autoritative `dig +trace hallofmemory.de NS`-Readback belegt die erfolgreiche Parentübernahme: die `.de`-Zone delegiert `hallofmemory.de` auf `tia.ns.cloudflare.com` und `quentin.ns.cloudflare.com`; beide Cloudflare-Autoritäten liefern anschließend dasselbe NS-Paar. Der alte STRATO-Parentzustand ist damit überholt. Der Parent-DS blieb leer.
+- Auch die öffentlichen Resolver `1.1.1.1` und `8.8.8.8` liefern inzwischen ausschließlich `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com`; ein Resolver-Cache- oder Registrarblocker ist damit nicht mehr reproduzierbar.
+- Stand `2026-09-19T15:03:00+02:00` bleibt die Cloudflare-Zone dennoch providerseitig `pending`. Der Dashboard-Request `PUT .../activation_check` wurde direkt beobachtet und von Cloudflare mit HTTP 403 sowie Fehlercode `9109` (`Unauthorized to access requested resource`) abgewiesen.
+- Der aktuell eingeloggte delegierte Operator besitzt accountweit `Workers Platform Admin` und zonenspezifisch `Domain DNS`; diese Rollen erlauben die benötigte DNS-/Worker-Arbeit, enthalten aber nicht das für den Activation-Check geforderte generische `Zone Write`. Die Rollen wurden nicht verbreitert und bestehende OAuth-Scope-Minimierung wurde nicht aufgehoben.
+- Cloudflares automatischer Pending-Zonen-Check bleibt deshalb der fail-closed Providerpfad. Worker-Custom-Domain, `www`-Finalisierung und der abschließende TLS/Web/Mail-Readback werden erst nach `Active` ausgeführt. T045 bleibt `active`.
+
 ## Zielarchitektur
 
 ```text
@@ -193,6 +207,6 @@ Erst nach finalen Inhalten, Rechtstexten und T008/T010/T011 wird `launchStatus: 
 
 ## Externe Grenze
 
-Der kundeneigene Cloudflare-Kontext ist authentifiziert und der technische Preflight ist PASS. Offen bleibt ausschließlich die **autorisierte STRATO-Nameservermutation durch Aram/Kunde**.
+Die STRATO-Nameservermutation ist providerseitig abgeschlossen und die `.de`-Parentzone delegiert `hallofmemory.de` inzwischen autoritativ auf `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com`. Der Parent-DS ist weiterhin leer.
 
-Bis diese Delegation erfolgt, bleibt STRATO öffentlich autoritativ und Cloudflare `pending`. Neue kostenpflichtige Pläne/Dienste bleiben genehmigungspflichtig.
+Offen ist nur noch die providerseitige Umschaltung der bereits korrekt delegierten Cloudflare-Zone von `pending` auf `Active`. Parentdelegation, öffentliche Resolver und DS-Zustand sind bereits korrekt. Der manuelle Activation-Check ist mit dem aktuellen delegierten Operatorzugang nicht autorisiert (`403`, Cloudflare-Code `9109`); Berechtigungen werden dafür nicht unnötig verbreitert. Bis der automatische Cloudflare-Check die Zone aktiviert oder ein Accountinhaber den Check mit passender `Zone Write`-Berechtigung ausführt, werden Worker-Custom-Domain und `www`-/TLS-Finalisierung nicht vorgezogen. Nach Cloudflare-`Active` folgen Custom Domain, `www`-Strategie sowie vollständiger TLS/Web/Mail-Readback. Neue kostenpflichtige Pläne/Dienste bleiben genehmigungspflichtig.

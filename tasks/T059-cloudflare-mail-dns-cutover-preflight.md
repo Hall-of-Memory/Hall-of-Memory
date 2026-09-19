@@ -72,6 +72,7 @@ Diese Records müssen vor einer Delegationsänderung in Cloudflare vorhanden und
 4. Webzieländerungen ausdrücklich von Mailrecords trennen:
    - die derzeitigen STRATO-A/AAAA-Werte sind Quell-/Rollbackevidenz, nicht das endgültige Cloudflare-Webziel;
    - spätere Cloudflare-Worker-Custom-Domain-DNS-Änderungen nur als begründete `allowedWebValueChanges` im bestehenden T045-Gate zulassen.
+   - die erst bei externen Nameservern erforderlichen SPF-/DKIM-RRsets als eng begründete `allowedTargetAdditions` binden; nur DNS-only `TXT` bzw. nicht-proxied `CNAME` sind dafür zulässig.
 5. Einen neuen, zeitnahen STRATO- und Cloudflare-Snapshot für `scripts/dns-zone-cutover.mjs` erzeugen. Weil STRATO keinen Zonefile-Export liefert, muss die verwendete Ersatzinventur transparent als Provider-UI + autoritative DNS-Readbacks dokumentiert werden; `complete: true` darf nur gesetzt werden, wenn diese Evidenz den Taskvertrag tatsächlich erfüllt.
 6. Comparator und DNSSEC-Gate aus T045 ausführen. Jede unerklärte Abweichung blockiert.
 7. Ergebnis revisionsgebunden in T045 dokumentieren.
@@ -95,6 +96,7 @@ Cloudflare Workers Custom Domains benötigen eine aktive Cloudflare-Zone. Deshal
 - authentifizierte aktuelle Cloudflare-Zone und aktuelle Nameserver sind belegt;
 - Standardhost des exakten Site-Deployments liefert den erwarteten Build;
 - STRATO-Mail-MX, SPF und aktuelle DKIM-Selectoren sind in Cloudflare korrekt und DNS-only vorhanden;
+- die target-only SPF-/DKIM-RRsets sind im Comparator explizit und typgebunden als `allowedTargetAdditions` akzeptiert; andere zusätzliche Cloudflare-RRsets bleiben blockierend;
 - bekannte DMARC-/Autoconfig-/Autodiscover-/Wildcard-Mailrecords bleiben erhalten;
 - keine Mail- oder Service-Records sind proxied;
 - Parent-DS/DNSSEC-Ausgangszustand ist frisch belegt;

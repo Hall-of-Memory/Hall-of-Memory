@@ -140,9 +140,9 @@ Die vorbereitete STRATO-Delegation wurde nach erneutem Live-Preflight und ausdr�
 - STRATO wurde im authentifizierten Kundenkonto exakt auf eigene Nameserver `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com` umgestellt; Nameserver 3 und 4 blieben leer. DNSSEC, Domain Guard und andere STRATO-DNS-Einstellungen wurden dabei nicht verändert.
 - Ein erster Submit-Versuch fiel wegen einer abgelaufenen STRATO-Sitzung auf den Login zurück und wurde nicht als Erfolg gewertet oder blind wiederholt. Der anschließende Provider-Readback zeigte weiterhin STRATO-Standardnameserver und leere eigene Nameserverfelder. Erst nach erneuter browsergespeicherter Authentifizierung wurden die Werte frisch hergestellt, exakt geprüft und erneut übermittelt.
 - Der Provider-Readback nach dem erfolgreichen Submit zeigt in der STRATO-DNS-Übersicht `NS: (quentin.ns, tia.ns).cloudflare.com`; die bisherigen STRATO-Bereiche für A/AAAA/MX/TXT/CNAME/SRV/Dynamic DNS werden unter den externen Nameservern als inaktiv angezeigt.
-- Stand `2026-09-19T13:52:31+02:00` liefern die autoritativen .de-Parentserver `a.nic.de`, `f.nic.de`, `l.de.net`, `n.de.net`, `s.de.net` und `z.nic.de` weiterhin `docks09.rzone.de` und `shades16.rzone.de`. Der Parent-DS ist weiterhin leer.
-- Cloudflare zeigt auch nach einem expliziten `Check nameservers now` weiterhin `Waiting for your registrar to propagate your new nameservers` und ist noch nicht `Active`.
-- Deshalb wurden Worker-Custom-Domain, `www`-Finalisierung und der abschließende TLS/Web/Mail-Readback noch nicht ausgeführt. T045 bleibt `active`; eine Erfolgsaussage „Domain live“ wäre zu diesem Zeitpunkt unbelegt.
+- Der spätere autoritative `dig +trace hallofmemory.de NS`-Readback belegt die erfolgreiche Parentübernahme: die `.de`-Zone delegiert `hallofmemory.de` auf `tia.ns.cloudflare.com` und `quentin.ns.cloudflare.com`; beide Cloudflare-Autoritäten liefern anschließend dasselbe NS-Paar. Der alte STRATO-Parentzustand ist damit überholt. Der Parent-DS blieb leer.
+- Stand `2026-09-19T14:43:13+02:00` zeigt Cloudflare trotz erfolgreicher Parentdelegation und erneutem `Check nameservers now` weiterhin `Waiting for your registrar to propagate your new nameservers`; die Zone ist providerseitig noch nicht `Active`.
+- Deshalb wurden Worker-Custom-Domain, `www`-Finalisierung und der abschließende TLS/Web/Mail-Readback weiterhin nicht vorgezogen. T045 bleibt `active`; die offene Grenze ist jetzt ausschließlich die Cloudflare-Aktivierung nach bereits erfolgreicher Parentdelegation.
 
 ## Zielarchitektur
 
@@ -205,6 +205,6 @@ Erst nach finalen Inhalten, Rechtstexten und T008/T010/T011 wird `launchStatus: 
 
 ## Externe Grenze
 
-Die STRATO-Nameservermutation ist providerseitig abgeschlossen und im Kundenkonto auf `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com` gespeichert. Offen ist jetzt die externe Übernahme dieser Delegation durch die `.de`-Parentzone und anschließend ihre Erkennung durch Cloudflare.
+Die STRATO-Nameservermutation ist providerseitig abgeschlossen und die `.de`-Parentzone delegiert `hallofmemory.de` inzwischen autoritativ auf `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com`. Der Parent-DS ist weiterhin leer.
 
-Solange DENIC noch `docks09.rzone.de` / `shades16.rzone.de` liefert und Cloudflare `pending` ist, werden weder Worker-Custom-Domain noch `www`-/TLS-Finalisierung als abgeschlossen behauptet. Nach Cloudflare-`Active` folgen Custom Domain, `www`-Strategie sowie vollständiger TLS/Web/Mail-Readback. Neue kostenpflichtige Pläne/Dienste bleiben genehmigungspflichtig.
+Offen ist nur noch die providerseitige Umschaltung der bereits korrekt delegierten Cloudflare-Zone von `pending` auf `Active`. Solange Cloudflare selbst noch `Waiting for your registrar to propagate your new nameservers` meldet, werden Worker-Custom-Domain und `www`-/TLS-Finalisierung nicht vorgezogen. Nach Cloudflare-`Active` folgen Custom Domain, `www`-Strategie sowie vollständiger TLS/Web/Mail-Readback. Neue kostenpflichtige Pläne/Dienste bleiben genehmigungspflichtig.

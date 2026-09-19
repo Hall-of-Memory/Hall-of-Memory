@@ -39,6 +39,7 @@ const targetSnapshot = () => ({
   allowedWebValueChanges: [
     { name: '@', type: 'A', reason: 'web apex moves from STRATO hosting to the verified Cloudflare custom-domain target' },
   ],
+  allowedTargetAdditions: [],
   records: [
     { name: '@', type: 'A', ttl: 300, values: ['198.51.100.10'], proxied: true },
     { name: '@', type: 'AAAA', ttl: 3600, values: ['2001:db8::10'], proxied: true },
@@ -113,6 +114,72 @@ const targetSnapshot = () => ({
   assert.equal(report.passed, false);
   assert.ok(report.errors.some(({ code, key }) => code === 'unexpected_rrset' && key === 'unexpected.example.com|TXT'));
   assert.ok(!JSON.stringify(report).includes('provider-extra-token'));
+}
+
+{
+  const target = targetSnapshot();
+  target.records.push({ name: 'provider-auth', type: 'TXT', ttl: 300, values: ['provider-extra-token'] });
+  target.allowedTargetAdditions.push({ name: 'provider-auth', type: 'TXT', reason: 'provider-required mail authentication after delegation' });
+  const report = compareDnsZoneSnapshots(sourceSnapshot(), target);
+  assert.equal(report.passed, true, JSON.stringify(report));
+  assert.ok(report.acceptedAdditions.some(({ key }) => key === 'provider-auth.example.com|TXT'));
+  assert.ok(!JSON.stringify(report).includes('provider-extra-token'));
+  assert.ok(!JSON.stringify(report).includes('provider-required mail authentication'));
+}
+
+{
+  const target = targetSnapshot();
+  target.records.push({
+    name: 'selector._domainkey',
+    type: 'CNAME',
+    ttl: 300,
+    values: ['selector.provider.example.'],
+    proxied: false,
+  });
+  target.allowedTargetAdditions.push({
+    name: 'selector._domainkey',
+    type: 'CNAME',
+    reason: 'provider-required DKIM selector after delegation',
+  });
+  const report = compareDnsZoneSnapshots(sourceSnapshot(), target);
+  assert.equal(report.passed, true, JSON.stringify(report));
+  assert.ok(report.acceptedAdditions.some(({ key }) => key === 'selector._domainkey.example.com|CNAME'));
+}
+
+{
+  const target = targetSnapshot();
+  target.records.push({
+    name: 'selector._domainkey',
+    type: 'CNAME',
+    ttl: 300,
+    values: ['selector.provider.example.'],
+    proxied: true,
+  });
+  target.allowedTargetAdditions.push({
+    name: 'selector._domainkey',
+    type: 'CNAME',
+    reason: 'must remain DNS-only',
+  });
+  const report = compareDnsZoneSnapshots(sourceSnapshot(), target);
+  assert.equal(report.passed, false);
+  assert.ok(report.errors.some(({ code, key }) => code === 'unsafe_target_addition_proxied' && key === 'selector._domainkey.example.com|CNAME'));
+}
+
+{
+  const target = targetSnapshot();
+  target.allowedTargetAdditions.push({ name: 'missing-auth', type: 'TXT', reason: 'must bind a real target record' });
+  const report = compareDnsZoneSnapshots(sourceSnapshot(), target);
+  assert.equal(report.passed, false);
+  assert.ok(report.errors.some(({ code, key }) => code === 'orphaned_allowed_target_addition' && key === 'missing-auth.example.com|TXT'));
+}
+
+{
+  const target = targetSnapshot();
+  target.allowedTargetAdditions.push({ name: 'unexpected-web', type: 'A', reason: 'must never broaden target additions into web records' });
+  const report = compareDnsZoneSnapshots(sourceSnapshot(), target);
+  assert.equal(report.passed, false);
+  assert.equal(report.errors[0].code, 'snapshot_invalid');
+  assert.match(report.errors[0].detail, /allowed target addition/);
 }
 
 {

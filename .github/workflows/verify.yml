@@ -48,7 +48,7 @@ jobs:
       - name: Enforce production release build
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
-          PUBLIC_SITE_URL: https://hallofmemory.de/
+          PUBLIC_SITE_URL: https://memoraevent.de/
           PUBLIC_INQUIRY_API_URL: ${{ vars.PRODUCTION_INQUIRY_API_URL }}
           PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.PRODUCTION_TURNSTILE_SITE_KEY }}
           PRODUCTION_WORKER_CONFIG_JSON: ${{ secrets.PRODUCTION_WORKER_CONFIG_JSON }}

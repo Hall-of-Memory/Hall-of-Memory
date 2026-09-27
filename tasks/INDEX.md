@@ -47,7 +47,7 @@
 | T042 | done | Demo-CSS-Reserve vor weiteren Styling-Erweiterungen wieder auf mindestens 2 KiB anheben |
 | T043 | blocked_external | Kundenkontrolliertes GitHub-Repo, Codex-/CI-Readiness und Publication Gate |
 | T044 | planned | Preview-Legacy-Sternenrahmen V7–V9 in Fundus überführen oder bewusst ausmustern |
-| T045 | active | `hallofmemory.de` als Produktions-/Primärdomain aktivieren und Source-Privatsphäre getrennt entscheiden |
+| T045 | cancelled | Historischer `hallofmemory.de`-Cutover; operativer Domainpfad durch T060 superseded |
 | T046 | done | Kanonische Landingpage: Demo- und Produktionsarchitektur auf gemeinsamen Seitenkern und gemeinsames Contentmodell konvergieren |
 | T047 | done | Release-Safety-Gates: Production-Readiness, verify→deploy, Actions-/Header-Härtung |
 | T048 | done | Testarchitektur in Contract-, Visual- und Performance-Gates entkoppeln |
@@ -62,3 +62,4 @@
 | T057 | blocked_external | Business + Legal Ground Truth für V1: gemeinsame Legal-/Privacy-/Inquiry-Eingabe für T008/T049/T011 ohne erfundene Regeln |
 | T058 | planned | Post-Launch Automation Needs Audit: erst reale manuelle Arbeit messen, dann kleinsten Automationspfad wählen |
 | T059 | done | Cloudflare-Mail-DNS-Cutover-Preflight: STRATO-Mailrecords, Provider-Readback und Vollzonen-/DNSSEC-Gate vor Delegationswechsel |
+| T060 | active | Produktionsdomain-Pivot auf `memoraevent.de`: INWX → Cloudflare → Worker, mit Least-Privilege- und Cutover-Gates |

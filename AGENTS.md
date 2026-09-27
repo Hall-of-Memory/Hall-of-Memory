@@ -20,7 +20,7 @@ Diese Datei ist der operative Arbeitsvertrag für Coding-Agenten in Hall of Memo
 
 ## 3. Datenschutz- und Veröffentlichungsgrenze
 
-Die Repository-Sichtbarkeit kann sich gemäß T045 ändern. Deshalb gilt unabhängig von `public` oder `private` fail-closed:
+Die Repository-Sichtbarkeit wurde historisch in T045 behandelt; T060 ändert ausschließlich den operativen Domainpfad. Deshalb gilt unabhängig von `public` oder `private` fail-closed:
 
 - Keine Secrets, Tokens, Passwörter, `.env`-Dateien oder produktiven Zugangsdaten committen.
 - Keine personenbezogenen Eventkundendaten oder privaten Eventmedien committen.
@@ -54,9 +54,9 @@ Bei einem im aktuellen Task ausdrücklich als Kundenredesign dokumentierten `DES
 
 ## 6. Deployment-Grenze
 
-- Produktiver Primär-Origin ist gemäß T045 `https://hallofmemory.de`.
+- Produktiver Primär-Origin ist gemäß T060 `https://memoraevent.de`; T045/T059 sind historische Evidenz des früheren Domainpfads.
 - Cloudflare bleibt die vorgesehene Produktionsplattform; GitHub Pages ist nur Übergangs-Fallback bis zum erfolgreichen Domain-Cutover.
-- Die Kundenentscheidung vom 22.08.2026 autorisiert den statischen Domain-Livegang und die weitere Entwicklung auf dieser Domain, sobald kundeneigene Cloudflare-/DNS-Autorität technisch verfügbar ist und keine neue kostenpflichtige Zusatznutzung ohne Freigabe entsteht.
+- Die Kundenentscheidung vom 27.09.2026 setzt `memoraevent.de` als neue Primärdomain. Der statische Domain-Livegang bleibt an kundeneigene Cloudflare-/DNS-Autorität, T060-Cutover-Gates und das Verbot ungefragter kostenpflichtiger Zusatznutzung gebunden.
 - Produktive Backend-Ressourcen wie D1, Turnstile, Access, Email-Bindings oder neue kostenpflichtige Dienste bleiben an T009/T011 und ihre Freigaben gebunden.
 - Nach Deployment immer revisionsgebundenen HTTP-/Browser-Readback durchführen; ein Merge allein beweist keinen erfolgreichen Livegang.
 

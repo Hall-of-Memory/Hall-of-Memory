@@ -70,6 +70,33 @@ const targetSnapshot = () => ({
 
 {
   const source = sourceSnapshot();
+  source.provider = 'inwx';
+  source.records = source.records.map((record) => {
+    if (record.name === '@' && record.type === 'NS') {
+      return { ...record, values: ['ns.inwx.de.', 'ns2.inwx.de.', 'ns3.inwx.eu.'] };
+    }
+    if (record.name === '@' && record.type === 'SOA') {
+      return { ...record, values: ['ns.inwx.de. hostmaster.inwx.de. 1 10800 3600 1209600 3600'] };
+    }
+    return record;
+  });
+  const report = compareDnsZoneSnapshots(source, targetSnapshot());
+  assert.equal(report.passed, true, JSON.stringify(report));
+  assert.equal(report.errors.length, 0);
+  assert.equal(report.dnssec.passed, true);
+}
+
+{
+  const source = sourceSnapshot();
+  source.provider = 'unsupported-provider';
+  const report = compareDnsZoneSnapshots(source, targetSnapshot());
+  assert.equal(report.passed, false);
+  assert.equal(report.errors[0].code, 'snapshot_invalid');
+  assert.match(report.errors[0].detail, /source provider/);
+}
+
+{
+  const source = sourceSnapshot();
   source.complete = false;
   const report = compareDnsZoneSnapshots(source, targetSnapshot());
   assert.equal(report.passed, false);
@@ -318,7 +345,7 @@ const targetSnapshot = () => ({
 {
   const directory = await mkdtemp(join(tmpdir(), 'hall-of-memory-dns-cutover-'));
   try {
-    const sourcePath = join(directory, 'strato.json');
+    const sourcePath = join(directory, 'source.json');
     const targetPath = join(directory, 'cloudflare.json');
     await writeFile(sourcePath, JSON.stringify(sourceSnapshot()));
     await writeFile(targetPath, JSON.stringify(targetSnapshot()));

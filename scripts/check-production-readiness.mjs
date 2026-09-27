@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 
-export const PRODUCTION_SITE_ORIGIN = 'https://hallofmemory.de/';
+export const PRODUCTION_SITE_ORIGIN = 'https://memoraevent.de/';
 export const PRODUCTION_INQUIRY_ENTRY = 'src/privacy-entry.ts';
 
 const TURNSTILE_TEST_SITE_KEYS = new Set([

@@ -1,6 +1,6 @@
 # Mitwirken an Hall of Memory
 
-Hall of Memory liegt in einem kundenkontrollierten GitHub-Repository. Die öffentliche Website und die Sichtbarkeit des Source-Repositories werden bewusst getrennt behandelt; T045 dokumentiert die aktuelle Privatsphäre-/Tarifentscheidung.
+Hall of Memory liegt in einem kundenkontrollierten GitHub-Repository. Die öffentliche Website und die Sichtbarkeit des Source-Repositories werden bewusst getrennt behandelt; T045 dokumentiert die historische Privatsphäre-/Tarifentscheidung, T060 den aktuellen Domainpfad.
 
 ## Kanonischer Ablauf
 
@@ -11,7 +11,7 @@ Hall of Memory liegt in einem kundenkontrollierten GitHub-Repository. Die öffen
 5. Pull Request erstellen und die Wirkung knapp beschreiben.
 6. Diff, Preview und Checks prüfen.
 7. Erst danach nach `main` mergen.
-8. Bei einer für Produktion vorgesehenen Änderung zusätzlich den revisionsgebundenen Deploy-/Domain-Readback aus T045 durchführen.
+8. Bei einer für Produktion vorgesehenen Änderung zusätzlich den revisionsgebundenen Deploy-/Domain-Readback aus T060 durchführen.
 
 `tasks/` bleibt die einzige Aufgabenquelle. GitHub Issues ersetzen die Task-Dateien nicht.
 
@@ -32,7 +32,7 @@ Nicht committen:
 - interne Verträge, Rechnungen oder private Korrespondenz,
 - nicht zur Veröffentlichung bestimmte Designer-/Stock-/Font-Source-Master.
 
-Auch ein privates Repository ist keine Freigabe für private Betriebsdaten. Produktive Secrets und private Eventmedien bleiben außerhalb von Git. Öffentliche Web-Exports dürfen nach den projektseitig geklärten Nutzungsrechten über `hallofmemory.de` ausgeliefert werden.
+Auch ein privates Repository ist keine Freigabe für private Betriebsdaten. Produktive Secrets und private Eventmedien bleiben außerhalb von Git. Öffentliche Web-Exports dürfen nach den projektseitig geklärten Nutzungsrechten über `memoraevent.de` ausgeliefert werden.
 
 ## Branches und Pull Requests
 
@@ -55,9 +55,9 @@ Die GitHub-CI führt denselben Befehl aus. Lokale und Remote-Prüfung sollen nic
 
 ## Deployment
 
-Produktiver Primär-Origin ist `https://hallofmemory.de`; Zielplattform ist Cloudflare gemäß T009/T045 und `docs/deployment-handover.md`. GitHub Pages ist nur noch Übergangs-Fallback bis zum erfolgreichen Domain-Cutover.
+Produktiver Primär-Origin ist `https://memoraevent.de`; Zielplattform ist Cloudflare gemäß T009/T060 und `docs/deployment-handover.md`. GitHub Pages ist nur noch Übergangs-Fallback bis zum erfolgreichen Domain-Cutover.
 
-Die Kundenentscheidung vom 22.08.2026 autorisiert den statischen Domain-Livegang. Neue kostenpflichtige Dienste oder produktive Backend-Ressourcen werden dadurch nicht pauschal freigegeben.
+Die Kundenentscheidung vom 27.09.2026 setzt `memoraevent.de` als neue Primärdomain. Neue kostenpflichtige Dienste oder produktive Backend-Ressourcen werden dadurch nicht pauschal freigegeben.
 
 ## Lizenz
 

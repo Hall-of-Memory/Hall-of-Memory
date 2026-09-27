@@ -1,27 +1,30 @@
 # Deployment- und Handover-Runbook
 
-Stand: 2026-08-24
+Stand: 2026-09-27
 
 Dieses Runbook trennt zwei Stufen:
 
-1. **Domain-Arbeitsstand:** die gepflegte Hall-of-Memory-Website wird unter `https://hallofmemory.de` erreichbar und dort weiterentwickelt; sie bleibt bis zur inhaltlichen/rechtlichen Freigabe `noindex` und das produktive Anfrageformular bleibt fail-closed.
+1. **Domain-Arbeitsstand:** die gepflegte Hall-of-Memory-Website wird unter `https://memoraevent.de` erreichbar und dort weiterentwickelt; sie bleibt bis zur inhaltlichen/rechtlichen Freigabe `noindex` und das produktive Anfrageformular bleibt fail-closed.
 2. **Vollständige V1-Produktion:** Anfrage-Worker, Turnstile, Access, D1, Email-Binding und finale Recht-/Inhaltsfreigaben werden erst nach den Gates aus T008/T010/T011 aktiviert.
 
-Die Kundenentscheidung vom 22.08.2026 autorisiert Stufe 1. Sie ist keine pauschale Freigabe neuer kostenpflichtiger Dienste oder der Backend-Stufe 2.
+Die Kundenentscheidung vom 27.09.2026 setzt `memoraevent.de` als neue Primärdomain und autorisiert Stufe 1. Sie ist keine pauschale Freigabe neuer kostenpflichtiger Dienste oder der Backend-Stufe 2.
 
 ## 1. Aktuelle Kundeninfrastruktur
 
-- Produktions-/Primärdomain: `https://hallofmemory.de`
-- Registrar/DNS: kundeneigen bei STRATO
-- autoritative Nameserver zum Stand 22.08.2026: `docks09.rzone.de`, `shades16.rzone.de`
-- Apex-A-Record: `217.160.0.152`
-- `www.hallofmemory.de`: CNAME auf `hallofmemory.de`
+- Produktions-/Primärdomain: `https://memoraevent.de`
+- Registrar/DNS: kundeneigen bei INWX
+- autoritative Nameserver zum Stand 27.09.2026: `ns.inwx.de`, `ns2.inwx.de`, `ns3.inwx.eu`
+- Apex-A-Record: `185.181.104.242`
+- `www.memoraevent.de`: A `185.181.104.242`
+- Wildcard `*`: A `185.181.104.242`
+- aktuell keine Apex-MX/TXT/CAA- oder `_dmarc`-TXT-Records; Parent-DS leer
 - kanonisches Source-Repo: `Hall-of-Memory/Hall-of-Memory`
 - `main`: PR-geschützt, Required Check `verify`, Admin-Enforcement, Conversation Resolution, kein Force-Push/Branch-Löschen
 - GitHub Pages: nur Übergangs-Fallback, nicht Produktionsplattform
-- Cloudflare: vorgesehene produktive Auslieferung; auf dem Heim-PC ist Wrangler derzeit **nicht** an ein Kundenkonto authentifiziert
+- Cloudflare: vorgesehene produktive Auslieferung; bestehender Worker `hall-of-memory` ist Zielruntime
+- neue Cloudflare-Zone `memoraevent.de`: noch nicht angelegt; der aktuelle delegierte Zugang wird beim Erstellen wegen fehlendem `com.cloudflare.api.account.zone.create` blockiert
 
-T045 ist die operative Wahrheit für den Domain-Cutover.
+T060 ist die operative Wahrheit für den Domain-Cutover. T045/T059 bleiben historische Evidenz des früheren `hallofmemory.de`-Pfads.
 
 ## 2. Öffentlicher Buildvertrag
 
@@ -29,7 +32,7 @@ T045 ist die operative Wahrheit für den Domain-Cutover.
 
 | Name | Vertrag |
 |---|---|
-| `PUBLIC_SITE_URL` | für den Domain-Build exakt `https://hallofmemory.de`, ohne Pfad/Query/Fragment |
+| `PUBLIC_SITE_URL` | für den Domain-Build exakt `https://memoraevent.de`, ohne Pfad/Query/Fragment |
 | `PUBLIC_INQUIRY_API_URL` | leer, solange Stufe 2 nicht aktiviert ist; später relative Same-Origin-Route oder vollständiger HTTPS-Endpunkt |
 | `PUBLIC_TURNSTILE_SITE_KEY` | leer, solange Stufe 2 nicht aktiviert ist; später öffentlicher produktiver Site-Key |
 | `PUBLIC_WHATSAPP_NUMBER` | nur bestätigte Business-Nummer; sonst leer |
@@ -42,7 +45,7 @@ Solange Inhalte/Legal noch Entwurfsstand sind, bleibt `noindex` bewusst erhalten
 / /demo/ 302
 ```
 
-Damit zeigt `https://hallofmemory.de/` auf die gepflegte Kundenwebsite unter `/demo/`, ohne den sicherheitsgehärteten internen Root-Scaffold oder seine Formularprüfungen zu ersetzen. Bis zur finalen Launch-Entscheidung bleibt es ein temporärer `302` statt eines permanenten `301`.
+Damit zeigt `https://memoraevent.de/` auf die gepflegte Kundenwebsite unter `/demo/`, ohne den sicherheitsgehärteten internen Root-Scaffold oder seine Formularprüfungen zu ersetzen. Bis zur finalen Launch-Entscheidung bleibt es ein temporärer `302` statt eines permanenten `301`.
 
 Der Anfragebereich auf `/demo/` ist in Stage 1 nur eine sichtbare Ablaufvorschau: Feldgruppen und Submit sind disabled, es gibt keinen Mock-Submit und keinen clientseitigen Pfad, der eingegebene Kontaktdaten scheinbar entgegennimmt und verwirft. Ein echter Anfragepfad darf erst mit Stage 2 aktiviert werden.
 
@@ -52,27 +55,27 @@ Vor Mutation:
 
 - exakten Git-Commit und sauberen Worktree lesen;
 - `npm ci` und `npm run verify` grün;
-- Domain-Build mit `PUBLIC_SITE_URL=https://hallofmemory.de` erzeugen;
+- Domain-Build mit `PUBLIC_SITE_URL=https://memoraevent.de` erzeugen;
 - `dist/_redirects` exakt auf die eine freigegebene Regel prüfen;
 - keine Secrets oder produktiven Backend-Platzhalter im Artefakt;
-- **vollständigen autoritativen STRATO-DNS-Zonenstand** vor jeder Nameservermutation inventarisieren/exportieren: alle Ownernamen/Subdomains, Recordtypen, Werte, Prioritäten und TTLs; mindestens `A`, `AAAA`, `CNAME`, `MX`, `TXT` (einschließlich SPF/DKIM/DMARC/Verifikationen), `SRV` und `CAA`; aktuelle `NS`/`SOA` separat dokumentieren;
-- DNSSEC/DS-Status beim Registrar separat read-backen. Bei aktivem DNSSEC darf der Nameserverwechsel nicht erfolgen, solange ein alter/inkompatibler DS die neue Delegation validierungsfehlerhaft machen würde; die zum Umschaltzeitpunkt gültige STRATO-/Cloudflare-Migrationsprozedur wird live gelesen und revisionsgebunden protokolliert;
+- **vollständigen autoritativen INWX-DNS-Zonenstand** vor jeder Nameservermutation inventarisieren/exportieren: alle Ownernamen/Subdomains, Recordtypen, Werte, Prioritäten und TTLs; mindestens `A`, `AAAA`, `CNAME`, `MX`, `TXT` (einschließlich SPF/DKIM/DMARC/Verifikationen), `SRV` und `CAA`; aktuelle `NS`/`SOA` separat dokumentieren;
+- DNSSEC/DS-Status beim Registrar separat read-backen. Bei aktivem DNSSEC darf der Nameserverwechsel nicht erfolgen, solange ein alter/inkompatibler DS die neue Delegation validierungsfehlerhaft machen würde; die zum Umschaltzeitpunkt gültige INWX-/Cloudflare-Migrationsprozedur wird live gelesen und revisionsgebunden protokolliert;
 - im kundeneigenen Cloudflare-Kontext Account/Zone, Tarif und tatsächlich verlangte Nameserver/Custom-Domain-Konfiguration lesen;
-- **vor dem Nameserverwechsel** sämtliche weiterhin benötigten nicht-provider-spezifischen RRsets aus dem STRATO-Snapshot in Cloudflare anlegen/importieren. Mail-/Verifikationsrecords (`MX`, zugehörige `A`/`AAAA`, `TXT`, `SRV`) bleiben DNS-only; nur bewusst gewählte Webrecords dürfen proxied werden;
-- den normalisierten STRATO-Snapshot und die Cloudflare-Zone recordweise vergleichen. Abgesehen von bewusst dokumentierten providerbedingten `NS`/`SOA`-/Proxy-Unterschieden darf kein benötigter Record fehlen oder unerklärt abweichen. `CAA` muss mit der vorgesehenen TLS-Zertifikatsausstellung vereinbar sein; bei Unklarheit bleibt der Cutover blockiert;
+- **vor dem Nameserverwechsel** sämtliche weiterhin benötigten nicht-provider-spezifischen RRsets aus dem INWX-Snapshot in Cloudflare anlegen/importieren. Mail-/Verifikationsrecords (`MX`, zugehörige `A`/`AAAA`, `TXT`, `SRV`) bleiben DNS-only; nur bewusst gewählte Webrecords dürfen proxied werden;
+- den normalisierten INWX-Snapshot und die Cloudflare-Zone recordweise vergleichen. Abgesehen von bewusst dokumentierten providerbedingten `NS`/`SOA`-/Proxy-Unterschieden darf kein benötigter Record fehlen oder unerklärt abweichen. `CAA` muss mit der vorgesehenen TLS-Zertifikatsausstellung vereinbar sein; bei Unklarheit bleibt der Cutover blockiert;
 - vollständigen Zonen-Snapshot, DNSSEC-Ausgangszustand und vorherige Nameserver als Rollbackevidenz außerhalb von Secrets protokollieren. Die bekannten Apex-`A`- und `www`-Records allein sind ausdrücklich **kein** vollständiger DNS-Sicherungsnachweis.
 
 ### Maschinenlesbares Vollzonen-/DNSSEC-Gate
 
 Die Provider-Sicherung wird vor dem Nameserverwechsel nicht nur textuell, sondern mit `scripts/dns-zone-cutover.mjs` fail-closed geprüft. Das Werkzeug erwartet zwei **vollständige, lokal bereitgestellte JSON-Snapshots**; es ruft keinen Provider auf und nimmt selbst keine DNS-Mutation vor. Ein `complete: true` ist dabei eine vom Provider-Export zu belegende Eingangsbehauptung und ersetzt nicht den Nachweis, dass der Export tatsächlich vollständig war.
 
-Quellsnapshot STRATO:
+Quellsnapshot INWX:
 
 ```json
 {
   "schemaVersion": 1,
-  "provider": "strato",
-  "zone": "hallofmemory.de",
+  "provider": "inwx",
+  "zone": "memoraevent.de",
   "complete": true,
   "capturedAt": "<ISO-8601 mit Zeitzone>",
   "dnssec": { "dsRecords": [] },
@@ -86,7 +89,7 @@ Zielsnapshot Cloudflare:
 {
   "schemaVersion": 1,
   "provider": "cloudflare",
-  "zone": "hallofmemory.de",
+  "zone": "memoraevent.de",
   "complete": true,
   "capturedAt": "<ISO-8601 mit Zeitzone>",
   "dnssec": { "migrationReady": false },
@@ -97,12 +100,12 @@ Zielsnapshot Cloudflare:
 }
 ```
 
-Für beide Snapshots sind `NS` und `SOA` am Zonenapex als Authority-Evidenz Pflicht; nur diese Apex-RRsets werden anschließend als providerverwaltete Unterschiede vom Inhaltsvergleich ausgenommen. Delegierte oder sonstige subdomainbezogene `NS`/`SOA` bleiben regulärer Vergleichsinhalt. Absolute Recordnamen außerhalb der deklarierten Zone werden abgewiesen. `capturedAt` muss ISO-8601 mit expliziter Zeitzone sein. Ein Snapshot darf für eine Cutover-Entscheidung höchstens sechs Stunden alt sein, und Quell-/Zielsnapshot dürfen höchstens eine Stunde auseinanderliegen. Für Cloudflare müssen `A`/`AAAA`/`CNAME` explizit `proxied: true|false` tragen. Jeder tatsächlich proxied Web-Owner muss zusätzlich in `proxiedWebOwners` ausdrücklich freigegeben sein; damit können etwa `imap`, `autodiscover` oder Verifikations-CNAMEs nicht allein deshalb proxied passieren, weil sie kein direktes `MX`-/`SRV`-Ziel sind. Ungenutzte Proxy-Freigaben blockieren. Von `MX` oder `SRV` referenzierte Ziele müssen unabhängig davon DNS-only bleiben. Alle übrigen RRsets werden owner-/typgebunden verglichen. TTL-Abweichungen sind sichtbar, aber allein nicht blockierend. Bewusste Webzieländerungen sind nur für `A`/`AAAA`/`CNAME` über `allowedWebValueChanges` mit begründetem Eintrag zulässig; Mail-/SRV-Ziele können darüber nicht freigegeben werden, und ungenutzte Freigaben blockieren. Providerbedingt erst nach der Delegation notwendige zusätzliche Mail-/Verifikations-RRsets dürfen ausschließlich als explizite `allowedTargetAdditions` aufgenommen werden; zulässig sind nur DNS-only `TXT` oder nicht-proxied `CNAME`, jeweils mit Begründung. Die Freigabe muss exakt einen nur in Cloudflare vorhandenen RRset binden; fehlende, bereits in STRATO vorhandene, proxied oder typfremde Freigaben blockieren. Existieren im STRATO-Snapshot DS-Records, bleibt das Gate rot, bis `dnssec.migrationReady=true` revisionsgebunden belegt ist.
+Für beide Snapshots sind `NS` und `SOA` am Zonenapex als Authority-Evidenz Pflicht; nur diese Apex-RRsets werden anschließend als providerverwaltete Unterschiede vom Inhaltsvergleich ausgenommen. Delegierte oder sonstige subdomainbezogene `NS`/`SOA` bleiben regulärer Vergleichsinhalt. Absolute Recordnamen außerhalb der deklarierten Zone werden abgewiesen. `capturedAt` muss ISO-8601 mit expliziter Zeitzone sein. Ein Snapshot darf für eine Cutover-Entscheidung höchstens sechs Stunden alt sein, und Quell-/Zielsnapshot dürfen höchstens eine Stunde auseinanderliegen. Für Cloudflare müssen `A`/`AAAA`/`CNAME` explizit `proxied: true|false` tragen. Jeder tatsächlich proxied Web-Owner muss zusätzlich in `proxiedWebOwners` ausdrücklich freigegeben sein; damit können etwa `imap`, `autodiscover` oder Verifikations-CNAMEs nicht allein deshalb proxied passieren, weil sie kein direktes `MX`-/`SRV`-Ziel sind. Ungenutzte Proxy-Freigaben blockieren. Von `MX` oder `SRV` referenzierte Ziele müssen unabhängig davon DNS-only bleiben. Alle übrigen RRsets werden owner-/typgebunden verglichen. TTL-Abweichungen sind sichtbar, aber allein nicht blockierend. Bewusste Webzieländerungen sind nur für `A`/`AAAA`/`CNAME` über `allowedWebValueChanges` mit begründetem Eintrag zulässig; Mail-/SRV-Ziele können darüber nicht freigegeben werden, und ungenutzte Freigaben blockieren. Providerbedingt erst nach der Delegation notwendige zusätzliche Mail-/Verifikations-RRsets dürfen ausschließlich als explizite `allowedTargetAdditions` aufgenommen werden; zulässig sind nur DNS-only `TXT` oder nicht-proxied `CNAME`, jeweils mit Begründung. Die Freigabe muss exakt einen nur in Cloudflare vorhandenen RRset binden; fehlende, bereits in INWX vorhandene, proxied oder typfremde Freigaben blockieren. Existieren im INWX-Snapshot DS-Records, bleibt das Gate rot, bis `dnssec.migrationReady=true` revisionsgebunden belegt ist.
 
 Prüfung:
 
 ```sh
-node scripts/dns-zone-cutover.mjs <strato-snapshot.json> <cloudflare-snapshot.json>
+node scripts/dns-zone-cutover.mjs <inwx-snapshot.json> <cloudflare-snapshot.json>
 ```
 
 Nur Exit-Code `0` **und** `passed: true` gelten als PASS. Der Report bindet beide normalisierten Vollsnapshots über SHA-256, nennt Recordschlüssel und Fehlerklassen, gibt aber absichtlich keine RRset-Werte, TXT-Verifikationstokens, Freigabegründe oder sonstigen DNS-Inhalt wieder. Auch Datei-/JSON-Parsefehler werden nur generisch gemeldet, damit malformed Snapshots keine Tokenfragmente über Parserdiagnosen in Logs tragen. Die vollständigen Snapshots können solche Werte enthalten und werden deshalb nicht ins Repository committed, sondern ausschließlich in einem freigegebenen Evidenz-/Rollbackpfad außerhalb von Git gehalten.
@@ -111,12 +114,12 @@ Dann:
 
 1. statische Site revisionsgebunden nach Cloudflare deployen;
 2. Deployment auf dem Cloudflare-Standardhost read-backen;
-3. `hallofmemory.de` als Custom Domain an das geprüfte Deployment binden;
-4. Cloudflare-Zonenbestand nochmals gegen den vollständigen STRATO-Snapshot vergleichen und den Vergleich als `PASS` binden; DNSSEC/DS-Preflight muss ebenfalls `PASS` sein;
-5. die von Cloudflare tatsächlich ausgegebenen Nameserver revisionsgebunden lesen;
-6. **erst bei bestandenem Vollzonen- und DNSSEC-Gate** die STRATO-Nameserver kontrolliert auf diese Cloudflare-Werte umstellen;
+3. Cloudflare-Zonenbestand gegen den vollständigen INWX-Snapshot vergleichen und den Vergleich als `PASS` binden; DNSSEC/DS-Preflight muss ebenfalls `PASS` sein;
+4. die von Cloudflare tatsächlich ausgegebenen Nameserver revisionsgebunden lesen;
+5. **erst bei bestandenem Vollzonen- und DNSSEC-Gate** bei INWX auf diese externen Cloudflare-Nameserver umstellen;
+6. Cloudflare-`Active` abwarten und erst dann `memoraevent.de` als Custom Domain an das geprüfte Deployment binden;
 7. DNS-Propagation, vollständige öffentliche Record-Stichprobe (insbesondere Web + Mail/Verifikation) und TLS abwarten/read-backen;
-8. `https://hallofmemory.de/` muss mit `302` nach `/demo/` führen;
+8. `https://memoraevent.de/` muss mit `302` nach `/demo/` führen;
 9. `/demo/` und `/demo/rahmen/` müssen HTTP 200 liefern und die erwarteten Assets laden;
 10. `www` erhält eine explizite Redirect-/Canonical-Strategie;
 11. Desktop/Mobil-Browserreadback durchführen.
@@ -139,7 +142,7 @@ Erst nach Entblockung von T008/T010/T011:
 | Variable | `ACCESS_AUD` | Audience der Access-Anwendung |
 | Variable | `NOTIFY_TO` | verifizierte Betreiber-Zieladresse |
 | Variable | `NOTIFY_FROM` | verifizierte Absenderadresse |
-| Variable | `PUBLIC_SITE_ORIGIN` | exakt `https://hallofmemory.de` |
+| Variable | `PUBLIC_SITE_ORIGIN` | exakt `https://memoraevent.de` |
 
 `ACCESS_JWKS_JSON` und `SMOKE_LIMITER` bleiben ausschließlich lokale Testkonfiguration. Die Vorlage `spikes/inquiry-worker/wrangler.production.example.jsonc` darf mit Platzhaltern nie produktiv deployt werden. Die tatsächliche kundengebundene Laufzeitkonfiguration heißt exakt `spikes/inquiry-worker/wrangler.production.jsonc`, ist in `.gitignore` ausgeschlossen und darf weder Secrets noch `REPLACE_WITH_*`-/`example.invalid`-/`local-only`-Werte enthalten.
 
@@ -178,7 +181,7 @@ npm run verify
 Für den Stage-1-Domain-Build zusätzlich:
 
 ```sh
-PUBLIC_SITE_URL=https://hallofmemory.de npm run build
+PUBLIC_SITE_URL=https://memoraevent.de npm run build
 ```
 
 Stage 1:
@@ -219,7 +222,7 @@ Stufe 2 zusätzlich:
 Vor DNS- und Deployment-Mutationen immer den vorherigen Zustand protokollieren.
 
 - Sitefehler: auf vorherige Cloudflare-Version zurückrollen und Readback wiederholen.
-- Domainfehler: STRATO-DNS/Nameserver auf den protokollierten vorherigen Zustand zurücksetzen; TTL und Zertifikat erneut lesen.
+- Domainfehler: INWX-DNS/Nameserver auf den protokollierten vorherigen Zustand zurücksetzen; TTL und Zertifikat erneut lesen.
 - Workerfehler in Stufe 2: vorherige Worker-Version aktivieren; Health, Access und D1 read-only prüfen.
 - D1-Migrationen haben kein automatisches Down-Skript; künftige destruktive Migrationen brauchen vorab einen eigenen Restore-/Forward-Fix-Plan.
 

@@ -33,7 +33,7 @@ const readyFixture = () => ({
   },
   redirects: '# Stage 2: canonical root is active\n',
   publicSiteUrl: PRODUCTION_SITE_ORIGIN,
-  inquiryApiUrl: 'https://inquiry.hallofmemory.de/api/inquiries',
+  inquiryApiUrl: 'https://inquiry.memoraevent.de/api/inquiries',
   turnstileSiteKey: '0x4AAAAA-production-site-key',
   productionWorkerConfigExists: true,
   productionWorkerConfig: `{"main":"${PRODUCTION_INQUIRY_ENTRY}","vars":{"SPIKE_MODE":"production"}}`,
@@ -91,7 +91,7 @@ const pagesPreviewStart = verifyWorkflow.indexOf('- name: Build verified GitHub 
 assert.ok(releaseGateStart >= 0 && pagesPreviewStart > releaseGateStart, 'main production gate must run before the Pages preview artifact build');
 const releaseGateBlock = verifyWorkflow.slice(releaseGateStart, pagesPreviewStart);
 assert.match(releaseGateBlock, /if: github\.event_name == 'push' && github\.ref == 'refs\/heads\/main'/);
-assert.match(releaseGateBlock, /PUBLIC_SITE_URL: https:\/\/hallofmemory\.de\//);
+assert.match(releaseGateBlock, /PUBLIC_SITE_URL: https:\/\/memoraevent\.de\//);
 assert.ok(releaseGateBlock.includes('PUBLIC_INQUIRY_API_URL: ${{ vars.PRODUCTION_INQUIRY_API_URL }}'));
 assert.ok(releaseGateBlock.includes('PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.PRODUCTION_TURNSTILE_SITE_KEY }}'));
 assert.ok(releaseGateBlock.includes('PRODUCTION_WORKER_CONFIG_JSON: ${{ secrets.PRODUCTION_WORKER_CONFIG_JSON }}'));

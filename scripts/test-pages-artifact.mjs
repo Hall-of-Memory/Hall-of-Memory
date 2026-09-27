@@ -57,7 +57,7 @@ assert.match(protectedSourceText, /DemoExperience/);
 assert.match(protectedSourceText, /mode="production"/);
 assert.match(previewSource, /DemoExperience/);
 assert.doesNotMatch(previewSource, /mode="production"/);
-assert.equal(sha256(protectedRedirects), '481743f355c095b2e34695f7b7025e38cb172354f971c9deeb6c75decef792b5');
+assert.equal(sha256(protectedRedirects), 'e39ab7fadbabc33a4b58667548848430656b071ef464870e53d5c847806f35b3');
 
 try {
   const productionIndexBefore = readFileSync(join(source, 'index.html'));

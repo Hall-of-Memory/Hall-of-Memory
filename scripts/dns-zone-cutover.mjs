@@ -6,6 +6,7 @@ const IGNORED_PROVIDER_TYPES = new Set(['NS', 'SOA']);
 const WEB_TYPES = new Set(['A', 'AAAA', 'CNAME']);
 const DNS_ONLY_TYPES = new Set(['MX', 'TXT', 'SRV', 'CAA']);
 const TARGET_ADDITION_TYPES = new Set(['CNAME', 'TXT']);
+const SOURCE_PROVIDERS = new Set(['strato', 'inwx']);
 const MAX_SNAPSHOT_AGE_MS = 6 * 60 * 60 * 1000;
 const MAX_SNAPSHOT_FUTURE_SKEW_MS = 5 * 60 * 1000;
 const MAX_PAIR_SKEW_MS = 60 * 60 * 1000;
@@ -91,8 +92,8 @@ function canonicalDnssec(snapshot, provider) {
   if (!snapshot.dnssec || typeof snapshot.dnssec !== 'object' || Array.isArray(snapshot.dnssec)) {
     throw new Error('dnssec must be an object');
   }
-  if (provider === 'strato') {
-    if (!Array.isArray(snapshot.dnssec.dsRecords)) throw new Error('STRATO dnssec.dsRecords must be an array');
+  if (provider !== 'cloudflare') {
+    if (!Array.isArray(snapshot.dnssec.dsRecords)) throw new Error('source dnssec.dsRecords must be an array');
     return { dsRecords: [...new Set(snapshot.dnssec.dsRecords.map((value) => String(value).trim()).filter(Boolean))].sort() };
   }
   if (typeof snapshot.dnssec.migrationReady !== 'boolean') {
@@ -228,7 +229,9 @@ export function compareDnsZoneSnapshots(sourceInput, targetInput, options = {}) 
   let source;
   let target;
   try {
-    source = canonicalSnapshot(sourceInput, 'strato', nowMs);
+    const sourceProvider = sourceInput?.provider;
+    if (!SOURCE_PROVIDERS.has(sourceProvider)) throw new Error('source provider must be one of: strato, inwx');
+    source = canonicalSnapshot(sourceInput, sourceProvider, nowMs);
     target = canonicalSnapshot(targetInput, 'cloudflare', nowMs);
   } catch (error) {
     return {
@@ -294,7 +297,7 @@ export function compareDnsZoneSnapshots(sourceInput, targetInput, options = {}) 
     if (!sourceRecords.has(key)) {
       const allowedAdditionReason = allowedTargetAdditions.get(key);
       if (!allowedAdditionReason) {
-        errors.push({ code: 'unexpected_rrset', key, detail: 'Cloudflare contains a non-provider RRset absent from the STRATO snapshot' });
+        errors.push({ code: 'unexpected_rrset', key, detail: 'Cloudflare contains a non-provider RRset absent from the source snapshot' });
       } else if (serviceTargetNames.has(targetRecord.name)) {
         errors.push({ code: 'unsafe_target_addition', key, detail: 'MX/SRV target owners cannot be accepted as target-only additions' });
       } else if (targetRecord.type === 'CNAME' && targetRecord.proxied !== false) {
@@ -371,7 +374,7 @@ export function compareDnsZoneSnapshots(sourceInput, targetInput, options = {}) 
 async function main() {
   const [sourcePath, targetPath] = process.argv.slice(2);
   if (!sourcePath || !targetPath) {
-    console.error('usage: node scripts/dns-zone-cutover.mjs <strato-snapshot.json> <cloudflare-snapshot.json>');
+    console.error('usage: node scripts/dns-zone-cutover.mjs <source-snapshot.json> <cloudflare-snapshot.json>');
     process.exitCode = 1;
     return;
   }

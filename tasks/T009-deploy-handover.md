@@ -29,6 +29,23 @@ Live belegt:
 
 Die Produktionsplattform bleibt Cloudflare. GitHub Pages ist nur noch Übergangs-Fallback und wird nach erfolgreichem Domain-Readback nicht mehr als Primärpreview benötigt.
 
+
+## Produktionsdomain-Pivot — 2026-09-27
+
+Die Kundenentscheidung vom 27.09.2026 supersediert den operativen Domainpfad vom 22.08.2026: neue Produktions-/Primärdomain ist **`https://memoraevent.de`**. T060 ist ab jetzt der operative Domain-Cutover-Task; T045/T059 bleiben historische Evidenz des früheren `hallofmemory.de`-Pfads.
+
+Frisch belegt:
+
+- Registrar/DNS liegt beim Kunden bei INWX.
+- Autoritative Nameserver: `ns.inwx.de`, `ns2.inwx.de`, `ns3.inwx.eu`.
+- Apex, `www` und der vorhandene Wildcard-`A` zeigen auf `185.181.104.242`.
+- Apex-`MX`, Apex-`TXT`, `_dmarc TXT` und Apex-`CAA` sind aktuell leer.
+- Beim `.de`-Parent ist kein DS veröffentlicht.
+- Der bestehende Cloudflare-Worker `hall-of-memory` bleibt Zielruntime.
+- Die neue Cloudflare-Zone existiert noch nicht. Der vorhandene delegierte Cloudflare-Zugang erreicht den `Add domain`-Pfad, wird bei der Zonenerstellung aber ausdrücklich wegen fehlendem `com.cloudflare.api.account.zone.create` blockiert. Es wurde keine Zone erstellt und keine kostenpflichtige Option aktiviert.
+
+Least-Privilege-Folge: Bevorzugt legt Aram die Zone einmal selbst an und delegiert danach bei Bedarf `Domain Administrator` nur für `memoraevent.de`. Ein breiterer accountweiter Adminzugang ist dafür nicht der Standardpfad.
+
 ## GitHub-/Source-Entscheidung — aktualisiert 2026-08-22
 
 - Das kanonische Kundenrepo ist `Hall-of-Memory/Hall-of-Memory`.
@@ -50,16 +67,16 @@ Die Produktionsplattform bleibt Cloudflare. GitHub Pages ist nur noch Übergangs
 
 ## Externe Blockade
 
-Für den **statischen Domain-Livegang** fehlen derzeit noch die nachweislich kundeneigene Cloudflare-Zielautorität und die autorisierte DNS-Mutation bei STRATO. Die Domain selbst ist nicht mehr unbekannt.
+Für den **statischen Domain-Livegang** fehlt aktuell die neue Cloudflare-Zone `memoraevent.de`. Der vorhandene delegierte Zugang darf Zonen nicht anlegen (`com.cloudflare.api.account.zone.create` fehlt). Vor einer INWX-Nameservermutation müssen anschließend die frisch zugewiesenen Cloudflare-Nameserver, der vollständige INWX→Cloudflare-DNS-Vergleich und das DNSSEC/DS-Gate aus T060 PASS sein.
 
 Für die vollständige V1 mit Anfrage/Admin bleiben zusätzlich die produktiven Ressourcen/Freigaben aus T008/T010/T011 erforderlich: Turnstile, Access, D1, Rate Limit, Email-Binding, verifizierte Ziel-/Absenderadresse, finale Inhalte sowie Datenschutz-/Löschregel.
 
-Der statische Marketing-/Demo-Livegang auf `hallofmemory.de` darf von diesen späteren Backend-Bausteinen getrennt vorbereitet werden, solange nicht fälschlich ein funktionsfähiges produktives Anfrageformular behauptet wird. Fehlende produktive Formularwerte bleiben fail-closed.
+Der statische Marketing-/Demo-Livegang auf `memoraevent.de` darf von diesen späteren Backend-Bausteinen getrennt vorbereitet werden, solange nicht fälschlich ein funktionsfähiges produktives Anfrageformular behauptet wird. Fehlende produktive Formularwerte bleiben fail-closed.
 
-T009 bleibt deshalb `blocked_external`; T045 ist für den unmittelbar gewünschten Domain-Cutover `active`.
+T009 bleibt deshalb `blocked_external`; T060 ist für den unmittelbar gewünschten Domain-Pivot `active`.
 
 ## Historischer Preview-Befund — 2026-08-11
 
 - Frühere unauthentifizierte Cloudflare-Temporary-Previews unter wechselnden `workers.dev`-Hostnamen waren ausdrücklich nicht dauerhaft.
 - Diese temporären Hosts sind keine Produktions- oder Handover-Wahrheit.
-- Mit der Kundenentscheidung vom 22.08.2026 ist `hallofmemory.de` die einzige vorgesehene produktive Primäradresse.
+- Der damalige Primärdomain-Befund zu `hallofmemory.de` ist historische Evidenz. Seit der Kundenentscheidung vom 27.09.2026 ist `memoraevent.de` die vorgesehene produktive Primäradresse; T060 ist dafür autoritativ.

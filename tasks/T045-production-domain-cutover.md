@@ -1,7 +1,12 @@
 # T045 — `hallofmemory.de` als Arbeits-/Produktionsdomain aktivieren und Source-Privatsphäre sauber trennen
 
-Status: active
+Status: cancelled
 Priorität: P0
+
+## Superseded — 27.09.2026
+
+Der Kunde hat `memoraevent.de` als neue Produktions-/Primärdomain gewählt. Der weitere operative Domainpfad liegt ausschließlich in T060. Die nachfolgenden Abschnitte bleiben unverändert als historische Evidenz des tatsächlich bearbeiteten `hallofmemory.de`-Cutovers erhalten und dürfen nicht als aktuelle Zielkonfiguration gelesen werden.
+
 
 ## Ziel
 

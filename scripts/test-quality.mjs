@@ -269,8 +269,8 @@ try {
   const stageOneStart = deploymentRunbook.indexOf('## 3. Stufe 1 — Domain-Arbeitsstand');
   const stageTwoStart = deploymentRunbook.indexOf('## 4. Stufe 2 — Anfrage/Admin-Produktion');
   const stageOne = deploymentRunbook.slice(stageOneStart, stageTwoStart);
-  const fullZoneSnapshotPosition = stageOne.indexOf('vollständigen autoritativen STRATO-DNS-Zonenstand');
-  const cloudflareZoneComparePosition = stageOne.indexOf('Cloudflare-Zonenbestand nochmals gegen den vollständigen STRATO-Snapshot vergleichen');
+  const fullZoneSnapshotPosition = stageOne.indexOf('vollständigen autoritativen INWX-DNS-Zonenstand');
+  const cloudflareZoneComparePosition = stageOne.indexOf('Cloudflare-Zonenbestand gegen den vollständigen INWX-Snapshot vergleichen');
   const nameserverSwitchPosition = stageOne.indexOf('erst bei bestandenem Vollzonen- und DNSSEC-Gate');
   assert.ok(stageOneStart >= 0 && stageTwoStart > stageOneStart, 'Stage 1 DNS cutover section must be explicit');
   assert.ok(fullZoneSnapshotPosition >= 0, 'Stage 1 must require a complete authoritative DNS-zone snapshot');

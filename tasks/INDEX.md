@@ -63,3 +63,4 @@
 | T058 | planned | Post-Launch Automation Needs Audit: erst reale manuelle Arbeit messen, dann kleinsten Automationspfad wählen |
 | T059 | done | Cloudflare-Mail-DNS-Cutover-Preflight: STRATO-Mailrecords, Provider-Readback und Vollzonen-/DNSSEC-Gate vor Delegationswechsel |
 | T060 | active | Produktionsdomain-Pivot auf `memoraevent.de`: INWX → Cloudflare → Worker, mit Least-Privilege- und Cutover-Gates |
+| T061 | active | Öffentliche Markenmigration auf `Memora Event`; Textumstellung umgesetzt, freigegebenes Logo-Asset noch offen |

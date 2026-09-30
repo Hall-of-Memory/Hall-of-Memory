@@ -166,7 +166,7 @@ try {
   assert.match(demoText, /Fotobox/);
   assert.match(demoText, /Fotospiegel/);
   assert.match(demoText, /Magazinbox/);
-  assert.match(demoText, /Warum Hall of Memory/);
+  assert.match(demoText, /Warum Memora Event/);
   assert.match(demoText, /Pakete/);
   assert.match(demoText, /Galerie/);
   assert.match(demoText, /So funktioniert/);

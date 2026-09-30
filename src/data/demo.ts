@@ -52,7 +52,7 @@ type CanonicalSite = {
  * module only adapts and orders their public shape.
  */
 const siteEntry = site[0] as CanonicalSite | undefined;
-if (!siteEntry) throw new Error('Hall of Memory site settings are missing.');
+if (!siteEntry) throw new Error('Memora Event site settings are missing.');
 export const demoSite: CanonicalSite = siteEntry;
 
 export const demoOffers = [...(offers as CanonicalOffer[])].sort(bySortOrder).map((offer) => ({

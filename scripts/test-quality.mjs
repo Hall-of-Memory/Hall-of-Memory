@@ -50,7 +50,7 @@ try {
   assert.equal(attr(htmlElement, 'lang'), 'de');
   const documentTitles = elements(head, 'title');
   assert.equal(documentTitles.length, 1, 'document head must contain exactly one page title');
-  assert.ok(textContent(documentTitles[0]).includes('Hall of Memory'));
+  assert.ok(textContent(documentTitles[0]).includes('Memora Event'));
 
   const meta = elements(head, 'meta');
   const metaByName = (name) => meta.find((node) => attr(node, 'name') === name);

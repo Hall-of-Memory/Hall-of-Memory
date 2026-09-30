@@ -42,14 +42,14 @@ const inquiryConfig = resolveInquiryPublicConfig({
 
 const whatsappNumber = String(import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? '').replace(/\D/g, '');
 const genericWhatsAppText =
-  'Hallo, ich interessiere mich für Hall of Memory und möchte gerne eine Anfrage stellen.';
+  'Hallo, ich interessiere mich für Memora Event und möchte gerne eine Anfrage stellen.';
 const whatsappHref = whatsappNumber
   ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(genericWhatsAppText)}`
   : undefined;
 const productWhatsAppHref = (product: string) =>
   whatsappNumber
     ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-        `Hallo, ich interessiere mich für Hall of Memory – ${product} und möchte gerne eine Anfrage stellen.`,
+        `Hallo, ich interessiere mich für Memora Event – ${product} und möchte gerne eine Anfrage stellen.`,
       )}`
     : undefined;
 
@@ -207,8 +207,8 @@ const isPortraitAssetFrame = frameVariant === 10;
   )}
 
   <header class="site-header demo-header shell">
-    <a href={homeHref} class="demo-brand" aria-label="Hall of Memory Start">
-      <img src={`${assetBase}brand/hall-of-memory-logo-primary.svg`} alt="Hall of Memory" width="406" height="475" loading="eager" decoding="async" />
+    <a href={homeHref} class="demo-brand" aria-label="Memora Event Start">
+      <img src={`${assetBase}brand/hall-of-memory-logo-primary.svg`} alt="Memora Event" width="406" height="475" loading="eager" decoding="async" />
       <span class="demo-brand-copy"><small>Every Star Has a Memory</small></span>
     </a>
     <nav class="demo-nav" aria-label="Hauptnavigation">
@@ -223,7 +223,7 @@ const isPortraitAssetFrame = frameVariant === 10;
   <main id="main-content" tabindex="-1">
     <section class="demo-hero shell" aria-labelledby="demo-title">
       <div class="demo-hero-copy">
-        <p class="eyebrow">Hall of Memory · Event-Erlebnisse</p>
+        <p class="eyebrow">Memora Event · Event-Erlebnisse</p>
         <p class="demo-signature">Every Star Has a Memory</p>
         <h1 id="demo-title">Dein Event.<br /><em>Deine Erinnerung.</em></h1>
         <p class="demo-hero-text">
@@ -234,7 +234,7 @@ const isPortraitAssetFrame = frameVariant === 10;
           <a class="button button-primary" href="#anfrage">Anfragebereich ansehen <span aria-hidden="true">→</span></a>
           <a class="button button-ghost" href="#angebote">Angebote entdecken</a>
         </div>
-        <div class="demo-hero-points" aria-label="Hall of Memory auf einen Blick">
+        <div class="demo-hero-points" aria-label="Memora Event auf einen Blick">
           <span>Fotobox</span>
           <span>Fotospiegel</span>
           <span>Magazinbox</span>
@@ -243,7 +243,7 @@ const isPortraitAssetFrame = frameVariant === 10;
 
       <figure class="demo-hero-media">
         <div class="demo-hero-image-wrap" style={frameMaskStyle} data-frame-consumer={frameVariant ? 'comparison' : undefined} data-frame-kind={frameVariant ? (isDirectFloralFrame ? 'floral-source' : isPortraitAssetFrame ? 'asset-source-portrait' : 'asset-source') : undefined} data-frame-variant={frameVariant} data-frame-inset-inner={framePhotoInset?.inner} data-frame-inset-outer={framePhotoInset?.outer}>
-          <img class="demo-hero-event-photo" src={`${assetBase}demo/hall-of-memory-example-event.webp`} alt="Beispielhafte Hall-of-Memory Eventaufnahme" width="1122" height="1402" loading="eager" fetchpriority="high" decoding="async" />
+          <img class="demo-hero-event-photo" src={`${assetBase}demo/hall-of-memory-example-event.webp`} alt="Beispielhafte Memora-Event Eventaufnahme" width="1122" height="1402" loading="eager" fetchpriority="high" decoding="async" />
           <div class="demo-hero-glow" aria-hidden="true"></div>
         </div>
         <figcaption>
@@ -291,7 +291,7 @@ const isPortraitAssetFrame = frameVariant === 10;
       href={whatsappHref}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Hall of Memory per WhatsApp kontaktieren"
+      aria-label="Memora Event per WhatsApp kontaktieren"
     >
       <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3a12 12 0 0 0-10.3 18.2L4 28l7-1.6A12 12 0 1 0 16 3Zm0 21.8c-1.8 0-3.6-.5-5.1-1.4l-.4-.2-4 .9 1-3.9-.3-.4A9.8 9.8 0 1 1 16 24.8Zm5.4-7.4c-.3-.2-1.8-.9-2.1-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7.1a8 8 0 0 1-2.4-1.5 9 9 0 0 1-1.7-2.1c-.2-.3 0-.5.1-.7l.5-.6.3-.6c.1-.2 0-.5 0-.6l-1-2.3c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.9 1.2 3.3 1.4 3.6a13 13 0 0 0 5 4.4c.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2.1-1.5.3-.8.3-1.4.2-1.5 0-.2-.2-.3-.5-.5Z"/></svg>
       <span>WhatsApp</span>
@@ -304,8 +304,8 @@ const isPortraitAssetFrame = frameVariant === 10;
   )}
 
   <footer class="site-footer demo-footer shell">
-    <a href={homeHref} class="demo-brand" aria-label="Hall of Memory Start">
-      <img src={`${assetBase}brand/hall-of-memory-logo-primary.svg`} alt="Hall of Memory" width="406" height="475" loading="lazy" decoding="async" />
+    <a href={homeHref} class="demo-brand" aria-label="Memora Event Start">
+      <img src={`${assetBase}brand/hall-of-memory-logo-primary.svg`} alt="Memora Event" width="406" height="475" loading="lazy" decoding="async" />
       <span class="demo-brand-copy"><small>Every Star Has a Memory</small></span>
     </a>
     <p>Event-Erlebnisse mit Raum für Erinnerungen. · <a href={`${assetBase}impressum/`}>Impressum</a> · <a href={`${assetBase}datenschutz/`}>Datenschutz</a></p>

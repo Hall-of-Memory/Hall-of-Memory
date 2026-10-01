@@ -64,4 +64,4 @@
 | T059 | done | Cloudflare-Mail-DNS-Cutover-Preflight: STRATO-Mailrecords, Provider-Readback und Vollzonen-/DNSSEC-Gate vor Delegationswechsel |
 | T060 | cancelled | Historischer Zwischen-Pivot auf `memoraevent.de`; operativer Domainpfad durch T061 superseded |
 | T061 | done | Produktionsdomain-Korrektur auf `memoraevents.de`: INWX → Cloudflare → Worker live; `www` kanonisiert, Zwischen-Domain kundenseitig zur Löschung eingereicht |
-| T062 | active | GitHub-Repository von `Hall-of-Memory/Hall-of-Memory` auf `Hall-of-Memory/memoraevents` umbenennen und Repo-/Pages-Verträge konvergieren |
+| T062 | done | GitHub-Repository auf `Hall-of-Memory/memoraevents` umbenannt; Repo-/Pages-Verträge, Redirect, Remote und Pages-Runtime verifiziert |

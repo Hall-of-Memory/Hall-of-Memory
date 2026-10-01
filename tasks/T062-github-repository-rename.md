@@ -1,6 +1,6 @@
 ---
 id: T062
-status: active
+status: done
 priority: P1
 dependencies: []
 ---
@@ -73,3 +73,12 @@ Diese Änderung betrifft die Repository-Identität und alle aktuell davon abgele
 - PR #71 ist unter dem neuen Repo-Pfad weiterhin `OPEN/CLEAN`; GitHub `verify` und Vercel sind grün.
 - Alle zuvor offenen PRs (#70, #66, #64, #63, #61, #54, #45) sind unter dem neuen Repo-Pfad erhalten.
 - Der lokale physische Checkout bleibt wegen der verknüpften Worktrees absichtlich unter `/home/alex/repos/hall-of-memory`.
+
+## Abschluss — 01.10.2026
+
+- PR #71 wurde in `main` gemergt; Merge-Commit `bc31e686a1cb0ff6553d9784f2f25ee240d21ef6`.
+- `main`-Workflow `36900721272`: `verify` SUCCESS und `pages-runtime` SUCCESS.
+- GitHub Pages API meldet `https://hall-of-memory.github.io/memoraevents/` als Workflow-Pages-URL auf Branch `main`.
+- Externer Readback: Pages-Root HTTP 200; `/memoraevents/demo/rahmen/` HTTP 200.
+- Runtime-Receipt unter `/memoraevents/hall-of-memory-deployment.json` bindet `sourceRevision=bc31e686a1cb0ff6553d9784f2f25ee240d21ef6` und `verifyRunId=36900721272`.
+- Der GitHub-Repository-Rename ist damit revisionsgebunden und terminal.

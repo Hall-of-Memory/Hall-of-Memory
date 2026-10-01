@@ -1,0 +1,1684 @@
+{
+  "url": "http://127.0.0.1:4182/demo/memoraevents-logo/",
+  "results": [
+    {
+      "title": "Memoraevents Goldletter Lab",
+      "robots": "noindex,nofollow",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "material": [
+        {
+          "rect": {
+            "width": 1063.296875,
+            "height": 80.265625,
+            "left": 188.34375,
+            "right": 1251.640625,
+            "top": 693.078125,
+            "bottom": 773.34375
+          },
+          "images": [
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004d.png",
+              "naturalWidth": 190,
+              "naturalHeight": 131,
+              "rect": {
+                "width": 107.390625,
+                "height": 74.046875,
+                "left": 188.34375,
+                "right": 295.734375,
+                "top": 704.3858642578125,
+                "bottom": 778.4327392578125
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 72.328125,
+                "height": 72.90625,
+                "left": 296.0625,
+                "right": 368.390625,
+                "top": 705.5264892578125,
+                "bottom": 778.4327392578125
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004d.png",
+              "naturalWidth": 190,
+              "naturalHeight": 131,
+              "rect": {
+                "width": 107.390625,
+                "height": 74.046875,
+                "left": 368.71875,
+                "right": 476.109375,
+                "top": 704.3858642578125,
+                "bottom": 778.4327392578125
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004f.png",
+              "naturalWidth": 136,
+              "naturalHeight": 125,
+              "rect": {
+                "width": 76.859375,
+                "height": 70.65618896484375,
+                "left": 476.4375,
+                "right": 553.296875,
+                "top": 704.3838500976562,
+                "bottom": 775.0400390625
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0052.png",
+              "naturalWidth": 156,
+              "naturalHeight": 142,
+              "rect": {
+                "width": 88.171875,
+                "height": 80.265625,
+                "left": 553.625,
+                "right": 641.796875,
+                "top": 704.3846435546875,
+                "bottom": 784.6502685546875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0041.png",
+              "naturalWidth": 193,
+              "naturalHeight": 130,
+              "rect": {
+                "width": 109.09375,
+                "height": 73.484375,
+                "left": 642.125,
+                "right": 751.21875,
+                "top": 704.9483642578125,
+                "bottom": 778.4327392578125
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 72.328125,
+                "height": 72.90625,
+                "left": 751.546875,
+                "right": 823.875,
+                "top": 705.5264892578125,
+                "bottom": 778.4327392578125
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0056.png",
+              "naturalWidth": 164,
+              "naturalHeight": 125,
+              "rect": {
+                "width": 92.6875,
+                "height": 70.65625,
+                "left": 824.203125,
+                "right": 916.890625,
+                "top": 707.208740234375,
+                "bottom": 777.864990234375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 72.328125,
+                "height": 72.90625,
+                "left": 917.21875,
+                "right": 989.546875,
+                "top": 705.5264892578125,
+                "bottom": 778.4327392578125
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004e.png",
+              "naturalWidth": 186,
+              "naturalHeight": 134,
+              "rect": {
+                "width": 105.109375,
+                "height": 75.734375,
+                "left": 989.875,
+                "right": 1094.984375,
+                "top": 702.6983642578125,
+                "bottom": 778.4327392578125
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0054.png",
+              "naturalWidth": 132,
+              "naturalHeight": 124,
+              "rect": {
+                "width": 74.609375,
+                "height": 70.09381103515625,
+                "left": 1095.3125,
+                "right": 1169.921875,
+                "top": 706.0748901367188,
+                "bottom": 776.168701171875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0053.png",
+              "naturalWidth": 144,
+              "naturalHeight": 128,
+              "rect": {
+                "width": 81.390625,
+                "height": 72.359375,
+                "left": 1170.25,
+                "right": 1251.640625,
+                "top": 705.505615234375,
+                "bottom": 777.864990234375
+              }
+            }
+          ]
+        },
+        {
+          "rect": {
+            "width": 1102,
+            "height": 136.125,
+            "left": 169,
+            "right": 1271,
+            "top": 1126.6875,
+            "bottom": 1262.8125
+          },
+          "images": [
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004d.png",
+              "naturalWidth": 190,
+              "naturalHeight": 131,
+              "rect": {
+                "width": 93.8125,
+                "height": 64.6875,
+                "left": 232.5,
+                "right": 326.3125,
+                "top": 1174.5711669921875,
+                "bottom": 1239.2586669921875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 63.203125,
+                "height": 63.703125,
+                "left": 330.78125,
+                "right": 393.984375,
+                "top": 1175.5555419921875,
+                "bottom": 1239.2586669921875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004d.png",
+              "naturalWidth": 190,
+              "naturalHeight": 131,
+              "rect": {
+                "width": 93.8125,
+                "height": 64.6875,
+                "left": 398.453125,
+                "right": 492.265625,
+                "top": 1174.5711669921875,
+                "bottom": 1239.2586669921875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004f.png",
+              "naturalWidth": 136,
+              "naturalHeight": 125,
+              "rect": {
+                "width": 67.15625,
+                "height": 61.734375,
+                "left": 496.734375,
+                "right": 563.890625,
+                "top": 1174.5601806640625,
+                "bottom": 1236.2945556640625
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0052.png",
+              "naturalWidth": 156,
+              "naturalHeight": 142,
+              "rect": {
+                "width": 77.03125,
+                "height": 70.125,
+                "left": 568.359375,
+                "right": 645.390625,
+                "top": 1174.5657958984375,
+                "bottom": 1244.6907958984375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0041.png",
+              "naturalWidth": 193,
+              "naturalHeight": 130,
+              "rect": {
+                "width": 95.3125,
+                "height": 64.203125,
+                "left": 649.859375,
+                "right": 745.171875,
+                "top": 1175.0555419921875,
+                "bottom": 1239.2586669921875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 63.203125,
+                "height": 63.703125,
+                "left": 749.640625,
+                "right": 812.84375,
+                "top": 1175.5555419921875,
+                "bottom": 1239.2586669921875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0056.png",
+              "naturalWidth": 164,
+              "naturalHeight": 125,
+              "rect": {
+                "width": 80.984375,
+                "height": 61.734375,
+                "left": 817.3125,
+                "right": 898.296875,
+                "top": 1177.0283203125,
+                "bottom": 1238.7626953125
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 63.203125,
+                "height": 63.703125,
+                "left": 902.765625,
+                "right": 965.96875,
+                "top": 1175.5555419921875,
+                "bottom": 1239.2586669921875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004e.png",
+              "naturalWidth": 186,
+              "naturalHeight": 134,
+              "rect": {
+                "width": 91.84375,
+                "height": 66.171875,
+                "left": 970.4375,
+                "right": 1062.28125,
+                "top": 1173.0867919921875,
+                "bottom": 1239.2586669921875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0054.png",
+              "naturalWidth": 132,
+              "naturalHeight": 124,
+              "rect": {
+                "width": 65.171875,
+                "height": 61.234375,
+                "left": 1066.75,
+                "right": 1131.921875,
+                "top": 1176.0462646484375,
+                "bottom": 1237.2806396484375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0053.png",
+              "naturalWidth": 144,
+              "naturalHeight": 128,
+              "rect": {
+                "width": 71.109375,
+                "height": 63.21875,
+                "left": 1136.390625,
+                "right": 1207.5,
+                "top": 1175.5439453125,
+                "bottom": 1238.7626953125
+              }
+            }
+          ]
+        },
+        {
+          "rect": {
+            "width": 520,
+            "height": 22.15625,
+            "left": 193,
+            "right": 713,
+            "top": 1627.671875,
+            "bottom": 1649.828125
+          },
+          "images": [
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004d.png",
+              "naturalWidth": 190,
+              "naturalHeight": 131,
+              "rect": {
+                "width": 29.640625,
+                "height": 20.4375,
+                "left": 193,
+                "right": 222.640625,
+                "top": 1630.7952880859375,
+                "bottom": 1651.2327880859375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 19.96875,
+                "height": 20.125,
+                "left": 222.859375,
+                "right": 242.828125,
+                "top": 1631.1077880859375,
+                "bottom": 1651.2327880859375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004d.png",
+              "naturalWidth": 190,
+              "naturalHeight": 131,
+              "rect": {
+                "width": 29.640625,
+                "height": 20.4375,
+                "left": 243.046875,
+                "right": 272.6875,
+                "top": 1630.7952880859375,
+                "bottom": 1651.2327880859375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004f.png",
+              "naturalWidth": 136,
+              "naturalHeight": 125,
+              "rect": {
+                "width": 21.203125,
+                "height": 19.5,
+                "left": 272.90625,
+                "right": 294.109375,
+                "top": 1630.79638671875,
+                "bottom": 1650.29638671875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0052.png",
+              "naturalWidth": 156,
+              "naturalHeight": 142,
+              "rect": {
+                "width": 24.328125,
+                "height": 22.15625,
+                "left": 294.328125,
+                "right": 318.65625,
+                "top": 1630.792724609375,
+                "bottom": 1652.948974609375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0041.png",
+              "naturalWidth": 193,
+              "naturalHeight": 130,
+              "rect": {
+                "width": 30.109375,
+                "height": 20.28125,
+                "left": 318.875,
+                "right": 348.984375,
+                "top": 1630.9515380859375,
+                "bottom": 1651.2327880859375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 19.96875,
+                "height": 20.125,
+                "left": 349.203125,
+                "right": 369.171875,
+                "top": 1631.1077880859375,
+                "bottom": 1651.2327880859375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0056.png",
+              "naturalWidth": 164,
+              "naturalHeight": 125,
+              "rect": {
+                "width": 25.578125,
+                "height": 19.5,
+                "left": 369.390625,
+                "right": 394.96875,
+                "top": 1631.5760498046875,
+                "bottom": 1651.0760498046875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 19.96875,
+                "height": 20.125,
+                "left": 395.1875,
+                "right": 415.15625,
+                "top": 1631.1077880859375,
+                "bottom": 1651.2327880859375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004e.png",
+              "naturalWidth": 186,
+              "naturalHeight": 134,
+              "rect": {
+                "width": 29.015625,
+                "height": 20.90625,
+                "left": 415.375,
+                "right": 444.390625,
+                "top": 1630.3265380859375,
+                "bottom": 1651.2327880859375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0054.png",
+              "naturalWidth": 132,
+              "naturalHeight": 124,
+              "rect": {
+                "width": 20.578125,
+                "height": 19.34375,
+                "left": 444.609375,
+                "right": 465.1875,
+                "top": 1631.26416015625,
+                "bottom": 1650.60791015625
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0053.png",
+              "naturalWidth": 144,
+              "naturalHeight": 128,
+              "rect": {
+                "width": 22.453125,
+                "height": 19.96875,
+                "left": 465.40625,
+                "right": 487.859375,
+                "top": 1631.1072998046875,
+                "bottom": 1651.0760498046875
+              }
+            }
+          ]
+        }
+      ],
+      "stages": [
+        {
+          "width": 1240,
+          "height": 420,
+          "left": 100,
+          "right": 1340,
+          "top": 479.453125,
+          "bottom": 899.453125
+        },
+        {
+          "width": 1240,
+          "height": 420,
+          "left": 100,
+          "right": 1340,
+          "top": 923.453125,
+          "bottom": 1343.453125
+        },
+        {
+          "width": 1240,
+          "height": 420,
+          "left": 100,
+          "right": 1340,
+          "top": 1367.453125,
+          "bottom": 1787.453125
+        },
+        {
+          "width": 1240,
+          "height": 420,
+          "left": 100,
+          "right": 1340,
+          "top": 1811.453125,
+          "bottom": 2231.453125
+        }
+      ],
+      "cssWordmark": {
+        "width": 1102,
+        "height": 86.40625,
+        "left": 169,
+        "right": 1271,
+        "top": 2039.546875,
+        "bottom": 2125.953125
+      },
+      "brokenImages": [],
+      "screenshotBytes": 765437
+    },
+    {
+      "title": "Memoraevents Goldletter Lab",
+      "robots": "noindex,nofollow",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "material": [
+        {
+          "rect": {
+            "width": 567,
+            "height": 42.8125,
+            "left": 100.5,
+            "right": 667.5,
+            "top": 571.640625,
+            "bottom": 614.453125
+          },
+          "images": [
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004d.png",
+              "naturalWidth": 190,
+              "naturalHeight": 131,
+              "rect": {
+                "width": 57.265625,
+                "height": 39.484375,
+                "left": 100.5,
+                "right": 157.765625,
+                "top": 577.682861328125,
+                "bottom": 617.167236328125
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 38.578125,
+                "height": 38.890625,
+                "left": 157.9375,
+                "right": 196.515625,
+                "top": 578.276611328125,
+                "bottom": 617.167236328125
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004d.png",
+              "naturalWidth": 190,
+              "naturalHeight": 131,
+              "rect": {
+                "width": 57.265625,
+                "height": 39.484375,
+                "left": 196.6875,
+                "right": 253.953125,
+                "top": 577.682861328125,
+                "bottom": 617.167236328125
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004f.png",
+              "naturalWidth": 136,
+              "naturalHeight": 125,
+              "rect": {
+                "width": 40.984375,
+                "height": 37.671875,
+                "left": 254.125,
+                "right": 295.109375,
+                "top": 577.6859741210938,
+                "bottom": 615.3578491210938
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0052.png",
+              "naturalWidth": 156,
+              "naturalHeight": 142,
+              "rect": {
+                "width": 47.03125,
+                "height": 42.8125,
+                "left": 295.28125,
+                "right": 342.3125,
+                "top": 577.6707763671875,
+                "bottom": 620.4832763671875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0041.png",
+              "naturalWidth": 193,
+              "naturalHeight": 130,
+              "rect": {
+                "width": 58.171875,
+                "height": 39.1875,
+                "left": 342.484375,
+                "right": 400.65625,
+                "top": 577.979736328125,
+                "bottom": 617.167236328125
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 38.578125,
+                "height": 38.890625,
+                "left": 400.828125,
+                "right": 439.40625,
+                "top": 578.276611328125,
+                "bottom": 617.167236328125
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0056.png",
+              "naturalWidth": 164,
+              "naturalHeight": 125,
+              "rect": {
+                "width": 49.421875,
+                "height": 37.671875,
+                "left": 439.578125,
+                "right": 489,
+                "top": 579.1925659179688,
+                "bottom": 616.8644409179688
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 38.578125,
+                "height": 38.890625,
+                "left": 489.171875,
+                "right": 527.75,
+                "top": 578.276611328125,
+                "bottom": 617.167236328125
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004e.png",
+              "naturalWidth": 186,
+              "naturalHeight": 134,
+              "rect": {
+                "width": 56.0625,
+                "height": 40.390625,
+                "left": 527.921875,
+                "right": 583.984375,
+                "top": 576.776611328125,
+                "bottom": 617.167236328125
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0054.png",
+              "naturalWidth": 132,
+              "naturalHeight": 124,
+              "rect": {
+                "width": 39.78125,
+                "height": 37.37493896484375,
+                "left": 584.15625,
+                "right": 623.9375,
+                "top": 578.5847778320312,
+                "bottom": 615.959716796875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0053.png",
+              "naturalWidth": 144,
+              "naturalHeight": 128,
+              "rect": {
+                "width": 43.390625,
+                "height": 38.578125,
+                "left": 624.109375,
+                "right": 667.5,
+                "top": 578.2863159179688,
+                "bottom": 616.8644409179688
+              }
+            }
+          ]
+        },
+        {
+          "rect": {
+            "width": 657.21875,
+            "height": 103.390625,
+            "left": 55.390625,
+            "right": 712.609375,
+            "top": 1000.421875,
+            "bottom": 1103.8125
+          },
+          "images": [
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004d.png",
+              "naturalWidth": 190,
+              "naturalHeight": 131,
+              "rect": {
+                "width": 50.03125,
+                "height": 34.5,
+                "left": 124.09375,
+                "right": 174.125,
+                "top": 1043.683837890625,
+                "bottom": 1078.183837890625
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 33.703125,
+                "height": 33.96875,
+                "left": 176.5,
+                "right": 210.203125,
+                "top": 1044.215087890625,
+                "bottom": 1078.183837890625
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004d.png",
+              "naturalWidth": 190,
+              "naturalHeight": 131,
+              "rect": {
+                "width": 50.03125,
+                "height": 34.5,
+                "left": 212.578125,
+                "right": 262.609375,
+                "top": 1043.683837890625,
+                "bottom": 1078.183837890625
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004f.png",
+              "naturalWidth": 136,
+              "naturalHeight": 125,
+              "rect": {
+                "width": 35.8125,
+                "height": 32.921875,
+                "left": 264.984375,
+                "right": 300.796875,
+                "top": 1043.6810302734375,
+                "bottom": 1076.6029052734375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0052.png",
+              "naturalWidth": 156,
+              "naturalHeight": 142,
+              "rect": {
+                "width": 41.0625,
+                "height": 37.390625,
+                "left": 303.171875,
+                "right": 344.234375,
+                "top": 1043.6903076171875,
+                "bottom": 1081.0809326171875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0041.png",
+              "naturalWidth": 193,
+              "naturalHeight": 130,
+              "rect": {
+                "width": 50.8125,
+                "height": 34.234375,
+                "left": 346.609375,
+                "right": 397.421875,
+                "top": 1043.949462890625,
+                "bottom": 1078.183837890625
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 33.703125,
+                "height": 33.96875,
+                "left": 399.796875,
+                "right": 433.5,
+                "top": 1044.215087890625,
+                "bottom": 1078.183837890625
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0056.png",
+              "naturalWidth": 164,
+              "naturalHeight": 125,
+              "rect": {
+                "width": 43.1875,
+                "height": 32.921875,
+                "left": 435.875,
+                "right": 479.0625,
+                "top": 1044.997314453125,
+                "bottom": 1077.919189453125
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 33.703125,
+                "height": 33.96875,
+                "left": 481.4375,
+                "right": 515.140625,
+                "top": 1044.215087890625,
+                "bottom": 1078.183837890625
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004e.png",
+              "naturalWidth": 186,
+              "naturalHeight": 134,
+              "rect": {
+                "width": 48.96875,
+                "height": 35.28125,
+                "left": 517.515625,
+                "right": 566.484375,
+                "top": 1042.902587890625,
+                "bottom": 1078.183837890625
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0054.png",
+              "naturalWidth": 132,
+              "naturalHeight": 124,
+              "rect": {
+                "width": 34.75,
+                "height": 32.65625,
+                "left": 568.859375,
+                "right": 603.609375,
+                "top": 1044.4725341796875,
+                "bottom": 1077.1287841796875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0053.png",
+              "naturalWidth": 144,
+              "naturalHeight": 128,
+              "rect": {
+                "width": 37.90625,
+                "height": 33.703125,
+                "left": 605.984375,
+                "right": 643.890625,
+                "top": 1044.216064453125,
+                "bottom": 1077.919189453125
+              }
+            }
+          ]
+        },
+        {
+          "rect": {
+            "width": 348.703125,
+            "height": 13.0625,
+            "left": 79.390625,
+            "right": 428.09375,
+            "top": 1489.59375,
+            "bottom": 1502.65625
+          },
+          "images": [
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004d.png",
+              "naturalWidth": 190,
+              "naturalHeight": 131,
+              "rect": {
+                "width": 17.46875,
+                "height": 12.046875,
+                "left": 79.390625,
+                "right": 96.859375,
+                "top": 1491.4378662109375,
+                "bottom": 1503.4847412109375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 11.765625,
+                "height": 11.859375,
+                "left": 96.984375,
+                "right": 108.75,
+                "top": 1491.6253662109375,
+                "bottom": 1503.4847412109375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004d.png",
+              "naturalWidth": 190,
+              "naturalHeight": 131,
+              "rect": {
+                "width": 17.46875,
+                "height": 12.046875,
+                "left": 108.875,
+                "right": 126.34375,
+                "top": 1491.4378662109375,
+                "bottom": 1503.4847412109375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004f.png",
+              "naturalWidth": 136,
+              "naturalHeight": 125,
+              "rect": {
+                "width": 12.5,
+                "height": 11.5,
+                "left": 126.46875,
+                "right": 138.96875,
+                "top": 1491.432373046875,
+                "bottom": 1502.932373046875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0052.png",
+              "naturalWidth": 156,
+              "naturalHeight": 142,
+              "rect": {
+                "width": 14.34375,
+                "height": 13.0625,
+                "left": 139.09375,
+                "right": 153.4375,
+                "top": 1491.4345703125,
+                "bottom": 1504.4970703125
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0041.png",
+              "naturalWidth": 193,
+              "naturalHeight": 130,
+              "rect": {
+                "width": 17.734375,
+                "height": 11.953125,
+                "left": 153.5625,
+                "right": 171.296875,
+                "top": 1491.5316162109375,
+                "bottom": 1503.4847412109375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 11.765625,
+                "height": 11.859375,
+                "left": 171.421875,
+                "right": 183.1875,
+                "top": 1491.6253662109375,
+                "bottom": 1503.4847412109375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0056.png",
+              "naturalWidth": 164,
+              "naturalHeight": 125,
+              "rect": {
+                "width": 15.078125,
+                "height": 11.5,
+                "left": 183.3125,
+                "right": 198.390625,
+                "top": 1491.892333984375,
+                "bottom": 1503.392333984375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 11.765625,
+                "height": 11.859375,
+                "left": 198.515625,
+                "right": 210.28125,
+                "top": 1491.6253662109375,
+                "bottom": 1503.4847412109375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004e.png",
+              "naturalWidth": 186,
+              "naturalHeight": 134,
+              "rect": {
+                "width": 17.109375,
+                "height": 12.328125,
+                "left": 210.40625,
+                "right": 227.515625,
+                "top": 1491.1566162109375,
+                "bottom": 1503.4847412109375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0054.png",
+              "naturalWidth": 132,
+              "naturalHeight": 124,
+              "rect": {
+                "width": 12.140625,
+                "height": 11.40625,
+                "left": 227.640625,
+                "right": 239.78125,
+                "top": 1491.7099609375,
+                "bottom": 1503.1162109375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0053.png",
+              "naturalWidth": 144,
+              "naturalHeight": 128,
+              "rect": {
+                "width": 13.234375,
+                "height": 11.765625,
+                "left": 239.90625,
+                "right": 253.140625,
+                "top": 1491.626708984375,
+                "bottom": 1503.392333984375
+              }
+            }
+          ]
+        }
+      ],
+      "stages": [
+        {
+          "width": 736,
+          "height": 420,
+          "left": 16,
+          "right": 752,
+          "top": 343.46875,
+          "bottom": 763.46875
+        },
+        {
+          "width": 736,
+          "height": 420,
+          "left": 16,
+          "right": 752,
+          "top": 787.46875,
+          "bottom": 1207.46875
+        },
+        {
+          "width": 736,
+          "height": 420,
+          "left": 16,
+          "right": 752,
+          "top": 1231.46875,
+          "bottom": 1651.46875
+        },
+        {
+          "width": 736,
+          "height": 420,
+          "left": 16,
+          "right": 752,
+          "top": 1675.46875,
+          "bottom": 2095.46875
+        }
+      ],
+      "cssWordmark": {
+        "width": 657.21875,
+        "height": 46.078125,
+        "left": 55.390625,
+        "right": 712.609375,
+        "top": 1917.078125,
+        "bottom": 1963.15625
+      },
+      "brokenImages": []
+    },
+    {
+      "title": "Memoraevents Goldletter Lab",
+      "robots": "noindex,nofollow",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "material": [
+        {
+          "rect": {
+            "width": 248.578125,
+            "height": 18.765625,
+            "left": 70.703125,
+            "right": 319.28125,
+            "top": 601.109375,
+            "bottom": 619.875
+          },
+          "images": [
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004d.png",
+              "naturalWidth": 190,
+              "naturalHeight": 131,
+              "rect": {
+                "width": 25.109375,
+                "height": 17.3125,
+                "left": 70.703125,
+                "right": 95.8125,
+                "top": 603.7529296875,
+                "bottom": 621.0654296875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 16.90625,
+                "height": 17.046875,
+                "left": 95.890625,
+                "right": 112.796875,
+                "top": 604.0185546875,
+                "bottom": 621.0654296875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004d.png",
+              "naturalWidth": 190,
+              "naturalHeight": 131,
+              "rect": {
+                "width": 25.109375,
+                "height": 17.3125,
+                "left": 112.875,
+                "right": 137.984375,
+                "top": 603.7529296875,
+                "bottom": 621.0654296875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004f.png",
+              "naturalWidth": 136,
+              "naturalHeight": 125,
+              "rect": {
+                "width": 17.96875,
+                "height": 16.515625,
+                "left": 138.0625,
+                "right": 156.03125,
+                "top": 603.7561645507812,
+                "bottom": 620.2717895507812
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0052.png",
+              "naturalWidth": 156,
+              "naturalHeight": 142,
+              "rect": {
+                "width": 20.609375,
+                "height": 18.765625,
+                "left": 156.109375,
+                "right": 176.71875,
+                "top": 603.754150390625,
+                "bottom": 622.519775390625
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0041.png",
+              "naturalWidth": 193,
+              "naturalHeight": 130,
+              "rect": {
+                "width": 25.515625,
+                "height": 17.1875,
+                "left": 176.796875,
+                "right": 202.3125,
+                "top": 603.8779296875,
+                "bottom": 621.0654296875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 16.90625,
+                "height": 17.046875,
+                "left": 202.390625,
+                "right": 219.296875,
+                "top": 604.0185546875,
+                "bottom": 621.0654296875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0056.png",
+              "naturalWidth": 164,
+              "naturalHeight": 125,
+              "rect": {
+                "width": 21.65625,
+                "height": 16.515625,
+                "left": 219.375,
+                "right": 241.03125,
+                "top": 604.4169921875,
+                "bottom": 620.9326171875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 16.90625,
+                "height": 17.046875,
+                "left": 241.109375,
+                "right": 258.015625,
+                "top": 604.0185546875,
+                "bottom": 621.0654296875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004e.png",
+              "naturalWidth": 186,
+              "naturalHeight": 134,
+              "rect": {
+                "width": 24.5625,
+                "height": 17.703125,
+                "left": 258.09375,
+                "right": 282.65625,
+                "top": 603.3623046875,
+                "bottom": 621.0654296875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0054.png",
+              "naturalWidth": 132,
+              "naturalHeight": 124,
+              "rect": {
+                "width": 17.4375,
+                "height": 16.390625,
+                "left": 282.734375,
+                "right": 300.171875,
+                "top": 604.1452026367188,
+                "bottom": 620.5358276367188
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0053.png",
+              "naturalWidth": 144,
+              "naturalHeight": 128,
+              "rect": {
+                "width": 19.03125,
+                "height": 16.921875,
+                "left": 300.25,
+                "right": 319.28125,
+                "top": 604.0107421875,
+                "bottom": 620.9326171875
+              }
+            }
+          ]
+        },
+        {
+          "rect": {
+            "width": 344,
+            "height": 82.140625,
+            "left": 23,
+            "right": 367,
+            "top": 948.5,
+            "bottom": 1030.640625
+          },
+          "images": [
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004d.png",
+              "naturalWidth": 190,
+              "naturalHeight": 131,
+              "rect": {
+                "width": 21.59375,
+                "height": 14.890625,
+                "left": 85.140625,
+                "right": 106.734375,
+                "top": 988.7737426757812,
+                "bottom": 1003.6643676757812
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 14.53125,
+                "height": 14.65625,
+                "left": 107.34375,
+                "right": 121.875,
+                "top": 989.0081176757812,
+                "bottom": 1003.6643676757812
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004d.png",
+              "naturalWidth": 190,
+              "naturalHeight": 131,
+              "rect": {
+                "width": 21.59375,
+                "height": 14.890625,
+                "left": 122.484375,
+                "right": 144.078125,
+                "top": 988.7737426757812,
+                "bottom": 1003.6643676757812
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004f.png",
+              "naturalWidth": 136,
+              "naturalHeight": 125,
+              "rect": {
+                "width": 15.4375,
+                "height": 14.203125,
+                "left": 144.6875,
+                "right": 160.125,
+                "top": 988.7787475585938,
+                "bottom": 1002.9818725585938
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0052.png",
+              "naturalWidth": 156,
+              "naturalHeight": 142,
+              "rect": {
+                "width": 17.71875,
+                "height": 16.140625,
+                "left": 160.734375,
+                "right": 178.453125,
+                "top": 988.7745361328125,
+                "bottom": 1004.9151611328125
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0041.png",
+              "naturalWidth": 193,
+              "naturalHeight": 130,
+              "rect": {
+                "width": 21.9375,
+                "height": 14.78125,
+                "left": 179.0625,
+                "right": 201,
+                "top": 988.8831176757812,
+                "bottom": 1003.6643676757812
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 14.53125,
+                "height": 14.65625,
+                "left": 201.609375,
+                "right": 216.140625,
+                "top": 989.0081176757812,
+                "bottom": 1003.6643676757812
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0056.png",
+              "naturalWidth": 164,
+              "naturalHeight": 125,
+              "rect": {
+                "width": 18.625,
+                "height": 14.203125,
+                "left": 216.75,
+                "right": 235.375,
+                "top": 989.3470458984375,
+                "bottom": 1003.5501708984375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 14.53125,
+                "height": 14.65625,
+                "left": 235.984375,
+                "right": 250.515625,
+                "top": 989.0081176757812,
+                "bottom": 1003.6643676757812
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004e.png",
+              "naturalWidth": 186,
+              "naturalHeight": 134,
+              "rect": {
+                "width": 21.140625,
+                "height": 15.234375,
+                "left": 251.125,
+                "right": 272.265625,
+                "top": 988.4299926757812,
+                "bottom": 1003.6643676757812
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0054.png",
+              "naturalWidth": 132,
+              "naturalHeight": 124,
+              "rect": {
+                "width": 15,
+                "height": 14.09375,
+                "left": 272.875,
+                "right": 287.875,
+                "top": 989.1151733398438,
+                "bottom": 1003.2089233398438
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0053.png",
+              "naturalWidth": 144,
+              "naturalHeight": 128,
+              "rect": {
+                "width": 16.359375,
+                "height": 14.546875,
+                "left": 288.484375,
+                "right": 304.84375,
+                "top": 989.0032958984375,
+                "bottom": 1003.5501708984375
+              }
+            }
+          ]
+        },
+        {
+          "rect": {
+            "width": 324,
+            "height": 12.34375,
+            "left": 33,
+            "right": 357,
+            "top": 1347.390625,
+            "bottom": 1359.734375
+          },
+          "images": [
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004d.png",
+              "naturalWidth": 190,
+              "naturalHeight": 131,
+              "rect": {
+                "width": 16.515625,
+                "height": 11.390625,
+                "left": 33,
+                "right": 49.515625,
+                "top": 1349.127197265625,
+                "bottom": 1360.517822265625
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 11.125,
+                "height": 11.21875,
+                "left": 49.640625,
+                "right": 60.765625,
+                "top": 1349.299072265625,
+                "bottom": 1360.517822265625
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004d.png",
+              "naturalWidth": 190,
+              "naturalHeight": 131,
+              "rect": {
+                "width": 16.515625,
+                "height": 11.390625,
+                "left": 60.890625,
+                "right": 77.40625,
+                "top": 1349.127197265625,
+                "bottom": 1360.517822265625
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004f.png",
+              "naturalWidth": 136,
+              "naturalHeight": 125,
+              "rect": {
+                "width": 11.828125,
+                "height": 10.875,
+                "left": 77.53125,
+                "right": 89.359375,
+                "top": 1349.1204833984375,
+                "bottom": 1359.9954833984375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0052.png",
+              "naturalWidth": 156,
+              "naturalHeight": 142,
+              "rect": {
+                "width": 13.546875,
+                "height": 12.34375,
+                "left": 89.484375,
+                "right": 103.03125,
+                "top": 1349.1312255859375,
+                "bottom": 1361.4749755859375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0041.png",
+              "naturalWidth": 193,
+              "naturalHeight": 130,
+              "rect": {
+                "width": 16.78125,
+                "height": 11.3125,
+                "left": 103.15625,
+                "right": 119.9375,
+                "top": 1349.205322265625,
+                "bottom": 1360.517822265625
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 11.125,
+                "height": 11.21875,
+                "left": 120.0625,
+                "right": 131.1875,
+                "top": 1349.299072265625,
+                "bottom": 1360.517822265625
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0056.png",
+              "naturalWidth": 164,
+              "naturalHeight": 125,
+              "rect": {
+                "width": 14.265625,
+                "height": 10.875,
+                "left": 131.3125,
+                "right": 145.578125,
+                "top": 1349.555419921875,
+                "bottom": 1360.430419921875
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0045.png",
+              "naturalWidth": 128,
+              "naturalHeight": 129,
+              "rect": {
+                "width": 11.125,
+                "height": 11.21875,
+                "left": 145.703125,
+                "right": 156.828125,
+                "top": 1349.299072265625,
+                "bottom": 1360.517822265625
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u004e.png",
+              "naturalWidth": 186,
+              "naturalHeight": 134,
+              "rect": {
+                "width": 16.171875,
+                "height": 11.65625,
+                "left": 156.953125,
+                "right": 173.125,
+                "top": 1348.861572265625,
+                "bottom": 1360.517822265625
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0054.png",
+              "naturalWidth": 132,
+              "naturalHeight": 124,
+              "rect": {
+                "width": 11.46875,
+                "height": 10.78125,
+                "left": 173.25,
+                "right": 184.71875,
+                "top": 1349.3880615234375,
+                "bottom": 1360.1693115234375
+              }
+            },
+            {
+              "src": "http://127.0.0.1:4182/design-lab/memoraevents-gold/u0053.png",
+              "naturalWidth": 144,
+              "naturalHeight": 128,
+              "rect": {
+                "width": 12.515625,
+                "height": 11.125,
+                "left": 184.84375,
+                "right": 197.359375,
+                "top": 1349.305419921875,
+                "bottom": 1360.430419921875
+              }
+            }
+          ]
+        }
+      ],
+      "stages": [
+        {
+          "width": 370,
+          "height": 340,
+          "left": 10,
+          "right": 380,
+          "top": 393.515625,
+          "bottom": 733.515625
+        },
+        {
+          "width": 370,
+          "height": 340,
+          "left": 10,
+          "right": 380,
+          "top": 757.515625,
+          "bottom": 1097.515625
+        },
+        {
+          "width": 370,
+          "height": 340,
+          "left": 10,
+          "right": 380,
+          "top": 1121.515625,
+          "bottom": 1461.515625
+        },
+        {
+          "width": 370,
+          "height": 340,
+          "left": 10,
+          "right": 380,
+          "top": 1485.515625,
+          "bottom": 1825.515625
+        }
+      ],
+      "cssWordmark": {
+        "width": 344,
+        "height": 32,
+        "left": 23,
+        "right": 367,
+        "top": 1701.5625,
+        "bottom": 1733.5625
+      },
+      "brokenImages": [],
+      "screenshotBytes": 273706
+    }
+  ]
+}

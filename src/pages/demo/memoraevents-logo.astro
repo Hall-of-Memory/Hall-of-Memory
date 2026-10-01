@@ -1,0 +1,369 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const assetBase = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/';
+const glyphs = {
+  A: { file: 'u0041.png', width: 193, height: 130, descent: 9 },
+  E: { file: 'u0045.png', width: 128, height: 129, descent: 9 },
+  M: { file: 'u004d.png', width: 190, height: 131, descent: 9 },
+  N: { file: 'u004e.png', width: 186, height: 134, descent: 9 },
+  O: { file: 'u004f.png', width: 136, height: 125, descent: 3 },
+  R: { file: 'u0052.png', width: 156, height: 142, descent: 20 },
+  S: { file: 'u0053.png', width: 144, height: 128, descent: 8 },
+  T: { file: 'u0054.png', width: 132, height: 124, descent: 5 },
+  V: { file: 'u0056.png', width: 164, height: 125, descent: 8 },
+} as const;
+
+const word = [...'MEMORAEVENTS'] as Array<keyof typeof glyphs>;
+const source = 'Livia Gold Material Source · Original SHA-256 8555fa52…b17b1';
+const glyphStyle = (letter: keyof typeof glyphs) => {
+  const glyph = glyphs[letter];
+  return 'height:' + (glyph.height / 121).toFixed(4) + 'em;transform:translateY(' + (glyph.descent / 121).toFixed(4) + 'em)';
+};
+---
+
+<BaseLayout
+  title="Memoraevents Goldletter Lab"
+  description="Isolierter Vergleich der gegossenen Goldletter-Materialglyphen für Memoraevents."
+  noIndex={true}
+  bodyClass="memora-gold-lab"
+  formActionSource="'none'"
+>
+  <main class="lab-shell" id="main-content">
+    <header class="lab-header">
+      <a class="back" href={assetBase + 'demo/'}>← Demo</a>
+      <p class="kicker">Design Lab · keine Produktionsfreigabe</p>
+      <h1>Goldlettern für <span>Memoraevents</span></h1>
+      <p class="intro">
+        Derselbe gegossene Materialbestand wie im Livia-Goldtypografie-Test – hier nur mit den
+        bestätigten Großbuchstaben, die die neue Marke tatsächlich benötigt.
+      </p>
+    </header>
+
+    <section class="stage stage-signature" aria-labelledby="signature-title">
+      <div class="stage-meta">
+        <p>01 · Signature</p>
+        <h2 id="signature-title">Material pur</h2>
+        <span>ruhig · eng · logoartig</span>
+      </div>
+      <div class="brand-lockup">
+        <div class="material-wordmark material-wordmark-tight" aria-hidden="true">
+          {word.map((letter) => (
+            <span class="material-glyph">
+              <img
+                src={assetBase + 'design-lab/memoraevents-gold/' + glyphs[letter].file}
+                alt=""
+                width={glyphs[letter].width}
+                height={glyphs[letter].height}
+                loading="eager"
+                decoding="async"
+                style={glyphStyle(letter)}
+              />
+            </span>
+          ))}
+        </div>
+        <span class="sr-brand">MEMORAEVENTS</span>
+        <p class="tagline">Erinnerungen, die Teil des Events werden.</p>
+      </div>
+    </section>
+
+    <section class="stage stage-editorial" aria-labelledby="editorial-title">
+      <div class="stage-meta">
+        <p>02 · Editorial</p>
+        <h2 id="editorial-title">Mehr Luft</h2>
+        <span>großzügiger · ruhiger · luxuriöser</span>
+      </div>
+      <div class="material-wordmark material-wordmark-airy" aria-hidden="true">
+        {word.map((letter) => (
+          <span class="material-glyph">
+            <img
+              src={assetBase + 'design-lab/memoraevents-gold/' + glyphs[letter].file}
+              alt=""
+              width={glyphs[letter].width}
+              height={glyphs[letter].height}
+              loading="lazy"
+              decoding="async"
+              style={glyphStyle(letter)}
+            />
+          </span>
+        ))}
+      </div>
+      <span class="sr-brand">MEMORAEVENTS</span>
+    </section>
+
+    <section class="stage stage-header-sim" aria-labelledby="header-title">
+      <div class="stage-meta">
+        <p>03 · Header-Simulation</p>
+        <h2 id="header-title">Im echten Seitenmaßstab</h2>
+        <span>kompakt · navigationsnah</span>
+      </div>
+      <div class="header-sim">
+        <a href="#" class="mini-brand" aria-label="Memoraevents">
+          <span class="material-wordmark material-wordmark-mini" aria-hidden="true">
+            {word.map((letter) => (
+              <span class="material-glyph">
+                <img
+                  src={assetBase + 'design-lab/memoraevents-gold/' + glyphs[letter].file}
+                  alt=""
+                  width={glyphs[letter].width}
+                  height={glyphs[letter].height}
+                  loading="lazy"
+                  decoding="async"
+                  style={glyphStyle(letter)}
+                />
+              </span>
+            ))}
+          </span>
+        </a>
+        <nav aria-label="Beispielnavigation">
+          <span>Angebote</span><span>Galerie</span><span>Anfrage</span>
+        </nav>
+      </div>
+    </section>
+
+    <section class="stage stage-control" aria-labelledby="control-title">
+      <div class="stage-meta">
+        <p>04 · Gegenprobe</p>
+        <h2 id="control-title">Nur CSS-Gold</h2>
+        <span>skalierbar · aber ohne echte Materialpixel</span>
+      </div>
+      <p class="css-wordmark">MEMORAEVENTS</p>
+    </section>
+
+    <section class="notes" aria-label="Einordnung">
+      <p><strong>Materialquelle:</strong> {source}</p>
+      <p><strong>Bewusst nicht gezeigt:</strong> Kleinbuchstaben und Sonderzeichen; deren Zuordnung ist in dieser Quelle nicht belastbar bestätigt.</p>
+      <p><strong>Dieser Lab-Stand ändert nichts an Production.</strong></p>
+    </section>
+  </main>
+
+  <style>
+    :global(body.memora-gold-lab) {
+      margin: 0;
+      min-height: 100vh;
+      color: #f2eadc;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(184, 137, 54, .16), transparent 34rem),
+        linear-gradient(180deg, #080705 0%, #0c0a07 48%, #070604 100%);
+    }
+    :global(body.memora-gold-lab)::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: linear-gradient(rgba(255,255,255,.013) 1px, transparent 1px);
+      background-size: 100% 4px;
+      opacity: .3;
+    }
+    .lab-shell {
+      width: min(1240px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 28px 0 80px;
+      overflow: hidden;
+    }
+    .lab-header {
+      max-width: 850px;
+      padding: 34px 0 56px;
+    }
+    .back {
+      display: inline-block;
+      margin-bottom: 42px;
+      color: #bcae96;
+      font-size: .76rem;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+    .kicker, .stage-meta > p {
+      margin: 0 0 12px;
+      color: #c9a45a;
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+    .lab-header h1 {
+      max-width: 900px;
+      margin: 0;
+      font: 400 clamp(3rem, 7vw, 6.8rem)/.92 Georgia, serif;
+      letter-spacing: -.045em;
+    }
+    .lab-header h1 span { color: #e7c976; }
+    .intro {
+      max-width: 690px;
+      margin: 30px 0 0;
+      color: #a79e90;
+      font-size: 1rem;
+    }
+    .stage {
+      position: relative;
+      min-height: 420px;
+      margin-bottom: 24px;
+      display: grid;
+      align-content: center;
+      gap: 46px;
+      padding: clamp(28px, 5vw, 68px);
+      border: 1px solid rgba(216, 181, 104, .18);
+      background:
+        linear-gradient(145deg, rgba(255,240,194,.025), transparent 38%),
+        rgba(14, 12, 9, .86);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.012);
+    }
+    .stage::after {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      pointer-events: none;
+      border: 1px solid rgba(218, 182, 99, .055);
+    }
+    .stage-meta {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: baseline;
+      gap: 4px 24px;
+    }
+    .stage-meta > p { grid-column: 1 / -1; }
+    .stage-meta h2 {
+      margin: 0;
+      font: 400 clamp(1.8rem, 3vw, 3rem)/1 Georgia, serif;
+      letter-spacing: -.025em;
+    }
+    .stage-meta > span {
+      color: #7f776c;
+      font-size: .7rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .brand-lockup {
+      display: grid;
+      justify-items: center;
+      gap: 22px;
+      padding: 20px 0 8px;
+    }
+    .tagline {
+      margin: 0;
+      color: #b7aa95;
+      font: italic 400 clamp(.9rem, 1.4vw, 1.12rem)/1.4 Georgia, serif;
+      letter-spacing: .035em;
+    }
+    .material-wordmark {
+      max-width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      white-space: nowrap;
+      line-height: 1;
+      filter: drop-shadow(0 .06em .09em rgba(0,0,0,.36));
+    }
+    .material-wordmark-tight {
+      font-size: clamp(1.2rem, 4.75vw, 4.5rem);
+      gap: .005em;
+    }
+    .material-wordmark-airy {
+      font-size: clamp(1.05rem, 4.15vw, 3.95rem);
+      gap: .075em;
+      padding: 38px 0 28px;
+    }
+    .material-wordmark-mini {
+      justify-content: flex-start;
+      font-size: clamp(.48rem, 1.45vw, 1.18rem);
+      gap: .012em;
+    }
+    .material-glyph {
+      display: inline-flex;
+      flex: 0 0 auto;
+      align-items: flex-end;
+      justify-content: center;
+      line-height: 1;
+    }
+    .material-glyph img {
+      display: block;
+      width: auto;
+      max-width: none;
+      object-fit: contain;
+    }
+    .sr-brand {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .stage-editorial {
+      background:
+        radial-gradient(circle at 50% 53%, rgba(201, 164, 90, .075), transparent 44%),
+        #0a0907;
+    }
+    .header-sim {
+      position: relative;
+      z-index: 2;
+      min-height: 88px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 26px;
+      padding: 0 24px;
+      border-block: 1px solid rgba(201, 164, 90, .18);
+      background: #090806;
+    }
+    .mini-brand {
+      min-width: 0;
+      flex: 0 1 520px;
+    }
+    .header-sim nav {
+      display: flex;
+      flex: 0 0 auto;
+      gap: 26px;
+      color: #bcb3a5;
+      font-size: .72rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .stage-control {
+      background: linear-gradient(135deg, #17130c, #080705 62%);
+    }
+    .css-wordmark {
+      margin: 0;
+      text-align: center;
+      font: 600 clamp(2rem, 6vw, 5.9rem)/1 Georgia, serif;
+      letter-spacing: .04em;
+      color: transparent;
+      background: linear-gradient(115deg, #8e6725 2%, #f5dfa1 23%, #ad7b28 42%, #f3d68d 61%, #8b6424 82%, #dcb96d);
+      -webkit-background-clip: text;
+      background-clip: text;
+      text-shadow: 0 8px 18px rgba(0,0,0,.3);
+    }
+    .notes {
+      display: grid;
+      gap: 8px;
+      padding: 22px 4px;
+      color: #8c8378;
+      font-size: .76rem;
+    }
+    .notes p { margin: 0; }
+    .notes strong { color: #c7bba8; }
+    @media (max-width: 720px) {
+      .lab-shell { width: min(100% - 20px, 680px); padding-top: 12px; }
+      .lab-header { padding: 24px 6px 42px; }
+      .stage { min-height: 340px; gap: 34px; padding: 28px 18px; }
+      .stage-meta { grid-template-columns: 1fr; }
+      .stage-meta > span { margin-top: 6px; }
+      .material-wordmark-tight { font-size: clamp(1.1rem, 5.15vw, 2.4rem); }
+      .material-wordmark-airy { font-size: clamp(.94rem, 4.5vw, 2rem); gap: .045em; }
+      .header-sim { padding: 18px 10px; min-height: 72px; }
+      .mini-brand { flex-basis: 100%; }
+      .header-sim nav { display: none; }
+      .material-wordmark-mini { font-size: clamp(.52rem, 2.7vw, .95rem); }
+    }
+    @media (max-width: 390px) {
+      .stage { padding-inline: 12px; }
+      .material-wordmark-tight { font-size: 1rem; }
+      .material-wordmark-airy { font-size: .86rem; }
+    }
+  </style>
+</BaseLayout>

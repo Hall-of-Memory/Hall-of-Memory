@@ -62,3 +62,14 @@ Diese Änderung betrifft die Repository-Identität und alle aktuell davon abgele
 - `npm run test:inquiry-contract`: PASS
 - `npm run verify`: **23 PASS · 0 FAIL · 0 BLOCKED**
 - npm-Paketname und Pages-Basis sind revisionsgebunden auf `memoraevents` vorbereitet.
+
+## GitHub-Rename-Readback — 01.10.2026
+
+- GitHub-Repository erfolgreich auf `Hall-of-Memory/memoraevents` umbenannt.
+- Neuer kanonischer URL: `https://github.com/Hall-of-Memory/memoraevents`.
+- Alter URL `https://github.com/Hall-of-Memory/Hall-of-Memory` liefert HTTP 301 auf den neuen Pfad.
+- Lokaler `origin` zeigt explizit auf `git@github.com:Hall-of-Memory/memoraevents.git`.
+- Remote-`main` bleibt `9055903b40301759eca9f1290beb55d91e2236ff`; Rename-Branch bleibt `1fdd2db23f0101e703ed563afa95aa096551f02f`.
+- PR #71 ist unter dem neuen Repo-Pfad weiterhin `OPEN/CLEAN`; GitHub `verify` und Vercel sind grün.
+- Alle zuvor offenen PRs (#70, #66, #64, #63, #61, #54, #45) sind unter dem neuen Repo-Pfad erhalten.
+- Der lokale physische Checkout bleibt wegen der verknüpften Worktrees absichtlich unter `/home/alex/repos/hall-of-memory`.

@@ -69,7 +69,7 @@ Ein Merge allein ist keine Behauptung eines erfolgreichen Produktivdeployments. 
 
 ## Aktueller Stand
 
-Siehe [`tasks/INDEX.md`](tasks/INDEX.md), [`tasks/T009-deploy-handover.md`](tasks/T009-deploy-handover.md), [`tasks/T043-public-collaboration-readiness.md`](tasks/T043-public-collaboration-readiness.md), [`tasks/T045-production-domain-cutover.md`](tasks/T045-production-domain-cutover.md), [`tasks/T060-memoraevent-domain-pivot.md`](tasks/T060-memoraevent-domain-pivot.md), [`tasks/T061-memoraevents-domain-correction.md`](tasks/T061-memoraevents-domain-correction.md) und [`docs/project-brief.md`](docs/project-brief.md).
+Siehe [`tasks/INDEX.md`](tasks/INDEX.md), [`tasks/T009-deploy-handover.md`](tasks/T009-deploy-handover.md), [`tasks/T043-public-collaboration-readiness.md`](tasks/T043-public-collaboration-readiness.md), [`tasks/T045-production-domain-cutover.md`](tasks/T045-production-domain-cutover.md), [`tasks/T060-memoraevent-domain-pivot.md`](tasks/T060-memoraevent-domain-pivot.md), [`tasks/T061-memoraevents-domain-correction.md`](tasks/T061-memoraevents-domain-correction.md), [`tasks/T062-github-repository-rename.md`](tasks/T062-github-repository-rename.md) und [`docs/project-brief.md`](docs/project-brief.md).
 
 ## Lizenzstatus
 

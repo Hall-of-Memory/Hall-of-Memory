@@ -4,9 +4,9 @@ Kanonisches Arbeitsrepository für **Hall of Memory**.
 
 ## Website
 
-**Produktions- und Primärdomain:** `https://memoraevent.de`
+**Produktions- und Primärdomain:** `https://memoraevents.de`
 
-Die Domain ist bei INWX registriert; der Registrarzugriff liegt bei Hall of Memory. Der aktuelle Domain-Pivot und DNS-Cutover zur Zielplattform sind in T060 dokumentiert. T045/T059 bleiben historische Evidenz des früheren `hallofmemory.de`-Pfads. Bis der neue Domain-Readback vollständig grün ist, bleibt die GitHub-Pages-Preview nur als technischer Übergangs-Fallback bestehen.
+Die Domain ist bei INWX registriert; der Registrarzugriff liegt bei Hall of Memory. Der aktuelle Domain-Pivot und DNS-Cutover zur Zielplattform sind in T061 dokumentiert. T045/T059/T060 bleiben historische Evidenz der früheren Domainpfade. Bis der neue Domain-Readback vollständig grün ist, bleibt die GitHub-Pages-Preview nur als technischer Übergangs-Fallback bestehen.
 
 ## Ziel
 
@@ -14,13 +14,13 @@ Eine hochwertige, moderne und erweiterbare Event-Website mit Schwerpunkt auf Fot
 
 ## Eigentum und technische Rollen
 
-- **Domain/Registrar:** INWX für `memoraevent.de`; Registrarzugriff bei Hall of Memory.
+- **Domain/Registrar:** INWX für `memoraevents.de`; Registrarzugriff bei Hall of Memory.
 - **GitHub:** Quellcode, Pull Requests, CI und nachvollziehbare Änderungshistorie.
 - **Cloudflare:** vorgesehene produktive Auslieferung und später die serverseitigen Produktbausteine gemäß T009.
 - **GitHub Pages:** nur Übergangs-Preview; nicht die Produktionsplattform.
 - **`tasks/`:** einzige kanonische Task-Registry dieses Projekts.
 
-Das Source-Repo soll langfristig so privat wie sinnvoll sein. Die Repository-Sichtbarkeit wird aber nicht auf Kosten von Branchschutz und CI-Sicherheit geändert. Solange der eingesetzte GitHub-Organisationstarif Schutzregeln für private Repositories nicht nachweislich unterstützt, bleibt die bereinigte Veröffentlichungshistorie ohne vertrauliche Quellen zulässig öffentlich. T045 hält die historische Sichtbarkeitsentscheidung revisionsgebunden fest; T060 ändert daran nichts.
+Das Source-Repo soll langfristig so privat wie sinnvoll sein. Die Repository-Sichtbarkeit wird aber nicht auf Kosten von Branchschutz und CI-Sicherheit geändert. Solange der eingesetzte GitHub-Organisationstarif Schutzregeln für private Repositories nicht nachweislich unterstützt, bleibt die bereinigte Veröffentlichungshistorie ohne vertrauliche Quellen zulässig öffentlich. T045 hält die historische Sichtbarkeitsentscheidung revisionsgebunden fest; T061 ändert daran nichts.
 
 Unabhängig von der GitHub-Sichtbarkeit gilt: produktive Secrets, Zugangsdaten, private Eventfotos, personenbezogene Eventdaten, Verträge und nicht zur Veröffentlichung bestimmte Designer-Originaldateien gehören **nicht** in Git.
 
@@ -56,7 +56,7 @@ Der gleiche Volltest läuft in GitHub Actions für Pull Requests und `main`.
 
 ## Deployment
 
-Produktiver Ziel-Origin ist `https://memoraevent.de`. Ein Produktions-Build setzt `PUBLIC_SITE_URL` auf genau diesen HTTPS-Origin. Deployment, DNS-Cutover, Rollback und Readback sind in [`docs/deployment-handover.md`](docs/deployment-handover.md), T009 und T060 geregelt.
+Produktiver Ziel-Origin ist `https://memoraevents.de`. Ein Produktions-Build setzt `PUBLIC_SITE_URL` auf genau diesen HTTPS-Origin. Deployment, DNS-Cutover, Rollback und Readback sind in [`docs/deployment-handover.md`](docs/deployment-handover.md), T009 und T061 geregelt.
 
 Ein Merge allein ist keine Behauptung eines erfolgreichen Produktivdeployments. Ein Livegang gilt erst nach revisionsgebundenem Deployment und HTTP-/Browser-Readback der echten Domain als erfolgt.
 
@@ -69,7 +69,7 @@ Ein Merge allein ist keine Behauptung eines erfolgreichen Produktivdeployments. 
 
 ## Aktueller Stand
 
-Siehe [`tasks/INDEX.md`](tasks/INDEX.md), [`tasks/T009-deploy-handover.md`](tasks/T009-deploy-handover.md), [`tasks/T043-public-collaboration-readiness.md`](tasks/T043-public-collaboration-readiness.md), [`tasks/T045-production-domain-cutover.md`](tasks/T045-production-domain-cutover.md), [`tasks/T060-memoraevent-domain-pivot.md`](tasks/T060-memoraevent-domain-pivot.md) und [`docs/project-brief.md`](docs/project-brief.md).
+Siehe [`tasks/INDEX.md`](tasks/INDEX.md), [`tasks/T009-deploy-handover.md`](tasks/T009-deploy-handover.md), [`tasks/T043-public-collaboration-readiness.md`](tasks/T043-public-collaboration-readiness.md), [`tasks/T045-production-domain-cutover.md`](tasks/T045-production-domain-cutover.md), [`tasks/T060-memoraevent-domain-pivot.md`](tasks/T060-memoraevent-domain-pivot.md), [`tasks/T061-memoraevents-domain-correction.md`](tasks/T061-memoraevents-domain-correction.md) und [`docs/project-brief.md`](docs/project-brief.md).
 
 ## Lizenzstatus
 

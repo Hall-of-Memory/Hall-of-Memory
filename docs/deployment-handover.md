@@ -1,30 +1,31 @@
 # Deployment- und Handover-Runbook
 
-Stand: 2026-09-27
+Stand: 2026-10-01
 
 Dieses Runbook trennt zwei Stufen:
 
-1. **Domain-Arbeitsstand:** die gepflegte Hall-of-Memory-Website wird unter `https://memoraevent.de` erreichbar und dort weiterentwickelt; sie bleibt bis zur inhaltlichen/rechtlichen Freigabe `noindex` und das produktive Anfrageformular bleibt fail-closed.
+1. **Domain-Arbeitsstand:** die gepflegte Hall-of-Memory-Website wird unter `https://memoraevents.de` erreichbar und dort weiterentwickelt; sie bleibt bis zur inhaltlichen/rechtlichen Freigabe `noindex` und das produktive Anfrageformular bleibt fail-closed.
 2. **Vollständige V1-Produktion:** Anfrage-Worker, Turnstile, Access, D1, Email-Binding und finale Recht-/Inhaltsfreigaben werden erst nach den Gates aus T008/T010/T011 aktiviert.
 
-Die Kundenentscheidung vom 27.09.2026 setzt `memoraevent.de` als neue Primärdomain und autorisiert Stufe 1. Sie ist keine pauschale Freigabe neuer kostenpflichtiger Dienste oder der Backend-Stufe 2.
+Die korrigierte Kundenentscheidung vom 30.09.2026 setzt `memoraevents.de` als neue Primärdomain und autorisiert Stufe 1. Sie ist keine pauschale Freigabe neuer kostenpflichtiger Dienste oder der Backend-Stufe 2.
 
 ## 1. Aktuelle Kundeninfrastruktur
 
-- Produktions-/Primärdomain: `https://memoraevent.de`
+- Produktions-/Primärdomain: `https://memoraevents.de`
 - Registrar/DNS: kundeneigen bei INWX
-- autoritative Nameserver zum Stand 27.09.2026: `ns.inwx.de`, `ns2.inwx.de`, `ns3.inwx.eu`
-- Apex-A-Record: `185.181.104.242`
-- `www.memoraevent.de`: A `185.181.104.242`
+- autoritative Nameserver zum Stand 01.10.2026: `quentin.ns.cloudflare.com`, `tia.ns.cloudflare.com`
+- Apex: Worker-Custom-Domain auf `hall-of-memory`; öffentliche Resolver liefern Cloudflare-Anycast statt des früheren INWX-A `185.181.104.242`
+- `www.memoraevents.de`: proxied Cloudflare-DNS + Single Redirect `302` auf den Apex, Pfad/Query erhalten
 - Wildcard `*`: A `185.181.104.242`
 - aktuell keine Apex-MX/TXT/CAA- oder `_dmarc`-TXT-Records; Parent-DS leer
 - kanonisches Source-Repo: `Hall-of-Memory/Hall-of-Memory`
 - `main`: PR-geschützt, Required Check `verify`, Admin-Enforcement, Conversation Resolution, kein Force-Push/Branch-Löschen
 - GitHub Pages: nur Übergangs-Fallback, nicht Produktionsplattform
 - Cloudflare: vorgesehene produktive Auslieferung; bestehender Worker `hall-of-memory` ist Zielruntime
-- neue Cloudflare-Zone `memoraevent.de`: noch nicht angelegt; der aktuelle delegierte Zugang wird beim Erstellen wegen fehlendem `com.cloudflare.api.account.zone.create` blockiert
+- Cloudflare-Zone `memoraevents.de`: Plan `Free Website`, Status `active`; Worker-Custom-Domain an Production/`hall-of-memory` gebunden; Ruleset `d0e0eb3bf2964c0da4c790db1b753fd4` kanonisiert `www` temporär auf den Apex
+- frühere Zwischen-Domain `memoraevent.de`: bei INWX `DELETE SCHEDULED`; Löschung am 30.09.2026 durch `aram222` angefordert, daher kein Legacy-Redirect und kein Storno durch den Operator
 
-T060 ist die operative Wahrheit für den Domain-Cutover. T045/T059 bleiben historische Evidenz des früheren `hallofmemory.de`-Pfads.
+T061 ist die operative Wahrheit für den Domain-Cutover. T045/T059/T060 bleiben historische Evidenz der früheren Domainpfade.
 
 ## 2. Öffentlicher Buildvertrag
 
@@ -32,7 +33,7 @@ T060 ist die operative Wahrheit für den Domain-Cutover. T045/T059 bleiben histo
 
 | Name | Vertrag |
 |---|---|
-| `PUBLIC_SITE_URL` | für den Domain-Build exakt `https://memoraevent.de`, ohne Pfad/Query/Fragment |
+| `PUBLIC_SITE_URL` | für den Domain-Build exakt `https://memoraevents.de`, ohne Pfad/Query/Fragment |
 | `PUBLIC_INQUIRY_API_URL` | leer, solange Stufe 2 nicht aktiviert ist; später relative Same-Origin-Route oder vollständiger HTTPS-Endpunkt |
 | `PUBLIC_TURNSTILE_SITE_KEY` | leer, solange Stufe 2 nicht aktiviert ist; später öffentlicher produktiver Site-Key |
 | `PUBLIC_WHATSAPP_NUMBER` | nur bestätigte Business-Nummer; sonst leer |
@@ -45,7 +46,7 @@ Solange Inhalte/Legal noch Entwurfsstand sind, bleibt `noindex` bewusst erhalten
 / /demo/ 302
 ```
 
-Damit zeigt `https://memoraevent.de/` auf die gepflegte Kundenwebsite unter `/demo/`, ohne den sicherheitsgehärteten internen Root-Scaffold oder seine Formularprüfungen zu ersetzen. Bis zur finalen Launch-Entscheidung bleibt es ein temporärer `302` statt eines permanenten `301`.
+Damit zeigt `https://memoraevents.de/` auf die gepflegte Kundenwebsite unter `/demo/`, ohne den sicherheitsgehärteten internen Root-Scaffold oder seine Formularprüfungen zu ersetzen. Bis zur finalen Launch-Entscheidung bleibt es ein temporärer `302` statt eines permanenten `301`.
 
 Der Anfragebereich auf `/demo/` ist in Stage 1 nur eine sichtbare Ablaufvorschau: Feldgruppen und Submit sind disabled, es gibt keinen Mock-Submit und keinen clientseitigen Pfad, der eingegebene Kontaktdaten scheinbar entgegennimmt und verwirft. Ein echter Anfragepfad darf erst mit Stage 2 aktiviert werden.
 
@@ -54,8 +55,9 @@ Der Anfragebereich auf `/demo/` ist in Stage 1 nur eine sichtbare Ablaufvorschau
 Vor Mutation:
 
 - exakten Git-Commit und sauberen Worktree lesen;
+- authentifizierten INWX-Provider-Readback für Domainstatus, vollständige DNS-Zone/Inventur, Nameserver und DNSSEC durchführen; öffentliche DNS-Stichproben allein sind kein Vollständigkeitsnachweis;
 - `npm ci` und `npm run verify` grün;
-- Domain-Build mit `PUBLIC_SITE_URL=https://memoraevent.de` erzeugen;
+- Domain-Build mit `PUBLIC_SITE_URL=https://memoraevents.de` erzeugen;
 - `dist/_redirects` exakt auf die eine freigegebene Regel prüfen;
 - keine Secrets oder produktiven Backend-Platzhalter im Artefakt;
 - **vollständigen autoritativen INWX-DNS-Zonenstand** vor jeder Nameservermutation inventarisieren/exportieren: alle Ownernamen/Subdomains, Recordtypen, Werte, Prioritäten und TTLs; mindestens `A`, `AAAA`, `CNAME`, `MX`, `TXT` (einschließlich SPF/DKIM/DMARC/Verifikationen), `SRV` und `CAA`; aktuelle `NS`/`SOA` separat dokumentieren;
@@ -75,7 +77,7 @@ Quellsnapshot INWX:
 {
   "schemaVersion": 1,
   "provider": "inwx",
-  "zone": "memoraevent.de",
+  "zone": "memoraevents.de",
   "complete": true,
   "capturedAt": "<ISO-8601 mit Zeitzone>",
   "dnssec": { "dsRecords": [] },
@@ -89,7 +91,7 @@ Zielsnapshot Cloudflare:
 {
   "schemaVersion": 1,
   "provider": "cloudflare",
-  "zone": "memoraevent.de",
+  "zone": "memoraevents.de",
   "complete": true,
   "capturedAt": "<ISO-8601 mit Zeitzone>",
   "dnssec": { "migrationReady": false },
@@ -110,6 +112,22 @@ node scripts/dns-zone-cutover.mjs <inwx-snapshot.json> <cloudflare-snapshot.json
 
 Nur Exit-Code `0` **und** `passed: true` gelten als PASS. Der Report bindet beide normalisierten Vollsnapshots über SHA-256, nennt Recordschlüssel und Fehlerklassen, gibt aber absichtlich keine RRset-Werte, TXT-Verifikationstokens, Freigabegründe oder sonstigen DNS-Inhalt wieder. Auch Datei-/JSON-Parsefehler werden nur generisch gemeldet, damit malformed Snapshots keine Tokenfragmente über Parserdiagnosen in Logs tragen. Die vollständigen Snapshots können solche Werte enthalten und werden deshalb nicht ins Repository committed, sondern ausschließlich in einem freigegebenen Evidenz-/Rollbackpfad außerhalb von Git gehalten.
 
+### Vollzogener Stage-1-Cutover — 2026-10-01
+
+Der oben beschriebene Ablauf ist für `memoraevents.de` vollständig durchlaufen:
+
+- Vollzonen-/DNSSEC-Gate PASS;
+- INWX-Delegation auf `quentin.ns.cloudflare.com` / `tia.ns.cloudflare.com`;
+- Cloudflare seit `2026-10-01T04:42:50.559740Z` `active`;
+- Worker-Custom-Domain aktiv;
+- Worker-Version `077c864f-3e7c-433f-94c5-a7597a90de70`;
+- Apex `302 -> /demo/`, Demo/Rahmen HTTP 200;
+- Live-`/demo/` SHA-256 `27fe8a420e4829880607caa2d665f2a703ff6041997ec401622a1064f58e0ddd`, identisch zum geprüften Artefakt;
+- Security Header und `noindex,nofollow` grün;
+- `www`-Redirect `302`, Pfad/Query erhalten.
+
+Der lokale Heim-PC-Resolver kann während TTL-Nachlauf noch alte INWX-Antworten cachen; maßgeblich sind autoritative Cloudflare-DNS-Antworten und öffentliche Resolver.
+
 Dann:
 
 1. statische Site revisionsgebunden nach Cloudflare deployen;
@@ -117,9 +135,9 @@ Dann:
 3. Cloudflare-Zonenbestand gegen den vollständigen INWX-Snapshot vergleichen und den Vergleich als `PASS` binden; DNSSEC/DS-Preflight muss ebenfalls `PASS` sein;
 4. die von Cloudflare tatsächlich ausgegebenen Nameserver revisionsgebunden lesen;
 5. **erst bei bestandenem Vollzonen- und DNSSEC-Gate** bei INWX auf diese externen Cloudflare-Nameserver umstellen;
-6. Cloudflare-`Active` abwarten und erst dann `memoraevent.de` als Custom Domain an das geprüfte Deployment binden;
+6. Cloudflare-`Active` abwarten und erst dann `memoraevents.de` als Custom Domain an das geprüfte Deployment binden;
 7. DNS-Propagation, vollständige öffentliche Record-Stichprobe (insbesondere Web + Mail/Verifikation) und TLS abwarten/read-backen;
-8. `https://memoraevent.de/` muss mit `302` nach `/demo/` führen;
+8. `https://memoraevents.de/` muss mit `302` nach `/demo/` führen;
 9. `/demo/` und `/demo/rahmen/` müssen HTTP 200 liefern und die erwarteten Assets laden;
 10. `www` erhält eine explizite Redirect-/Canonical-Strategie;
 11. Desktop/Mobil-Browserreadback durchführen.
@@ -142,7 +160,7 @@ Erst nach Entblockung von T008/T010/T011:
 | Variable | `ACCESS_AUD` | Audience der Access-Anwendung |
 | Variable | `NOTIFY_TO` | verifizierte Betreiber-Zieladresse |
 | Variable | `NOTIFY_FROM` | verifizierte Absenderadresse |
-| Variable | `PUBLIC_SITE_ORIGIN` | exakt `https://memoraevent.de` |
+| Variable | `PUBLIC_SITE_ORIGIN` | exakt `https://memoraevents.de` |
 
 `ACCESS_JWKS_JSON` und `SMOKE_LIMITER` bleiben ausschließlich lokale Testkonfiguration. Die Vorlage `spikes/inquiry-worker/wrangler.production.example.jsonc` darf mit Platzhaltern nie produktiv deployt werden. Die tatsächliche kundengebundene Laufzeitkonfiguration heißt exakt `spikes/inquiry-worker/wrangler.production.jsonc`, ist in `.gitignore` ausgeschlossen und darf weder Secrets noch `REPLACE_WITH_*`-/`example.invalid`-/`local-only`-Werte enthalten.
 
@@ -181,7 +199,7 @@ npm run verify
 Für den Stage-1-Domain-Build zusätzlich:
 
 ```sh
-PUBLIC_SITE_URL=https://memoraevent.de npm run build
+PUBLIC_SITE_URL=https://memoraevents.de npm run build
 ```
 
 Stage 1:

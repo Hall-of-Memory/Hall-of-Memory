@@ -46,6 +46,40 @@ Frisch belegt:
 
 Least-Privilege-Folge: Bevorzugt legt Aram die Zone einmal selbst an und delegiert danach bei Bedarf `Domain Administrator` nur für `memoraevent.de`. Ein breiterer accountweiter Adminzugang ist dafür nicht der Standardpfad.
 
+
+## Produktionsdomain-Korrektur — 2026-09-30 / Live-Readback 2026-10-01
+
+Der Kunde hat die Primärdomain auf **`https://memoraevents.de`** korrigiert. T061 supersediert damit den operativen Domainpfad aus T060; T060 bleibt historische Evidenz des bereits gemergten `memoraevent.de`-Zwischenstands.
+
+Frisch belegt:
+
+- `memoraevents.de` ist öffentlich registriert und über INWX delegiert.
+- Aktuelle Nameserver: `ns.inwx.de`, `ns2.inwx.de`, `ns3.inwx.eu`.
+- Apex und `www` zeigen auf `185.181.104.242`; Apex-MX/TXT/CAA und `_dmarc TXT` sind leer.
+- Beim `.de`-Parent ist kein DS veröffentlicht.
+- Die Cloudflare-Zone `memoraevents.de` existiert bereits im kundeneigenen Aram-Account, Plan `Free Website`, Status `pending`.
+- Cloudflare weist `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com` zu.
+- Cloudflare enthält exakt die drei importierten A-RRsets für Apex, `www` und Wildcard `*`, jeweils auf `185.181.104.242`.
+- Der bestehende Worker `hall-of-memory` bleibt Zielruntime.
+- Offen ist ausschließlich der authentifizierte INWX-Provider-Readback vor der Delegationsmutation; die aktuelle Browser-Session ist bei INWX nicht angemeldet und AXFR ist nicht verfügbar.
+
+
+## Primärdomain live — 2026-10-01
+
+Der statische Stage-1-Domain-Livegang auf `https://memoraevents.de` ist technisch abgeschlossen:
+
+- vollständiger INWX→Cloudflare-Zonen-/DNSSEC-Vergleich: PASS;
+- INWX delegiert auf `quentin.ns.cloudflare.com` / `tia.ns.cloudflare.com`;
+- DENIC, `1.1.1.1` und `8.8.8.8` sehen die Cloudflare-Delegation;
+- Cloudflare-Zone ist `active`;
+- Worker-Custom-Domain `memoraevents.de` ist an Production/`hall-of-memory` gebunden;
+- aktueller revisionsgebundener Worker-Deploy: `077c864f-3e7c-433f-94c5-a7597a90de70`;
+- Apex: `/ -> 302 /demo/`, `/demo/ -> 200`, `/demo/rahmen/ -> 200`, Security Header und `noindex,nofollow` grün;
+- Live-`/demo/` ist byte-identisch zum geprüften Artefakt, SHA-256 `27fe8a420e4829880607caa2d665f2a703ff6041997ec401622a1064f58e0ddd`;
+- `www.memoraevents.de` wird per Cloudflare Single Redirects temporär (`302`) und pfad-/query-erhaltend auf den Apex kanonisiert.
+
+Die frühere Legacy-Weiterleitung für `memoraevent.de` ist durch die kundenseitig angeforderte Löschung superseded. Die Primärdomain selbst braucht keine weitere DNS-Mutation.
+
 ## GitHub-/Source-Entscheidung — aktualisiert 2026-08-22
 
 - Das kanonische Kundenrepo ist `Hall-of-Memory/Hall-of-Memory`.
@@ -67,16 +101,14 @@ Least-Privilege-Folge: Bevorzugt legt Aram die Zone einmal selbst an und delegie
 
 ## Externe Blockade
 
-Für den **statischen Domain-Livegang** fehlt aktuell die neue Cloudflare-Zone `memoraevent.de`. Der vorhandene delegierte Zugang darf Zonen nicht anlegen (`com.cloudflare.api.account.zone.create` fehlt). Vor einer INWX-Nameservermutation müssen anschließend die frisch zugewiesenen Cloudflare-Nameserver, der vollständige INWX→Cloudflare-DNS-Vergleich und das DNSSEC/DS-Gate aus T060 PASS sein.
+Der **statische Domain-Livegang auf `memoraevents.de` ist abgeschlossen**. Für Stage 1 besteht kein externer Produktionsblocker mehr.
 
-Für die vollständige V1 mit Anfrage/Admin bleiben zusätzlich die produktiven Ressourcen/Freigaben aus T008/T010/T011 erforderlich: Turnstile, Access, D1, Rate Limit, Email-Binding, verifizierte Ziel-/Absenderadresse, finale Inhalte sowie Datenschutz-/Löschregel.
+Für die vollständige V1 mit Anfrage/Admin bleiben weiterhin die produktiven Ressourcen/Freigaben aus T008/T010/T011 erforderlich: Turnstile, Access, D1, Rate Limit, Email-Binding, verifizierte Ziel-/Absenderadresse, finale Inhalte sowie Datenschutz-/Löschregel.
 
-Der statische Marketing-/Demo-Livegang auf `memoraevent.de` darf von diesen späteren Backend-Bausteinen getrennt vorbereitet werden, solange nicht fälschlich ein funktionsfähiges produktives Anfrageformular behauptet wird. Fehlende produktive Formularwerte bleiben fail-closed.
-
-T009 bleibt deshalb `blocked_external`; T060 ist für den unmittelbar gewünschten Domain-Pivot `active`.
+T009 bleibt deshalb für Stage 2 `blocked_external`. T061 ist für den statischen Domain-Cutover `done`; `memoraevent.de` wurde kundenseitig zur Löschung eingereicht und wird nicht als Legacy-Redirect weitergeführt.
 
 ## Historischer Preview-Befund — 2026-08-11
 
 - Frühere unauthentifizierte Cloudflare-Temporary-Previews unter wechselnden `workers.dev`-Hostnamen waren ausdrücklich nicht dauerhaft.
 - Diese temporären Hosts sind keine Produktions- oder Handover-Wahrheit.
-- Der damalige Primärdomain-Befund zu `hallofmemory.de` ist historische Evidenz. Seit der Kundenentscheidung vom 27.09.2026 ist `memoraevent.de` die vorgesehene produktive Primäradresse; T060 ist dafür autoritativ.
+- Der damalige Primärdomain-Befund zu `hallofmemory.de` sowie der zwischenzeitliche `memoraevent.de`-Pivot sind historische Evidenz. Seit der korrigierten Kundenentscheidung vom 30.09.2026 ist `memoraevents.de` die vorgesehene produktive Primäradresse; T061 ist dafür autoritativ.

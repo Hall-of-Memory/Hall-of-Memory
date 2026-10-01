@@ -39,9 +39,9 @@ assert.doesNotMatch(previewCsp, /frame-ancestors/, 'frame-ancestors must remain 
 
 const productionCsp = buildDocumentSecurityPolicy({
   formActionSource: "'self'",
-  apiConnectSource: 'https://inquiry.memoraevent.de',
+  apiConnectSource: 'https://inquiry.memoraevents.de',
 });
 assert.match(productionCsp, /form-action 'self'/);
-assert.match(productionCsp, /connect-src 'self' https:\/\/challenges\.cloudflare\.com https:\/\/inquiry\.memoraevent\.de/);
+assert.match(productionCsp, /connect-src 'self' https:\/\/challenges\.cloudflare\.com https:\/\/inquiry\.memoraevents\.de/);
 
 console.log('security-policy-contract-ok hsts=false deployment_and_document_policies_bound=true');

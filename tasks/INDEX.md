@@ -62,4 +62,5 @@
 | T057 | blocked_external | Business + Legal Ground Truth für V1: gemeinsame Legal-/Privacy-/Inquiry-Eingabe für T008/T049/T011 ohne erfundene Regeln |
 | T058 | planned | Post-Launch Automation Needs Audit: erst reale manuelle Arbeit messen, dann kleinsten Automationspfad wählen |
 | T059 | done | Cloudflare-Mail-DNS-Cutover-Preflight: STRATO-Mailrecords, Provider-Readback und Vollzonen-/DNSSEC-Gate vor Delegationswechsel |
-| T060 | active | Produktionsdomain-Pivot auf `memoraevent.de`: INWX → Cloudflare → Worker, mit Least-Privilege- und Cutover-Gates |
+| T060 | cancelled | Historischer Zwischen-Pivot auf `memoraevent.de`; operativer Domainpfad durch T061 superseded |
+| T061 | active | Produktionsdomain-Korrektur auf `memoraevents.de`: INWX → Cloudflare → Worker, mit vollständigem Provider-/Cutover-Gate |

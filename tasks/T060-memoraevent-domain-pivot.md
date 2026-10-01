@@ -1,10 +1,16 @@
 ---
 id: T060
-status: active
+status: cancelled
 priority: P0
 dependencies: [T009]
 ---
 # Produktionsdomain-Pivot auf `memoraevent.de`
+
+
+## Superseded — 30.09.2026
+
+Der Kunde hat die Primärdomain auf `memoraevents.de` korrigiert. Der weitere operative Domainpfad liegt ausschließlich in T061. Die nachfolgenden Abschnitte bleiben unverändert als historische Evidenz des tatsächlich umgesetzten und gemergten `memoraevent.de`-Zwischenstands erhalten.
+
 
 ## Ziel
 

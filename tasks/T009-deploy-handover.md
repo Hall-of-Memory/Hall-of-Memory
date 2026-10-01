@@ -46,6 +46,24 @@ Frisch belegt:
 
 Least-Privilege-Folge: Bevorzugt legt Aram die Zone einmal selbst an und delegiert danach bei Bedarf `Domain Administrator` nur für `memoraevent.de`. Ein breiterer accountweiter Adminzugang ist dafür nicht der Standardpfad.
 
+
+## Produktionsdomain-Korrektur — 2026-09-30 / Live-Readback 2026-10-01
+
+Der Kunde hat die Primärdomain auf **`https://memoraevents.de`** korrigiert. T061 supersediert damit den operativen Domainpfad aus T060; T060 bleibt historische Evidenz des bereits gemergten `memoraevent.de`-Zwischenstands.
+
+Frisch belegt:
+
+- `memoraevents.de` ist öffentlich registriert und über INWX delegiert.
+- Aktuelle Nameserver: `ns.inwx.de`, `ns2.inwx.de`, `ns3.inwx.eu`.
+- Apex und `www` zeigen auf `185.181.104.242`; Apex-MX/TXT/CAA und `_dmarc TXT` sind leer.
+- Beim `.de`-Parent ist kein DS veröffentlicht.
+- Die Cloudflare-Zone `memoraevents.de` existiert bereits im kundeneigenen Aram-Account, Plan `Free Website`, Status `pending`.
+- Cloudflare weist `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com` zu.
+- Cloudflare enthält exakt die drei importierten A-RRsets für Apex, `www` und Wildcard `*`, jeweils auf `185.181.104.242`.
+- Der bestehende Worker `hall-of-memory` bleibt Zielruntime.
+- Offen ist ausschließlich der authentifizierte INWX-Provider-Readback vor der Delegationsmutation; die aktuelle Browser-Session ist bei INWX nicht angemeldet und AXFR ist nicht verfügbar.
+
+
 ## GitHub-/Source-Entscheidung — aktualisiert 2026-08-22
 
 - Das kanonische Kundenrepo ist `Hall-of-Memory/Hall-of-Memory`.
@@ -67,16 +85,16 @@ Least-Privilege-Folge: Bevorzugt legt Aram die Zone einmal selbst an und delegie
 
 ## Externe Blockade
 
-Für den **statischen Domain-Livegang** fehlt aktuell die neue Cloudflare-Zone `memoraevent.de`. Der vorhandene delegierte Zugang darf Zonen nicht anlegen (`com.cloudflare.api.account.zone.create` fehlt). Vor einer INWX-Nameservermutation müssen anschließend die frisch zugewiesenen Cloudflare-Nameserver, der vollständige INWX→Cloudflare-DNS-Vergleich und das DNSSEC/DS-Gate aus T060 PASS sein.
+Für den **statischen Domain-Livegang** fehlt aktuell nur noch der authentifizierte INWX-Provider-Readback für `memoraevents.de`. Die Cloudflare-Zone existiert bereits und wartet auf die Registrar-Delegation. Vor einer INWX-Nameservermutation müssen der vollständige INWX→Cloudflare-DNS-Vergleich und das DNSSEC/DS-Gate aus T061 PASS sein.
 
 Für die vollständige V1 mit Anfrage/Admin bleiben zusätzlich die produktiven Ressourcen/Freigaben aus T008/T010/T011 erforderlich: Turnstile, Access, D1, Rate Limit, Email-Binding, verifizierte Ziel-/Absenderadresse, finale Inhalte sowie Datenschutz-/Löschregel.
 
-Der statische Marketing-/Demo-Livegang auf `memoraevent.de` darf von diesen späteren Backend-Bausteinen getrennt vorbereitet werden, solange nicht fälschlich ein funktionsfähiges produktives Anfrageformular behauptet wird. Fehlende produktive Formularwerte bleiben fail-closed.
+Der statische Marketing-/Demo-Livegang auf `memoraevents.de` darf von diesen späteren Backend-Bausteinen getrennt vorbereitet werden, solange nicht fälschlich ein funktionsfähiges produktives Anfrageformular behauptet wird. Fehlende produktive Formularwerte bleiben fail-closed.
 
-T009 bleibt deshalb `blocked_external`; T060 ist für den unmittelbar gewünschten Domain-Pivot `active`.
+T009 bleibt deshalb `blocked_external`; T061 ist für den unmittelbar gewünschten Domain-Cutover `active`.
 
 ## Historischer Preview-Befund — 2026-08-11
 
 - Frühere unauthentifizierte Cloudflare-Temporary-Previews unter wechselnden `workers.dev`-Hostnamen waren ausdrücklich nicht dauerhaft.
 - Diese temporären Hosts sind keine Produktions- oder Handover-Wahrheit.
-- Der damalige Primärdomain-Befund zu `hallofmemory.de` ist historische Evidenz. Seit der Kundenentscheidung vom 27.09.2026 ist `memoraevent.de` die vorgesehene produktive Primäradresse; T060 ist dafür autoritativ.
+- Der damalige Primärdomain-Befund zu `hallofmemory.de` sowie der zwischenzeitliche `memoraevent.de`-Pivot sind historische Evidenz. Seit der korrigierten Kundenentscheidung vom 30.09.2026 ist `memoraevents.de` die vorgesehene produktive Primäradresse; T061 ist dafür autoritativ.

@@ -1,6 +1,6 @@
 ---
 id: T061
-status: active
+status: done
 priority: P0
 dependencies: [T009]
 ---
@@ -46,13 +46,30 @@ Cloudflare im kundeneigenen Aram-Account:
 - `activated_on` ist leer, weil die INWX-Delegation noch nicht auf Cloudflare zeigt;
 - der bestehende Worker `hall-of-memory` bleibt die Zielruntime.
 
-## Aktuelles Cutover-Gate
+## Cutover-Readback — 01.10.2026
 
-Cloudflare-Ziel und öffentliche INWX-Sicht stimmen für die bekannten Inhalts-RRsets überein. Vor einer Nameservermutation bleibt trotzdem ein vollständiger INWX-Provider-Readback verpflichtend.
+Der frühere INWX-Blocker ist erledigt und das Produktions-Cutover-Gate ist **PASS**.
 
-Der aktuelle Provider-Browser ist bei INWX **nicht authentifiziert**. AXFR gegen `ns.inwx.de` ist nicht verfügbar. Deshalb ist die öffentliche DNS-Sicht allein kein vollständiger Zonenexport und entsperrt den Nameserverwechsel noch nicht.
+Providerseitig belegt:
 
-**Bis zum authentifizierten INWX-Readback werden bei INWX keine Nameserver geändert.**
+- INWX-Domainstatus `OK`, ursprüngliche Nameserver `ns.inwx.de`, `ns2.inwx.de`, `ns3.inwx.eu`;
+- vollständige INWX-Zone: genau `* A 185.181.104.242`, `@ A 185.181.104.242`, `www A 185.181.104.242` plus providerverwaltete Apex-`NS`/`SOA`;
+- INWX-DNSSEC-Seite: `Aktuell ist DNSSEC für keine Domain eingerichtet`; Parent-DS leer;
+- vollständiger maschinenlesbarer INWX→Cloudflare-Vergleich: `passed: true`, `sourceRrsetCount=3`, `targetRrsetCount=3`, keine Fehler; Source-Snapshot `105037b495d1e5c43452292c5d1f51ca5abdec7c0b7b53d4b30398937346bf72`, Target-Snapshot `8cb9a669fb637d7d849ce2b7cd0b9d4c196a90ac64086c1d077b8d747b95fca4`;
+- anschließend INWX-Nameserver exakt auf `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com` umgestellt; frischer INWX-Reload bestätigt nur dieses Paar;
+- DENIC sowie `1.1.1.1` und `8.8.8.8` delegieren anschließend auf `quentin`/`tia`; Parent-DS bleibt leer;
+- Cloudflare-Aktivierungscheck: HTTP 200 / `success: true`; Zone seit `2026-10-01T04:42:50.559740Z` `active`;
+- Apex-Legacy-A wurde ausschließlich für die Worker-Custom-Domain entfernt; `www` und Wildcard blieben erhalten;
+- Worker-Custom-Domain `memoraevents.de` ist an Production/`hall-of-memory` gebunden;
+- revisionsgebundener Worker-Deploy: Version `077c864f-3e7c-433f-94c5-a7597a90de70`;
+- Edge-Readback: `/ -> 302 /demo/`, `/demo/ -> 200`, `/demo/rahmen/ -> 200`;
+- Live-`/demo/` ist byte-identisch zu `dist/demo/index.html`, SHA-256 `27fe8a420e4829880607caa2d665f2a703ff6041997ec401622a1064f58e0ddd`;
+- `noindex,nofollow` bleibt aktiv; repräsentative CSS-/Logo-/Eventbild-Assets liefern HTTP 200;
+- Security Header am Apex: CSP `frame-ancestors 'none'`, Permissions-Policy, Referrer-Policy, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`;
+- `www.memoraevents.de` wird über Cloudflare Single Redirects per `302` auf den Apex kanonisiert; Ruleset `d0e0eb3bf2964c0da4c790db1b753fd4`, Regel `e8b02adcaeca4ff69ad03344a002ec19`, Pfad und Query werden erhalten;
+- `www`-Readback: Root, `/demo/rahmen/` und Query-Beispiel redirecten jeweils korrekt auf `https://memoraevents.de`.
+
+Damit ist die neue Primärdomain technisch live. Der lokale Resolver auf dem Heim-PC hielt zeitweise noch den alten INWX-Apex im Cache; autoritative Cloudflare-Server und öffentliche Resolver liefern bereits Cloudflare-Anycast und sind die maßgebliche Produktionswahrheit.
 
 ## Umsetzung
 
@@ -94,13 +111,18 @@ Der aktuelle Provider-Browser ist bei INWX **nicht authentifiziert**. AXFR gegen
 - Cloudflare meldet `memoraevents.de` als `Active`;
 - Worker-Custom-Domain und `www`-Strategie sind eindeutig gebunden;
 - TLS und Stage-1-Webreadback sind vollständig grün;
-- `memoraevent.de` bleibt bis zum erfolgreichen neuen Primärhost erhalten und wird anschließend kontrolliert weitergeleitet;
+- `memoraevent.de` wurde nach erfolgreichem Primär-Livegang kundenseitig zur Löschung eingereicht; der frühere Legacy-Redirect-Plan ist damit superseded;
 - keine Mail-, Secret-, robots.txt-, AI-Crawler- oder kostenpflichtige Nebenwirkung wurde stillschweigend eingeführt.
 
-## Aktueller externer Blocker
+## Legacy-Domain-Entscheidung — 01.10.2026
 
-**Fehlt:** authentifizierter INWX-Provider-Readback für `memoraevents.de`.
+Der zuvor vorgesehene Redirect für `memoraevent.de` wird **nicht** umgesetzt, weil der Kunde die Domain inzwischen aktiv zur Löschung eingereicht hat.
 
-**Nötig für:** vollständiges Quellzonen-Gate und sichere Nameservermutation.
+Frischer INWX-Readback:
 
-Cloudflare selbst ist bereits vorbereitet; die neue Zone existiert und wartet ausschließlich auf die Registrar-Delegation.
+- Domainstatus `DELETE SCHEDULED`;
+- `Terminauftrag: 01.10.2026 17:48`;
+- Domainlog: `30.09.2026 21:48 DELETE REQUESTED` durch `aram222`, danach `DELETE SCHEDULED`;
+- die Domain delegiert bis zur Löschung weiter auf INWX und besitzt keinen funktionsfähigen HTTPS-Legacy-Redirect.
+
+Diese explizite Provideraktion supersediert die frühere vorsorgliche Annahme, `memoraevent.de` dauerhaft als Tippfehlerdomain zu behalten. Der Löschauftrag wird nicht storniert oder umgangen. T061 ist damit terminal: die neue Primärdomain ist vollständig live; die alte Zwischen-Domain wird gemäß Kundenentscheidung auslaufen.

@@ -64,6 +64,22 @@ Frisch belegt:
 - Offen ist ausschließlich der authentifizierte INWX-Provider-Readback vor der Delegationsmutation; die aktuelle Browser-Session ist bei INWX nicht angemeldet und AXFR ist nicht verfügbar.
 
 
+## Primärdomain live — 2026-10-01
+
+Der statische Stage-1-Domain-Livegang auf `https://memoraevents.de` ist technisch abgeschlossen:
+
+- vollständiger INWX→Cloudflare-Zonen-/DNSSEC-Vergleich: PASS;
+- INWX delegiert auf `quentin.ns.cloudflare.com` / `tia.ns.cloudflare.com`;
+- DENIC, `1.1.1.1` und `8.8.8.8` sehen die Cloudflare-Delegation;
+- Cloudflare-Zone ist `active`;
+- Worker-Custom-Domain `memoraevents.de` ist an Production/`hall-of-memory` gebunden;
+- aktueller revisionsgebundener Worker-Deploy: `077c864f-3e7c-433f-94c5-a7597a90de70`;
+- Apex: `/ -> 302 /demo/`, `/demo/ -> 200`, `/demo/rahmen/ -> 200`, Security Header und `noindex,nofollow` grün;
+- Live-`/demo/` ist byte-identisch zum geprüften Artefakt, SHA-256 `27fe8a420e4829880607caa2d665f2a703ff6041997ec401622a1064f58e0ddd`;
+- `www.memoraevents.de` wird per Cloudflare Single Redirects temporär (`302`) und pfad-/query-erhaltend auf den Apex kanonisiert.
+
+Die frühere Legacy-Weiterleitung für `memoraevent.de` ist durch die kundenseitig angeforderte Löschung superseded. Die Primärdomain selbst braucht keine weitere DNS-Mutation.
+
 ## GitHub-/Source-Entscheidung — aktualisiert 2026-08-22
 
 - Das kanonische Kundenrepo ist `Hall-of-Memory/Hall-of-Memory`.
@@ -85,13 +101,11 @@ Frisch belegt:
 
 ## Externe Blockade
 
-Für den **statischen Domain-Livegang** fehlt aktuell nur noch der authentifizierte INWX-Provider-Readback für `memoraevents.de`. Die Cloudflare-Zone existiert bereits und wartet auf die Registrar-Delegation. Vor einer INWX-Nameservermutation müssen der vollständige INWX→Cloudflare-DNS-Vergleich und das DNSSEC/DS-Gate aus T061 PASS sein.
+Der **statische Domain-Livegang auf `memoraevents.de` ist abgeschlossen**. Für Stage 1 besteht kein externer Produktionsblocker mehr.
 
-Für die vollständige V1 mit Anfrage/Admin bleiben zusätzlich die produktiven Ressourcen/Freigaben aus T008/T010/T011 erforderlich: Turnstile, Access, D1, Rate Limit, Email-Binding, verifizierte Ziel-/Absenderadresse, finale Inhalte sowie Datenschutz-/Löschregel.
+Für die vollständige V1 mit Anfrage/Admin bleiben weiterhin die produktiven Ressourcen/Freigaben aus T008/T010/T011 erforderlich: Turnstile, Access, D1, Rate Limit, Email-Binding, verifizierte Ziel-/Absenderadresse, finale Inhalte sowie Datenschutz-/Löschregel.
 
-Der statische Marketing-/Demo-Livegang auf `memoraevents.de` darf von diesen späteren Backend-Bausteinen getrennt vorbereitet werden, solange nicht fälschlich ein funktionsfähiges produktives Anfrageformular behauptet wird. Fehlende produktive Formularwerte bleiben fail-closed.
-
-T009 bleibt deshalb `blocked_external`; T061 ist für den unmittelbar gewünschten Domain-Cutover `active`.
+T009 bleibt deshalb für Stage 2 `blocked_external`. T061 ist für den statischen Domain-Cutover `done`; `memoraevent.de` wurde kundenseitig zur Löschung eingereicht und wird nicht als Legacy-Redirect weitergeführt.
 
 ## Historischer Preview-Befund — 2026-08-11
 

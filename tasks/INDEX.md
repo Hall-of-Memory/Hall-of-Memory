@@ -63,4 +63,4 @@
 | T058 | planned | Post-Launch Automation Needs Audit: erst reale manuelle Arbeit messen, dann kleinsten Automationspfad wählen |
 | T059 | done | Cloudflare-Mail-DNS-Cutover-Preflight: STRATO-Mailrecords, Provider-Readback und Vollzonen-/DNSSEC-Gate vor Delegationswechsel |
 | T060 | cancelled | Historischer Zwischen-Pivot auf `memoraevent.de`; operativer Domainpfad durch T061 superseded |
-| T061 | active | Produktionsdomain-Korrektur auf `memoraevents.de`: INWX → Cloudflare → Worker, mit vollständigem Provider-/Cutover-Gate |
+| T061 | done | Produktionsdomain-Korrektur auf `memoraevents.de`: INWX → Cloudflare → Worker live; `www` kanonisiert, Zwischen-Domain kundenseitig zur Löschung eingereicht |

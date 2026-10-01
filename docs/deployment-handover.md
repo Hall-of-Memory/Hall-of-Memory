@@ -13,16 +13,17 @@ Die korrigierte Kundenentscheidung vom 30.09.2026 setzt `memoraevents.de` als ne
 
 - Produktions-/Primärdomain: `https://memoraevents.de`
 - Registrar/DNS: kundeneigen bei INWX
-- autoritative Nameserver zum Stand 01.10.2026: `ns.inwx.de`, `ns2.inwx.de`, `ns3.inwx.eu`
-- Apex-A-Record: `185.181.104.242`
-- `www.memoraevents.de`: A `185.181.104.242`
+- autoritative Nameserver zum Stand 01.10.2026: `quentin.ns.cloudflare.com`, `tia.ns.cloudflare.com`
+- Apex: Worker-Custom-Domain auf `hall-of-memory`; öffentliche Resolver liefern Cloudflare-Anycast statt des früheren INWX-A `185.181.104.242`
+- `www.memoraevents.de`: proxied Cloudflare-DNS + Single Redirect `302` auf den Apex, Pfad/Query erhalten
 - Wildcard `*`: A `185.181.104.242`
 - aktuell keine Apex-MX/TXT/CAA- oder `_dmarc`-TXT-Records; Parent-DS leer
 - kanonisches Source-Repo: `Hall-of-Memory/Hall-of-Memory`
 - `main`: PR-geschützt, Required Check `verify`, Admin-Enforcement, Conversation Resolution, kein Force-Push/Branch-Löschen
 - GitHub Pages: nur Übergangs-Fallback, nicht Produktionsplattform
 - Cloudflare: vorgesehene produktive Auslieferung; bestehender Worker `hall-of-memory` ist Zielruntime
-- Cloudflare-Zone `memoraevents.de`: vorhanden, Plan `Free Website`, Status `pending`; zugewiesene Nameserver `quentin.ns.cloudflare.com` und `tia.ns.cloudflare.com`; importiert sind Apex-, `www`- und Wildcard-A auf `185.181.104.242`
+- Cloudflare-Zone `memoraevents.de`: Plan `Free Website`, Status `active`; Worker-Custom-Domain an Production/`hall-of-memory` gebunden; Ruleset `d0e0eb3bf2964c0da4c790db1b753fd4` kanonisiert `www` temporär auf den Apex
+- frühere Zwischen-Domain `memoraevent.de`: bei INWX `DELETE SCHEDULED`; Löschung am 30.09.2026 durch `aram222` angefordert, daher kein Legacy-Redirect und kein Storno durch den Operator
 
 T061 ist die operative Wahrheit für den Domain-Cutover. T045/T059/T060 bleiben historische Evidenz der früheren Domainpfade.
 
@@ -110,6 +111,22 @@ node scripts/dns-zone-cutover.mjs <inwx-snapshot.json> <cloudflare-snapshot.json
 ```
 
 Nur Exit-Code `0` **und** `passed: true` gelten als PASS. Der Report bindet beide normalisierten Vollsnapshots über SHA-256, nennt Recordschlüssel und Fehlerklassen, gibt aber absichtlich keine RRset-Werte, TXT-Verifikationstokens, Freigabegründe oder sonstigen DNS-Inhalt wieder. Auch Datei-/JSON-Parsefehler werden nur generisch gemeldet, damit malformed Snapshots keine Tokenfragmente über Parserdiagnosen in Logs tragen. Die vollständigen Snapshots können solche Werte enthalten und werden deshalb nicht ins Repository committed, sondern ausschließlich in einem freigegebenen Evidenz-/Rollbackpfad außerhalb von Git gehalten.
+
+### Vollzogener Stage-1-Cutover — 2026-10-01
+
+Der oben beschriebene Ablauf ist für `memoraevents.de` vollständig durchlaufen:
+
+- Vollzonen-/DNSSEC-Gate PASS;
+- INWX-Delegation auf `quentin.ns.cloudflare.com` / `tia.ns.cloudflare.com`;
+- Cloudflare seit `2026-10-01T04:42:50.559740Z` `active`;
+- Worker-Custom-Domain aktiv;
+- Worker-Version `077c864f-3e7c-433f-94c5-a7597a90de70`;
+- Apex `302 -> /demo/`, Demo/Rahmen HTTP 200;
+- Live-`/demo/` SHA-256 `27fe8a420e4829880607caa2d665f2a703ff6041997ec401622a1064f58e0ddd`, identisch zum geprüften Artefakt;
+- Security Header und `noindex,nofollow` grün;
+- `www`-Redirect `302`, Pfad/Query erhalten.
+
+Der lokale Heim-PC-Resolver kann während TTL-Nachlauf noch alte INWX-Antworten cachen; maßgeblich sind autoritative Cloudflare-DNS-Antworten und öffentliche Resolver.
 
 Dann:
 

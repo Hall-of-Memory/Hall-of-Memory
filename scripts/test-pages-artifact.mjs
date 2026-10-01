@@ -10,7 +10,7 @@ const repo = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const source = join(repo, '.pages-artifact-source-test-dist');
 const artifact = join(repo, '.pages-artifact-test-dist');
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
-const pagesBase = '/Hall-of-Memory/';
+const pagesBase = '/memoraevents/';
 const expectedFrameSources = [
   `${pagesBase}fundus/hall-of-memory-frame-01.png`,
   `${pagesBase}fundus/hall-of-memory-frame-02.png`,

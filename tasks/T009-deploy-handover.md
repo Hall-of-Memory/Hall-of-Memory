@@ -82,7 +82,7 @@ Die frühere Legacy-Weiterleitung für `memoraevent.de` ist durch die kundenseit
 
 ## GitHub-/Source-Entscheidung — aktualisiert 2026-08-22
 
-- Das kanonische Kundenrepo ist `Hall-of-Memory/Hall-of-Memory`.
+- Das kanonische Kundenrepo ist `Hall-of-Memory/memoraevents`.
 - Der bisherige Public-First-Schritt war ein Bootstrap, um kundenkontrollierten Remote, CI, Pages und Branch Protection ohne Zusatzkosten sicher zu etablieren.
 - Der Kunde möchte den Source nun möglichst privat halten. Das ist architektonisch sinnvoll, weil die öffentliche Website und die Repository-Sichtbarkeit getrennte Schichten sind.
 - Eine Sichtbarkeitsänderung darf aber **nicht** stillschweigend den gerade eingerichteten `main`-Schutz entfernen. GitHub dokumentiert Branch Protection/Rulesets für private Repositories nicht für GitHub Free for organizations, sondern für passende bezahlte Pläne.

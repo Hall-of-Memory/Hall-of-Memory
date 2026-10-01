@@ -18,7 +18,7 @@ Die korrigierte Kundenentscheidung vom 30.09.2026 setzt `memoraevents.de` als ne
 - `www.memoraevents.de`: proxied Cloudflare-DNS + Single Redirect `302` auf den Apex, Pfad/Query erhalten
 - Wildcard `*`: A `185.181.104.242`
 - aktuell keine Apex-MX/TXT/CAA- oder `_dmarc`-TXT-Records; Parent-DS leer
-- kanonisches Source-Repo: `Hall-of-Memory/Hall-of-Memory`
+- kanonisches Source-Repo: `Hall-of-Memory/memoraevents`
 - `main`: PR-geschützt, Required Check `verify`, Admin-Enforcement, Conversation Resolution, kein Force-Push/Branch-Löschen
 - GitHub Pages: nur Übergangs-Fallback, nicht Produktionsplattform
 - Cloudflare: vorgesehene produktive Auslieferung; bestehender Worker `hall-of-memory` ist Zielruntime

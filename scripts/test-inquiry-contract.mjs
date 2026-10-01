@@ -144,8 +144,8 @@ assert.equal(syntheticGallery[0].id, 'gallery-first');
 assert.equal(syntheticGallery[0].alt, 'Erster Testeintrag');
 assert.equal(syntheticGallery[0].caption, 'Testcaption');
 assert.equal(
-  resolveGalleryAssetSrc(syntheticGallery[0].src, '/Hall-of-Memory/'),
-  '/Hall-of-Memory/demo/first.webp',
+  resolveGalleryAssetSrc(syntheticGallery[0].src, '/memoraevents/'),
+  '/memoraevents/demo/first.webp',
   'gallery assets must resolve through Astro BASE_URL',
 );
 for (const invalidGallerySrc of [
@@ -158,7 +158,7 @@ for (const invalidGallerySrc of [
   '%2e%2e%5coutside.webp',
 ]) {
   assert.throws(
-    () => resolveGalleryAssetSrc(invalidGallerySrc, '/Hall-of-Memory/'),
+    () => resolveGalleryAssetSrc(invalidGallerySrc, '/memoraevents/'),
     /Gallery assets must/,
     `gallery source ${invalidGallerySrc} must fail closed instead of escaping BASE_URL or contradicting img-src CSP`,
   );

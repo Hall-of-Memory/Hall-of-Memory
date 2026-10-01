@@ -67,7 +67,7 @@ assert.match(
 assert.equal(verificationBuildScript, 'astro build', 'source verification must compile without production-only runtime inputs');
 assert.match(
   pagesBuildScript,
-  /^astro build --base \/Hall-of-Memory/,
+  /^astro build --base \/memoraevents/,
   'GitHub Pages preview must use its own non-production build surface',
 );
 assert.equal(verifyScript, 'node scripts/run-verification.mjs', 'canonical source verification must route through the T052 verification runner');

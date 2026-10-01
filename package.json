@@ -1,5 +1,5 @@
 {
-  "name": "hall-of-memory",
+  "name": "memoraevents",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -7,7 +7,7 @@
     "dev": "astro dev",
     "build": "node scripts/check-production-readiness.mjs --if-production && astro build",
     "build:verification": "astro build",
-    "build:pages": "astro build --base /Hall-of-Memory && node scripts/prepare-pages-artifact.mjs dist .pages-artifact",
+    "build:pages": "astro build --base /memoraevents && node scripts/prepare-pages-artifact.mjs dist .pages-artifact",
     "preview": "astro preview",
     "check": "astro check",
     "deploy": "npm run check:production-readiness && npm run build && wrangler deploy",
@@ -35,7 +35,7 @@
     "spike:inquiry": "WRANGLER_LOG_PATH=/tmp/hall-of-memory-spike-wrangler.log node --experimental-strip-types scripts/smoke-inquiry-spike.mjs",
     "spike:admin": "WRANGLER_LOG_PATH=/tmp/hall-of-memory-spike-wrangler.log node --experimental-strip-types scripts/smoke-inquiry-spike.mjs",
     "test:preview-base": "astro --base /hall-of-memory-preview build --outDir .preview-base-test-dist && node scripts/test-preview-base.mjs",
-    "test:pages-artifact": "astro --base /Hall-of-Memory build --outDir .pages-artifact-source-test-dist && node scripts/test-pages-artifact.mjs"
+    "test:pages-artifact": "astro --base /memoraevents build --outDir .pages-artifact-source-test-dist && node scripts/test-pages-artifact.mjs"
   },
   "dependencies": {
     "astro": "7.2.9",

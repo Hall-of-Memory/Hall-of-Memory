@@ -15,7 +15,7 @@ Eine hochwertige, moderne und erweiterbare Event-Website mit Schwerpunkt auf Fot
 ## Eigentum und technische Rollen
 
 - **Domain/Registrar:** INWX für `memoraevents.de`; Registrarzugriff bei Hall of Memory.
-- **GitHub:** Quellcode, Pull Requests, CI und nachvollziehbare Änderungshistorie.
+- **GitHub:** kanonisches Source-Repo `Hall-of-Memory/memoraevents` für Quellcode, Pull Requests, CI und nachvollziehbare Änderungshistorie.
 - **Cloudflare:** vorgesehene produktive Auslieferung und später die serverseitigen Produktbausteine gemäß T009.
 - **GitHub Pages:** nur Übergangs-Preview; nicht die Produktionsplattform.
 - **`tasks/`:** einzige kanonische Task-Registry dieses Projekts.

@@ -24,13 +24,13 @@ const expectedFrameSources = [
   `${pagesBase}fundus/hall-of-memory-stellar-frame-primary/package/assets/hall-of-memory-stellar-frame-primary-raster.png`,
 ];
 
-function collectFrameImageSources(html) {
+function collectImageSourcesByClass(html, className) {
   const document = parse(html);
   const sources = [];
   const visit = (node) => {
     if (node.tagName === 'img') {
       const attributes = Object.fromEntries((node.attrs ?? []).map(({ name, value }) => [name, value]));
-      if ((attributes.class ?? '').split(/\s+/).includes('frame-comparison-image')) {
+      if ((attributes.class ?? '').split(/\s+/).includes(className)) {
         sources.push(attributes.src);
       }
     }
@@ -38,6 +38,10 @@ function collectFrameImageSources(html) {
   };
   visit(document);
   return sources;
+}
+
+function collectFrameImageSources(html) {
+  return collectImageSourcesByClass(html, 'frame-comparison-image');
 }
 
 function assertFrameAssetFiles(root, sources) {
@@ -64,6 +68,9 @@ try {
   const demoIndex = readFileSync(join(source, 'demo', 'index.html'));
   const frameComparisonHtml = readFileSync(join(source, 'demo', 'rahmen', 'index.html'), 'utf8');
   const frameImageSources = collectFrameImageSources(frameComparisonHtml);
+  const goldletterHtml = readFileSync(join(source, 'demo', 'goldletters', 'index.html'), 'utf8');
+  const goldletterImageSources = collectImageSourcesByClass(goldletterHtml, 'material-glyph-image');
+  const goldletterUniqueSources = [...new Set(goldletterImageSources)];
 
   assert.deepEqual(
     frameImageSources,
@@ -80,16 +87,31 @@ try {
   );
   assert.deepEqual(readFileSync(join(source, '_redirects')), protectedRedirects);
 
+  assert.match(goldletterHtml, /<meta name="robots" content="noindex,nofollow">/);
+  assert.equal(goldletterImageSources.length, 36, 'goldletter lab must render three complete 12-glyph material wordmarks');
+  assert.equal(goldletterUniqueSources.length, 9, 'MEMORAEVENTS must reuse exactly nine unique confirmed glyph assets');
+  for (const glyphSource of goldletterUniqueSources) {
+    assert.ok(glyphSource.startsWith(`${pagesBase}design-lab/memoraevents-gold/`), `goldletter source must stay inside Pages base: ${glyphSource}`);
+    assert.match(glyphSource, /u00(41|45|4d|4e|4f|52|53|54|56)\.png$/);
+    const relativePath = glyphSource.slice(pagesBase.length);
+    assert.ok(statSync(join(source, relativePath)).size > 0, `goldletter asset must exist and be non-empty: ${relativePath}`);
+  }
+
   preparePagesArtifact(source, artifact);
 
   assert.deepEqual(readFileSync(join(source, 'index.html')), productionIndexBefore, 'normal production index changed');
   assert.deepEqual(readFileSync(join(source, '_redirects')), protectedRedirects, 'normal routing changed');
   assert.deepEqual(readFileSync(join(artifact, 'index.html')), demoIndex, 'Pages root must render the built /demo/ page');
   assert.deepEqual(readFileSync(join(artifact, 'demo', 'rahmen', 'index.html'), 'utf8'), frameComparisonHtml);
+  assert.deepEqual(readFileSync(join(artifact, 'demo', 'goldletters', 'index.html'), 'utf8'), goldletterHtml);
   assertFrameAssetFiles(artifact, frameImageSources);
+  for (const glyphSource of goldletterUniqueSources) {
+    const relativePath = glyphSource.slice(pagesBase.length);
+    assert.ok(statSync(join(artifact, relativePath)).size > 0, `Pages artifact must preserve goldletter asset: ${relativePath}`);
+  }
   assert.deepEqual(readFileSync(join(repo, 'src', 'pages', 'index.astro')), protectedSource);
   assert.deepEqual(readFileSync(join(repo, 'public', '_redirects')), protectedRedirects);
-  console.log(`pages-artifact-ok root=demo/index.html frame_images=${frameImageSources.length} production_index_sha256=${sha256(productionIndexBefore)} redirects_sha256=${sha256(protectedRedirects)}`);
+  console.log(`pages-artifact-ok root=demo/index.html frame_images=${frameImageSources.length} goldletter_images=${goldletterImageSources.length} goldletter_unique=${goldletterUniqueSources.length} production_index_sha256=${sha256(productionIndexBefore)} redirects_sha256=${sha256(protectedRedirects)}`);
 } finally {
   rmSync(source, { recursive: true, force: true });
   rmSync(artifact, { recursive: true, force: true });

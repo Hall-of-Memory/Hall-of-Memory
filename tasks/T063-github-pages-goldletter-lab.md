@@ -1,6 +1,6 @@
 ---
 id: T063
-status: active
+status: done
 priority: P1
 dependencies: [T062]
 ---
@@ -32,19 +32,26 @@ Die neun PNGs werden byteidentisch aus dem verifizierten Livia-Goldletter-Quellb
 
 ## Akzeptanz
 
-- [ ] Labroute baut lokal und unter `--base /memoraevents`
-- [ ] `noindex,nofollow` ist im erzeugten HTML vorhanden
-- [ ] alle Materialglyphen referenzieren den GitHub-Pages-Basispfad
-- [ ] alle referenzierten PNGs liegen im Pages-Artefakt
-- [ ] kanonischer Repo-Verify ist auf dem Implementierungs-Head grün
-- [ ] PR ist auf aktuellem `main` konfliktfrei und CI-grün
-- [ ] Merge auf `main`
-- [ ] `pages-runtime` ist auf exakt dem Merge-Commit grün
-- [ ] öffentliche GitHub-Pages-Labroute liefert HTTP 200
-- [ ] Cloudflare-Production bleibt unangetastet
+- [x] Labroute baut lokal und unter `--base /memoraevents`
+- [x] `noindex,nofollow` ist im erzeugten HTML vorhanden
+- [x] alle Materialglyphen referenzieren den GitHub-Pages-Basispfad
+- [x] alle referenzierten PNGs liegen im Pages-Artefakt
+- [x] kanonischer Repo-Verify ist auf dem Implementierungs-Head grün
+- [x] PR ist auf aktuellem `main` konfliktfrei und CI-grün
+- [x] Merge auf `main`
+- [x] `pages-runtime` ist auf exakt dem Merge-Commit grün
+- [x] öffentliche GitHub-Pages-Labroute liefert HTTP 200
+- [x] Cloudflare-Production bleibt unangetastet
 
 ## Arbeitsjournal
 
 - 2026-10-02: T063 auf `main` @ `81efb366dd39d03ee80d1fc05475dd2568654172` isoliert begonnen.
 - 2026-10-02: PR #70 nicht wiederverwendet, weil er auf einem alten Vor-Rename-Stand basiert und aktuell konfliktbehaftet ist.
 - 2026-10-02: neun benötigte Materialglyphen in den isolierten T063-Worktree übernommen und SHA-256 read-back erfasst.
+
+- 2026-10-02: Implementierungs-PR #73 auf Head `cef57c6bccf9c1fa93190acca2fd7e0d34311736` nach grünem `verify` gemergt.
+- 2026-10-02: Merge-Commit `2a9d48ac0063ecb2dce129272d6cb6e1fa6a57f9`; Main-Workflow `36961179757` mit `verify=SUCCESS` und `pages-runtime=SUCCESS`.
+- 2026-10-02: Öffentlicher Readback `/memoraevents/demo/goldletters/` = HTTP 200, `noindex,nofollow`, 36 Materialglyph-Instanzen aus genau 9 eindeutigen Quellen; alle Quellen unter dem Pages-Basispfad.
+- 2026-10-02: Deployment-Receipt öffentlich HTTP 200 und exakt an `sourceRevision=2a9d48ac0063ecb2dce129272d6cb6e1fa6a57f9` sowie `verifyRunId=36961179757` gebunden.
+- 2026-10-02: Öffentlicher M-Glyph `u004d.png` = HTTP 200 und SHA-256 `e1fd143cca99bbb2ea28a20f77406e71cb879fcc9389d8d10a43943bd35f0644`, byteidentisch zur Quellglyph.
+- 2026-10-02: Es wurde kein Cloudflare-Deploy ausgeführt; T063 betrifft ausschließlich GitHub Pages.

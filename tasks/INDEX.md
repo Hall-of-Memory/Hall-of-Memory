@@ -65,4 +65,4 @@
 | T060 | cancelled | Historischer Zwischen-Pivot auf `memoraevent.de`; operativer Domainpfad durch T061 superseded |
 | T061 | done | Produktionsdomain-Korrektur auf `memoraevents.de`: INWX → Cloudflare → Worker live; `www` kanonisiert, Zwischen-Domain kundenseitig zur Löschung eingereicht |
 | T062 | done | GitHub-Repository auf `Hall-of-Memory/memoraevents` umbenannt; Repo-/Pages-Verträge, Redirect, Remote und Pages-Runtime verifiziert |
-| T063 | active | Goldletter-Versuch als echte noindex GitHub-Pages-Labseite veröffentlichen |
+| T063 | done | Goldletter-Versuch als echte noindex GitHub-Pages-Labseite veröffentlicht und revisionsgebunden verifiziert |
